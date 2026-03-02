@@ -773,9 +773,9 @@ body.sidebar-resizing .sidebar::after {
   font-size: 11px;
   line-height: 1.2;
   color: #7b7b7b;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .sidebar-nav .dpr-sidebar-score-empty {
