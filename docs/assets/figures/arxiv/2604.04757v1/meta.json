@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.04757v1/fig-001.webp",
+      "caption": "Figure 1: Our Bundle Sampler Construction: a pair of algorithms (Embed,Decode) such that Embed, given sample access to a distribution D and a bit b ∈ {0, 1}, output x such that (a) the marginal distribution of x is precisely D; and (b) Decode(x) = b with probability that grows with the min-entropy of D.",
+      "page": 28,
+      "index": 1,
+      "width": 977,
+      "height": 762
+    },
+    {
+      "url": "assets/figures/arxiv/2604.04757v1/fig-002.webp",
+      "caption": "Figure 2: Our Pseudorandom Noise-Resilient Key Exchange Protocol to agree on a single key bit, tolerating a constant channel noise rate. To agree on a long λ-bit key, execute this protocol λ times in parallel.",
+      "page": 40,
+      "index": 2,
+      "width": 977,
+      "height": 856
+    }
+  ]
+}
