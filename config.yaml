@@ -25,3 +25,60 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: 水印扩散
+      description: 检索与水印及扩散模型相关的学术论文
+      enabled: true
+      paper_sources:
+        - arxiv
+      keywords:
+        - keyword: diffusion
+          keyword_cn: 扩散模型
+          query: d
+        - keyword: watermark
+          keyword_cn: 水印
+          query: w
+        - keyword: 数字水印
+          keyword_cn: 数字水印
+          query: 用于识别或保护图像内容的数字水印技术
+        - keyword: 模型鲁棒性
+          keyword_cn: 模型鲁棒性
+          query: 探讨扩散模型在添加水印后保持性能稳定的鲁棒性
+        - keyword: 隐写技术
+          keyword_cn: 隐写技术
+          query: 研究隐写或信息隐藏方法与水印技术的关系
+        - keyword: 内容认证
+          keyword_cn: 内容认证
+          query: 通过水印验证图像或模型输出的真伪
+      intent_queries:
+        - query: 查找探讨水印嵌入与扩散模型结合的最新研究论文
+          query_cn: 搜索有关水印与扩散模型交叉研究的论文
+          enabled: true
+          source: manual
+          note: ''
+        - query: 检索关于生成模型中水印鲁棒性与验证机制的学术资料
+          query_cn: 查找有关水印鲁棒性及验证的研究文献
+          enabled: true
+          source: manual
+          note: ''
+        - query: 获取讨论扩散模型内容保护和版权标记方法的论文
+          query_cn: 搜索扩散模型内容保护和水印标记的研究
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-04-10T08:04:23.323Z'
+source_backends:
+  arxiv:
+    papers_table: arxiv_papers
+    use_vector_rpc: true
+    vector_rpc: match_arxiv_papers
+    vector_rpc_exact: match_arxiv_papers_exact
+    use_bm25_rpc: true
+    bm25_rpc: match_arxiv_papers_bm25
+    sync_table: arxiv_sync_status
+    sync_success_value: success
+    schema: public
+    kind: supabase
+    enabled: true
+    url: https://lyucdwgefyfbmaiopjbk.supabase.co
+    anon_key: sb_publishable_lX-oi64Uxyd7SIVv3_w2Uw_MTOojeKq
