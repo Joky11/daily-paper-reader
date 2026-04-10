@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.03693v1/fig-001.webp",
+      "caption": "Figure 5: Comparison of inter-image residual similarity before and after applying ResGuard across five watermarking methods. Solid markers denote original models, while hollow markers represent ResGuard-enhanced counterparts. A lower similarity indicates more image-specific residuals.",
+      "page": 6,
+      "index": 1,
+      "width": 483,
+      "height": 355
+    },
+    {
+      "url": "assets/figures/arxiv/2604.03693v1/fig-002.webp",
+      "caption": "Table 4: Visual quality of watermarked images. PSNR, SSIM, and LPIPS are reported for original and ResGuard-enhanced models.",
+      "page": 6,
+      "index": 2,
+      "width": 494,
+      "height": 352
+    },
+    {
+      "url": "assets/figures/arxiv/2604.03693v1/fig-003.webp",
+      "caption": "Table 5: Visual quality of images after KOA. PSNR, SSIM, and LPIPS are reported for original and ResGuard-enhanced models.",
+      "page": 6,
+      "index": 3,
+      "width": 494,
+      "height": 352
+    },
+    {
+      "url": "assets/figures/arxiv/2604.03693v1/fig-004.webp",
+      "caption": "Figure 6: Qualitative comparison of residual patterns before and after applying ResGuard across five watermarking methods. For each method, we visualize the original image, the residual produced by the baseline model (w/o ResGuard), and the residual produced by the ResGuard-enhanced model (w/ ResGuard). All residuals are scaled by a factor of 10 for visualization.",
+      "page": 6,
+      "index": 4,
+      "width": 480,
+      "height": 326
+    },
+    {
+      "url": "assets/figures/arxiv/2604.03693v1/fig-005.webp",
+      "caption": "Table 6: Ablation study on the effectiveness of the residual specificity enhancement loss and the residual transferability suppression loss. “Cln” indicates results on clean images, while “Dis” represents results under channel distortions.",
+      "page": 7,
+      "index": 5,
+      "width": 836,
+      "height": 646
+    },
+    {
+      "url": "assets/figures/arxiv/2604.03693v1/fig-006.webp",
+      "caption": "Figure 7: Visual results of original andResGuard-enhancedmodels. For each baseline, we show the host image (top), watermarked image, KOA-attacked image, and the residual (bottom, ×10 magnified). Each column pair contrasts the original model (left) and its ResGuard-enhanced variant (right).",
+      "page": 7,
+      "index": 6,
+      "width": 1018,
+      "height": 358
+    },
+    {
+      "url": "assets/figures/arxiv/2604.03693v1/fig-007.webp",
+      "caption": "Figure 2: Framework of the proposed ResGuard. It consists of five main components: the encoder 𝐸, the combined noise layer, the KOA noise layer, the residual specificity enhancement module, and the decoder 𝐷 . The model is trained end-to-end using two basic losses: L𝑖𝑚𝑔 enforces visual similarity between the host and watermarked images, and L𝑚𝑒𝑠 ensures accurate message extraction under both common distortions and KOA attacks. Additionally, L𝑅𝑆𝐸 promotes image-specific residual patterns and suppresses cross-image transferability, enhancing robustness against KOA.",
+      "page": 3,
+      "index": 7,
+      "width": 1042,
+      "height": 266
+    },
+    {
+      "url": "assets/figures/arxiv/2604.03693v1/fig-008.webp",
+      "caption": "Table 7: Comparison results of KOA robustness. “Cln” indicates results on clean images, while “Dis” represents results under channel distortions.",
+      "page": 8,
+      "index": 8,
+      "width": 496,
+      "height": 323
+    },
+    {
+      "url": "assets/figures/arxiv/2604.03693v1/fig-009.webp",
+      "caption": "Table 2: Comparison results of KOA robustness. “Cln” indicates results on clean images, while “Dis” represents results under channel distortions.",
+      "page": 4,
+      "index": 9,
+      "width": 496,
+      "height": 321
+    },
+    {
+      "url": "assets/figures/arxiv/2604.03693v1/fig-010.webp",
+      "caption": "Table 3: Evaluation results under diverse channel distortions using MBRS. “Cln” indicates results on clean images without distortions, while “JPEG”, “GN”, “S&P”, “GB”, and “MB” correspond to JPEG compression, Gaussian noise, salt-and-pepper noise, Gaussian blur, and median blur, respectively.",
+      "page": 5,
+      "index": 10,
+      "width": 1044,
+      "height": 204
+    }
+  ]
+}

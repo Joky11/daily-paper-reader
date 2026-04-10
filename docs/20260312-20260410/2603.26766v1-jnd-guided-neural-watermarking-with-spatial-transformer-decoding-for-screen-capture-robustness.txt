@@ -1,0 +1,518 @@
+Title: JND-Guided Neural Watermarking with Spatial Transformer Decoding for Screen-Capture Robustness
+
+URL Source: https://arxiv.org/pdf/2603.26766v1
+
+Published Time: Tue, 31 Mar 2026 00:10:59 GMT
+
+Number of Pages: 18
+
+Markdown Content:
+# JND-Guided Neural Watermarking with Spatial Transformer Decoding for Screen-Capture Robustness 
+
+Jiayi Qin Jingwei Li Chuan Wu *
+
+School of Optical-Electrical and Computer Engineering Zhejiang Gongshang University 
+
+wuchuan@zjgsu.edu.cn 
+
+Abstract 
+
+Screen-shooting robust watermarking aims to imperceptibly embed extractable infor-mation into host images such that the wa-termark survives the complex distortion pipeline of screen display and camera recap-ture. However, achieving high extraction accuracy while maintaining satisfactory vi-sual quality remains an open challenge, pri-marily because the screen-shooting chan-nel introduces severe and entangled degra-dations including Moiré patterns, color-gamut shifts, perspective warping, and sen-sor noise. In this paper, we present an end-to-end deep learning framework that jointly optimizes watermark embedding and extraction for screen-shooting robustness. Our framework incorporates three key in-novations: (i) a comprehensive noise sim-ulation layer that faithfully models real-istic screen-shooting distortions—notably including a physically-motivated Moiré pat-tern generator—enabling the network to learn robust representations against the full spectrum of capture-channel noise through adversarial training; (ii) a Just Noticeable Distortion (JND) perceptual loss function that adaptively modulates watermark em-bedding strength by supervising the per-ceptual discrepancy between the JND co-efficient map and the watermark residual, thereby concentrating watermark energy in perceptually insensitive regions to max-imize visual quality; and (iii) two comple-mentary automatic localization modules— a semantic-segmentation-based foreground extractor for captured image rectification and a symmetric noise template mecha-nism for anti-cropping region recovery— that enable fully automated watermark de-coding under realistic deployment condi-tions. Extensive experiments demonstrate that our method achieves an average PSNR of 30.94 dB and SSIM of 0.94 on water-marked images while embedding 127-bit payloads, and attains bit error rates of 1%–3% under diverse screen-shooting con-ditions spanning multiple capture distances, angles, and device combinations, substan-tially outperforming state-of-the-art meth-ods in robustness with competitive visual fidelity. 
+
+1 Introduction 
+
+The proliferation of high-resolution displays and ubiquitous camera-equipped mobile de-vices has created an unprecedented challenge for digital content protection. While tradi-tional robust watermarking techniques (Cox et al., 2007; Podilchuk and Delp, 2001; Qin et al., 2007) have demonstrated effectiveness against common signal-processing attacks in the digital domain, they are fundamentally ill-equipped to withstand the complex, multi-faceted distortions introduced by the screen-shooting pipeline—the process in which a wa-termarked image is displayed on screen and subsequently recaptured by a camera. This cross-media transfer introduces a unique combi-nation of degradations, including color gamut distortion, perspective warping, motion blur, sensor noise, and most critically, Moiré pattern interference arising from the spatial frequency interaction between the display pixel grid and the camera sensor array (Yuan et al., 2019). The broader context of multimedia security has been profoundly reshaped by advances in deep generative models. Modern diffusion-based architectures (Ho et al., 2020; Rombach et al., 2022) have demonstrated remarkable ca-pabilities in high-fidelity image synthesis, mak-ing it increasingly trivial to generate, manip-ulate, and redistribute visual content. The emergence of powerful large multimodal mod-els (Achiam et al., 2023; Guo et al., 2025; Dubey et al., 2024) has further accelerated this trend, 
+
+> arXiv:2603.26766v1 [cs.CV] 24 Mar 2026
+
+enabling sophisticated understanding and gen-eration of visual data at scale. These devel-opments have heightened the urgency for ro-bust content authentication and traceability mechanisms that can survive not only digital-domain attacks but also physical-channel dis-tortions such as screen-shooting. Concurrently, advances in visual text understanding (Tang et al., 2024a,b; Feng et al., 2023, 2024) and document image analysis (Lu et al., 2024; Feng et al., 2025; Wang et al., 2025b; Shan et al., 2024) have underscored the importance of pre-serving embedded information through complex visual processing pipelines, a challenge directly analogous to maintaining watermark integrity through the screen-shooting channel. Moreover, recent efforts in sequential numerical predic-tion (Fei et al., 2025), cross-modal video recon-struction (Huang et al., 2025), and multimodal video understanding benchmarks (Nie et al., 2025) have demonstrated that neural architec-tures can reliably encode and decode struc-tured information across heterogeneous modal-ities and complex transformation pipelines—a capability that is fundamental to the screen-shooting watermarking problem. Screen-shooting robust watermarking has at-tracted considerable attention due to its practi-cal significance in copyright protection, leak tracing, and content authentication. Early approaches predominantly relied on hand-crafted features and transform-domain tech-niques. Katayama et al. (Katayama et al., 2004) pioneered this research direction by in-troducing an orthogonal-pattern-based water-marking scheme and establishing a performance evaluation framework tailored to capture at-tacks. Subsequently, Nakamura et al. (Naka-mura et al., 2004) designed a robust water-mark template that maps binary watermark bits to predefined orthogonal templates, en-abling extraction through matched filtering af-ter the print-and-capture process. To address the geometric distortions introduced by non-frontal capturing angles, Kang et al. (Kang et al., 2010) proposed a log-polar mapping approach that embeds watermark patterns by additively combining them with Fourier-Mellin coefficients, thereby achieving resilience to affine transformations. Delgado-Guillen et al. (Delgado-Guillen et al., 2013) further im-proved this scheme for enhanced geometric ro-bustness. More recently, Fang et al. (Fang et al., 2019) conducted a systematic analy-sis of the specific distortions present in the screen-shooting channel and proposed an I-SIFT (Intensity-based Scale-Invariant Feature Transform) keypoint-based watermark embed-ding algorithm with a cross-validation extrac-tion strategy, achieving moderate robustness to both print-and-capture and screen-shooting attacks. The advent of deep learning has catalyzed a paradigm shift in robust watermarking re-search (Zheng et al., 2021). Zhu et al. (Zhu et al., 2018) introduced HiDDeN, a seminal end-to-end framework that treats various at-tacks on watermarked images as differentiable noise layers, enabling gradient-based optimiza-tion of both embedding and extraction net-works. This architecture demonstrated that neural networks can learn attack-resilient rep-resentations far more effectively than hand-designed solutions. Building upon this foun-dation, Tancik et al. (Tancik et al., 2020) in-corporated U-Net (Ronneberger et al., 2015) architecture in the encoder and introduced ad-versarial training with a GAN (Goodfellow et al., 2014) discriminator to improve water-mark imperceptibility, while employing a Spa-tial Transformer Network (STN) (Jaderberg et al., 2015) in the decoder for geometric rectifi-cation. Although this approach exhibits strong robustness to print-and-screen-shooting, its wa-termarked image quality remains suboptimal. Fang et al. (Fang et al., 2021) proposed the Deep Template-based Watermarking (DTW) algorithm that combines traditional template embedding with deep-learning-enhanced extrac-tion, producing watermarked images with sat-isfactory visual quality and moderate screen-shooting resilience. However, its robustness degrades noticeably under certain challenging conditions, such as capture distances exceed-ing one meter. The TERA algorithm (Fang et al., 2022) further explored screen-to-camera image coding with improved adaptability but still faces limitations in extreme screen-shooting scenarios. Recent progress in multimodal learning and cross-domain feature alignment has also in-spired new perspectives for watermarking re-search. Techniques for multi-modal scene understanding (Tang et al., 2022c,a,b; Zhao et al., 2024a,b) have demonstrated the ef-fectiveness of learning robust feature repre-sentations that persist across different visual transformations—an insight directly applica-ble to designing watermark embeddings that survive the screen-shooting channel. Further-more, advances in image quality assessment us-ing vision-language models (Zhang et al., 2023; Wang et al., 2025a,c) provide sophisticated per-ceptual metrics that can better guide water-mark embedding optimization compared to tra-ditional pixel-level objectives. The develop-ment of efficient multi-expert architectures (Jia et al., 2025; Lu et al., 2025) and reinforcement learning-based optimization strategies (Wang et al., 2024; Niu et al., 2025) also offers promis-ing directions for jointly optimizing the com-peting objectives of watermark robustness and visual imperceptibility. Additionally, recent in-vestigations into intent understanding under ambiguous conditions (He et al., 2025b), coher-ent narrative generation with retrieval enhance-ment (Yi et al., 2025), agentic context engi-neering for long-document comprehension (Liu et al., 2025), and proactive perception in vision-language navigation (Xue et al., 2026) further illustrate the growing sophistication of systems that must preserve and recover structured in-formation across complex processing chains. Despite these advances, several critical chal-lenges remain unresolved. First, existing noise simulation layers fail to comprehensively model the screen-shooting distortion pipeline, particu-larly the Moiré pattern interference that consti-tutes one of the most destructive noise sources in the capture channel. Second, the visual qual-ity optimization of watermarked images has not been adequately addressed—most methods rely solely on pixel-level losses (e.g., MSE) that do not align well with human visual percep-tion, leading to perceptible artifacts in smooth image regions. Third, practical deployment re-quires fully automated watermark localization and extraction from arbitrarily captured pho-tographs, yet existing solutions either assume idealized capture conditions or require manual intervention. To address these limitations, we propose a comprehensive end-to-end framework for screen-shooting robust watermarking with the follow-ing principal contributions: 
+
+• We design an end-to-end deep learning ar-chitecture for joint watermark embedding and extraction that automatically gener-ates watermarked images with both high visual quality and strong screen-shooting robustness. The encoder employs a U-Net backbone that produces a two-channel residual map, while the decoder integrates a Spatial Transformer Network for geomet-ric rectification followed by a convolutional-fully-connected extraction network. 
+
+• We introduce a Moiré noise simulation module that models the physical process of Moiré pattern generation through LCD subpixel resampling, random perspective transformation, Bayer CFA interpolation, and inverse transformation. This module, combined with comprehensive simulations of color gamut distortion, saturation degra-dation, Gaussian noise, and motion blur, enables the network to learn robust rep-resentations against the full spectrum of screen-shooting distortions. 
+
+• We propose a JND-guided perceptual loss function that leverages the human visual system’s masking properties to adaptively control watermark embedding strength. By supervising the perceptual similarity between the JND coefficient map and the watermark residual, this loss function en-courages the network to concentrate water-mark energy in textured, high-frequency regions where human sensitivity is lowest, thereby significantly improving visual qual-ity. 
+
+• We develop two complementary automatic localization methods for practical deploy-ment: (a) a semantic-segmentation-based foreground extraction method that ro-bustly identifies and rectifies the water-marked image region from captured pho-tographs containing background clutter, and (b) a symmetric noise template mech-anism embedded in the red channel that enables accurate watermark recovery even when up to 75% of the image has been digitally cropped. Extensive experimental evaluation demon-strates that our proposed scheme achieves PSNR values exceeding 31 dB with 127-bit em-bedding capacity, while maintaining bit error rates of 1%–3% across diverse screen-shooting conditions. The total processing time for a single image is less than 0.1 seconds, meeting the real-time requirements of practical applica-tions. Compared with state-of-the-art methods, our approach offers superior robustness under varying capture distances, angles, and device combinations, with competitive visual quality. 
+
+2 Related Work 
+
+2.1 Traditional Screen-Shooting Robust Watermarking 
+
+The challenge of watermarking images to sur-vive the screen-shooting process has been stud-ied for nearly two decades. Early contribu-tions established the theoretical foundations and practical frameworks for this problem. Katayama et al. (Katayama et al., 2004) pro-posed a pioneering orthogonal-pattern water-marking algorithm and developed a compre-hensive performance evaluation framework for capture-resilient watermarking, providing a sys-tematic methodology that guided subsequent research. Nakamura et al. (Nakamura et al., 2004) advanced this line of work by designing robust watermark templates in which binary watermark bits are mapped to predefined or-thogonal patterns. The embedded templates can be recovered through specific matched filter-ing operations applied to the captured images, enabling reliable watermark extraction after the print-and-capture process. A major difficulty in screen-shooting scenar-ios stems from the perspective distortion caused by non-frontal camera angles. To address this geometric challenge, Kang et al. (Kang et al., 2010) proposed an elegant approach based on log-polar coordinate mapping, where the wa-termark pattern is embedded by adding it to the Fourier-Mellin coefficients of the host im-age. This representation inherently possesses re-silience to rotation and scaling transformations, thereby improving robustness against perspec-tive warping. Delgado-Guillen et al. (Delgado-Guillen et al., 2013) subsequently refined this technique with enhanced geometric distortion handling, extending its applicability to mobile platforms. Fang et al. (Fang et al., 2019) con-ducted a thorough analysis of the diverse dis-tortions present in the screen-shooting channel and proposed the Screen-Shooting Resilient Wa-termarking (SSRW) algorithm based on I-SIFT keypoint localization. Their cross-validation-based extraction scheme demonstrated moder-ate robustness to both print-and-capture and screen-shooting attacks, though the reliance on SIFT features, which are sensitive to Moiré pat-tern distortion, limits its effectiveness in direct screen-shooting scenarios. While these traditional approaches estab-lished important baselines and identified key challenges, they generally suffer from limited embedding capacity (typically 32–64 bits), sen-sitivity to specific distortion types, and inability to jointly optimize the embedding-extraction pipeline in an end-to-end fashion. 
+
+2.2 Deep Learning-Based Robust Watermarking 
+
+The application of deep learning to robust wa-termarking has opened new avenues for tack-ling the screen-shooting challenge (Zheng et al., 2021). The foundational architecture was in-troduced by Zhu et al. (Zhu et al., 2018) in their HiDDeN framework, which conceptualized the watermarking problem as an encoder-noise-decoder pipeline trainable end-to-end via back-propagation. By modeling various attacks as differentiable noise layers inserted between the encoder and decoder, HiDDeN demonstrated that neural networks can automatically learn to embed watermarks that are inherently resilient to anticipated distortions. This elegant for-mulation catalyzed a wave of subsequent deep watermarking research. Tancik et al. (Tancik et al., 2020) extended this paradigm with StegaStamp, which in-tegrates a U-Net (Ronneberger et al., 2015) encoder for richer multi-scale feature fusion and employs adversarial training using aGAN (Goodfellow et al., 2014) discriminator to improve the imperceptibility of embedded wa-termarks. Their decoder incorporates a Spatial Transformer Network (STN) (Jaderberg et al., 2015) for geometric rectification, enhancing ro-bustness to moderate rotations and translations. StegaStamp demonstrated strong resilience to physical-world attacks, including printing and screen shooting, though the visual quality of watermarked images remained a notable lim-itation. Fang et al. (Fang et al., 2021) pro-posed the Deep Template-based Watermark-ing (DTW) approach, which combines tradi-tional template embedding strategies with deep-learning-enhanced extraction. By decomposing the watermark into individual codeword tem-plates, DTW achieves satisfactory visual qual-ity and moderate screen-shooting robustness, but its performance degrades under challenging conditions such as large capture distances or extreme angles. The TERA algorithm (Fang et al., 2022) further explored screen-to-camera coding with improved transparency and adapt-ability, though it remains limited in handling the most severe screen-shooting distortions. The rapid evolution of deep generative mod-els has further expanded the landscape of learned watermarking. Diffusion-based gener-ative frameworks (Ho et al., 2020; Rombach et al., 2022) have demonstrated that latent-space representations can encode and recon-struct fine-grained image details with high fi-delity, suggesting that similar latent representa-tions could serve as effective carriers for water-mark information. In parallel, the emergence of powerful vision-language models (Achiam et al., 2023; Dubey et al., 2024; Guo et al., 2025) has enabled a more sophisticated understanding of image content and structure, which can in-form adaptive watermark embedding strategies that account for semantic content. Recent work on multimodal document understanding (Lu et al., 2024; Feng et al., 2025, 2024; Wang et al., 2025b) and text-centric visual recogni-tion (Tang et al., 2024a,b; Zhao et al., 2025; Liu et al., 2023) further illustrates the growing capability of neural networks to extract and preserve structured information from complex visual inputs—a core requirement shared with robust watermarking systems. The evolution toward universal document parsing architec-tures such as Dolphin-v2 (Feng et al., 2026) and large-scale foundation models (B Seed, 2025) further demonstrates the increasing capacity of deep networks to handle diverse visual inputs with high fidelity, reinforcing the feasibility of learning watermark representations that per-sist through complex visual transformations. Complementary work on lightweight temporal-aware video editing (He et al., 2025a) also show-cases that efficient adaptation mechanisms can enable precise control over visual content mod-ifications, an insight directly applicable to the fine-grained control required for imperceptible watermark embedding. Furthermore, advances in object detec-tion (Redmon et al., 2016) and scene text recognition (Tang et al., 2022c,a,b, 2023) have provided robust feature extraction techniques that can be adapted for watermark localiza-tion in captured images. Multi-modal learning approaches that integrate visual and textual cues (Zhao et al., 2024a,b; Wang et al., 2025a) have demonstrated the effectiveness of cross-domain feature alignment, an insight applica-ble to learning watermark representations that remain consistent across the screen-shooting channel. The concept of learning complemen-tary representations from heterogeneous data sources (Li et al., 2025b,a, 2024) also bears rel-evance to our multi-component watermarking framework, where the encoder, noise simulator, and decoder must learn synergistic representa-tions. 
+
+2.3 Perceptual Quality Optimization in Watermarking 
+
+Achieving high visual quality in watermarked images has been a persistent challenge. Early approaches predominantly relied on Mean Squared Error (MSE) or Peak Signal-to-Noise Ratio (PSNR) (Horé and Ziou, 2010) as opti-mization objectives. However, these pixel-level metrics correlate poorly with human visual per-ception, often resulting in watermark artifacts visible in smooth, low-frequency image regions where the human eye is most sensitive. The concept of Just Noticeable Distor-tion (JND) provides a principled framework for perceptually-guided watermark embedding. Pixel-domain JND models (Ahumada Jr and Peterson, 1992; Yang et al., 2005) character-ize the minimum change at each pixel loca-tion that is perceptible to the human visual system, accounting for background luminance adaptation and spatial masking effects. By leveraging JND maps, watermark embedding can be adaptively modulated to concentrate energy in regions where distortions are least perceptible. Zhang et al. (Zhang et al., 2018) demonstrated that deep features extracted from pretrained networks serve as remarkably effec-tive perceptual similarity metrics, leading to the widely-adopted LPIPS (Learned Perceptual Image Patch Similarity) loss function. More recently, vision-language models have been ap-plied to blind image quality assessment (Zhang et al., 2023), offering content-aware quality eval-uation that could further refine watermark em-bedding strategies. Complementary work on image editing and restoration using attention-guided diffusion (Sun et al., 2025; Cui et al., 2026b) has shown that perceptually-sensitive image modifications can be precisely controlled through learned attention mechanisms—a prin-ciple that aligns closely with our JND-guided approach to concentrating watermark energy in visually insensitive regions. Furthermore, recent advances in accelerating diffusion mod-els through trajectory-consistent approxima-tion (Cui et al., 2026a) and curvature-aware residual prediction (Huang et al., 2026) have revealed that carefully designed residual struc-tures can maintain reconstruction fidelity under aggressive computational constraints—an ob-servation that resonates with our approach of designing compact yet information-rich water-mark residual maps. The interplay between robustness and visual quality represents a fundamental trade-off in watermarking. Reinforcement learning-based optimization (Tang et al., 2022a; Wang et al., 2024; Niu et al., 2025) has emerged as a promis-ing strategy for navigating this trade-off, en-abling adaptive balancing of competing objec-tives during training. Multi-expert collabo-rative learning frameworks (Jia et al., 2025) and certainty-based adaptive routing strate-gies (Lu et al., 2025) further suggest that dy-namically allocating computational resources based on input difficulty could improve both the efficiency and effectiveness of watermark embedding. Recent explorations in visual text rendering (Zhu et al., 2026) and efficient token processing (Li et al., 2026; Wang et al., 2025c) also offer architectural insights applicable to designing lightweight yet effective watermark-ing networks. In our work, we synergistically combine JND-guided embedding control with LPIPS-based perceptual supervision to achieve superior visual quality while maintaining robust watermark extraction. 
+
+3 Proposed Method 
+
+Our proposed screen-shooting robust water-marking framework comprises four principal components: (1) an encoder network for water-mark embedding, (2) a decoder network for wa-termark extraction, (3) a comprehensive noise simulation layer for robustness training, and (4) two automatic localization modules for practi-cal deployment. Figure 1 provides an overview of the complete pipeline. 
+
+3.1 Network Architecture 3.1.1 Encoder Network 
+
+The encoder network is built upon a U-Net (Ronneberger et al., 2015) backbone archi-tecture designed to produce a watermark resid-ual map from the concatenated input of the host image and the binary watermark message. The U-Net topology consists of a contracting path (left side) for hierarchical feature compression and an expanding path (right side) for progres-sive decoding and reconstruction, connected by skip connections that enable multi-scale feature fusion at each resolution level. Table 1 details the complete encoder architec-ture. The input comprises a 6-channel tensor formed by concatenating the 3-channel RGB host image with a 3-channel watermark rep-resentation. The contracting path consists of four convolutional blocks ( conv1 –conv5 ) with increasing channel dimensions ( 6 → 32 →
+
+32 → 64 → 128 → 256 ) and stride-2 down-sampling. The expanding path employs trans-posed convolutions ( up6 –up9 ) for upsampling, with each level concatenating features from the corresponding contracting level via skip connec-tions. The final convolutional layer produces a 2-channel residual map that is additively fused with the green (G) and blue (B) channels of the host image to obtain the watermarked im-age. The rationale for generating a 2-channel rather than 3-channel residual and reserving the red (R) channel for anti-cropping template embedding is discussed in Section 3.4.2. 
+
+3.1.2 Decoder Network 
+
+The decoder network consists of two cascaded sub-networks: a Spatial Transformer Network (STN) (Jaderberg et al., 2015) for geometric rec-tification and a convolutional-fully-connected extraction sub-network for watermark recovery. The STN module learns a set of six affine transformation parameters Θ = {a, b, c, d, e, f }
+
+that map each pixel from its distorted coordi-[Figure 2: Overall pipeline of the proposed screen-shooting robust watermarking scheme. The encoder generates a two-channel residual map that is fused with the host image. The noise simulation layer models screen-shooting distortions including Moiré patterns. The decoder employs STN-based rectification followed by convolutional extraction. Two localization modules handle captured image foreground extraction and anti-cropping region recovery.] 
+
+Figure 1: Overall flowchart of the proposed screen-shooting robust watermarking framework. Table 1: Architecture of the encoder network. k:kernel size; s: stride.                                                                                             
+
+> Layer ksChannels Input
+> input ––6–conv1 316→32 input conv2 3232 →32 conv1 conv3 3232 →64 conv2 conv4 3264 →128 conv3 conv5 32128 →256 conv4 up6 21256 →128 conv5 conv6 31256 →128 conv4 + up6 up7 21128 →64 conv6 conv7 31128 →64 conv3 + up7 up8 2164 →32 conv7 conv8 3164 →32 conv2 + up8 up9 2132 →32 conv8 conv9 3170 →32 conv1 + up9 + input residual 3132 →2conv9
+
+nates (xi, y i) to rectified coordinates (xsi , y si ):
+
+xsi
+
+ysi
+
+
+
+=
+
+a bd e
+
+  xi
+
+yi
+
+
+
++
+
+cf
+
+
+
+(1) This affine transformation compensates for the geometric deformations introduced during the screen-shooting process, including trans-lation, rotation, scaling, and shearing. By learning these parameters end-to-end, the STN enables the subsequent extraction network to operate on approximately rectified images, sig-nificantly improving convergence and final ex-traction accuracy. The extraction sub-network (Table 2) pro-cesses the rectified image through a series of convolutional layers with progressively increas-ing channel dimensions for feature extraction and spatial compression, followed by fully-connected layers that map the extracted spatial features to a one-dimensional watermark se-quence. The final fully-connected layer outputs a vector of length L (the watermark bit-length), followed by a sigmoid activation that produces the probability of each bit position being 0 or 1, thereby enabling binary watermark extraction. 
+
+Table 2: Architecture of the decoder network. 
+
+k: kernel size; s: stride. “–” indicates non-convolutional layers.                                                                                                       
+
+> Layer ksChannels Input
+> STN Sub-network
+> conv1 323→32 image conv2 3232 →64 conv1 conv3 3264 →128 conv2 fc0 ––320 000 flatten(conv3) fc1 ––320 k→128 fc0 fc2 ––128 →6fc1 warp ––3→3transform(fc2)
+> Extraction Sub-network
+> conv1 323→32 warp conv2 3132 →32 conv1 conv3 3232 →64 conv2 conv4 2164 →64 conv3 conv5 3264 →64 conv4 conv6 2264 →128 conv5 conv7 32128 →128 conv6 fc0 ––20 000 flatten(conv7) fc1 ––20 k→512 fc0 secret ––512 →100 fc1
+
+3.2 Loss Functions 
+
+The overall training objective is a weighted com-bination of four complementary loss terms that jointly supervise the network to generate water-marked images exhibiting both high robustness and superior visual quality: 
+
+L = λloss  
+
+> 1
+
+· ℓ1 + λloss  
+
+> 2
+
+· ℓ2 + λloss  
+
+> 3
+
+· ℓ3 + λloss  
+
+> 4
+
+· ℓ4 (2) where λloss  
+
+> 1
+
+–λloss  
+
+> 4
+
+are weighting coefficients treated as training hyperparameters. 
+
+3.2.1 Image Reconstruction Loss 
+
+The image reconstruction loss ℓ1 employs the Mean Squared Error (MSE) between the host image I and the watermarked image ˆI, encour-aging the encoder to minimize pixel-level mod-ifications: 
+
+ℓ1 = 1
+
+M × N
+
+> M
+
+X
+
+> i=1
+> N
+
+X
+
+> j=1
+
+h ˆI(i, j ) − I(i, j )
+
+i2
+
+(3) where M and N denote the image height and width, respectively. In our implementation, all images are normalized to 512 ×512 pixels before being fed to the encoder. 
+
+3.2.2 Perceptual Similarity Loss 
+
+While the MSE loss improves PSNR, it does not fully align with human perceptual judgment. We therefore introduce the Learned Perceptual Image Patch Similarity (LPIPS) loss (Zhang et al., 2018) to supervise the residual map to-ward greater imperceptibility: 
+
+ℓ2 = X
+
+> z
+
+1
+
+Hz Wz
+
+X
+
+> h,w
+
+∥wz ⊙ (ˆ yzhw − ˆyz
+
+> 0hw
+
+)∥22 (4) where z indexes the layers of a pretrained fea-ture extraction network, ˆyzhw and ˆyz 
+
+> 0hw
+
+are the feature tensors of the watermarked and host images at layer z, Hz and Wz are the spatial dimensions, and wz ∈ RCz are learned channel-wise scaling weights. This loss captures high-level perceptual differences that pixel-level met-rics miss. 
+
+3.2.3 Information Cross-Entropy Loss 
+
+To ensure accurate watermark extraction (i.e., robustness), we employ the binary cross-entropy loss between the extracted and original watermark sequences: 
+
+ℓ3 = − 1
+
+L
+
+> L
+
+X
+
+> i=1
+
+n
+
+bi ln 
+
+h
+
+σ(ˆbi)
+
+i
+
++ (1 − bi) ln 
+
+h
+
+1 − σ(ˆbi)
+
+io 
+
+(5) where σ(·) denotes the sigmoid function, ˆbi is the predicted value of the i-th watermark bit, 
+
+bi is the ground-truth bit value, and L = 127 
+
+is the watermark bit-length. Notably, during the initial λtrain  
+
+> 1
+
+training iterations, only this cross-entropy loss participates in gradient up-dates to accelerate convergence; visual quality losses are subsequently incorporated to refine the embedding. 
+
+3.2.4 JND-Guided Residual Loss 
+
+Although the combination of MSE and LPIPS losses produces generally imperceptible water-marks, these objectives cannot explicitly ensure that the watermark residual is concentrated in high-frequency textured regions where human sensitivity is lowest. To address this limitation, we introduce a JND-guided loss that leverages the human visual system’s masking properties. The pixel-domain JND model (Ahumada Jr and Peterson, 1992) computes the minimum perceptible distortion at each pixel location 
+
+P = ( x, y ) based on background luminance adaptation and spatial contrast masking: 
+
+fJND (P ) = λ1·{ f1 [Ibg (P ), I mg (P )] + λ2}+f2 [Ibg (P )] 
+
+(6) where f1 computes the spatial masking com-ponent based on background luminance Ibg 
+
+and maximum weighted luminance gradient 
+
+Img , and f2 computes the luminance adapta-tion threshold: 
+
+f2(x) = 
+
+(
+
+17 ·  1 − x
+
+> 127
+
+ + 3 x ≤ 127  
+
+> 3128
+
+· (x − 127) + 3 x > 127 (7) The background luminance Ibg (x, y ) is com-puted as a weighted average over the 5 × 5 pixel neighborhood using a predefined kernel, while 
+
+Img (x, y ) captures the maximum directional gradient magnitude across four orientations us-ing Sobel-like filter banks G1–G4.Our JND loss is then defined as the LPIPS perceptual distance between the encoder’s resid-ual map Ir and the scaled JND coefficient map: 
+
+ℓ4 = LPIPS (Ir, η · IJND ) (8) where η is a weighting coefficient that controls the residual intensity. By minimizing this loss, the network learns to produce residual patterns whose spatial distribution closely follows the JND map—embedding stronger watermark sig-nals in textured regions and weaker signals in smooth areas, thereby maximizing visual qual-ity while preserving robustness. 
+
+3.3 Screen-Shooting Noise Simulation 
+
+A critical design element of our framework is the comprehensive noise simulation layer posi-tioned between the encoder and decoder during training. This layer models the complete spec-trum of screen-shooting distortions, enabling the network to learn robust watermark represen-tations through exposure to realistic degrada-tions. We describe each noise component below, noting that perspective distortion is handled separately by the localization modules (Sec-tion 3.4). 
+
+3.3.1 Color Gamut Distortion 
+
+Color gamut distortion encompasses contrast and brightness modifications that the image undergoes during display and recapture: 
+
+In = θ1 · I + θ2 (9) where θ1 (multiplicative/contrast) and θ2 (ad-ditive/brightness) are randomly sampled dis-tortion coefficients. To ensure stable training, the distortion range starts at zero and linearly increases with training iterations, preventing premature exposure to severe distortions that could impede convergence. The brightness co-efficient θ2 is sampled from a symmetric inter-val (−M1, M 1) and the contrast coefficient θ1
+
+from an asymmetric interval (m2, M 2), both governed by training-step-dependent hyperpa-rameters λnoise  
+
+> 1
+
+–λnoise  
+
+> 4
+
+.
+
+3.3.2 Saturation Distortion 
+
+The screen-shooting process often induces satu-ration shifts due to differences in display color reproduction and camera white balance. We model this as a linear interpolation between the color image and its grayscale counterpart: 
+
+In = θ3 · IRGB + (1 − θ3) · IG (10) where IG = 0.299 R + 0 .587 G + 0 .114 B
+
+is the luminance-weighted grayscale conver-sion and θ3 ∈ [0 , 1] controls the saturation level. The parameter θ3 is computed via a step-dependent schedule with hyperparameters 
+
+λnoise  
+
+> 5
+
+and λnoise  
+
+> 6
+
+.
+
+3.3.3 Random Gaussian Noise 
+
+Irregular noise from screen surface imperfec-tions, lens impurities, and CMOS analog-to-digital conversion is modeled as additive Gaus-sian noise: 
+
+In = I + N (0 , σ ) (11) where the standard deviation σ is randomly sampled from a training-step-dependent range controlled by hyperparameters λnoise  
+
+> 7
+
+and λnoise  
+
+> 8
+
+.
+
+3.3.4 Motion Blur 
+
+Two types of blur commonly affect screen-captured images: (1) defocus blur caused by focal length mismatch between the camera and screen distance, modeled by a Gaussian blur kernel: 
+
+G(x, y ) = 12πσ 2 exp 
+
+
+
+− x2 + y2
+
+2σ2
+
+
+
+(12) and (2) directional motion blur from camera movement during exposure, modeled by rotat-ing the blur kernel along the motion trajectory angle θ:
+
+Gv(x, y ) = G(x cos θ, y sin θ) (13) Both the kernel size Nk and standard de-viation σ are randomly sampled within step-dependent ranges. 
+
+3.3.5 Moiré Pattern Simulation 
+
+A key contribution of our noise simulation layer is the explicit modeling of Moiré pattern inter-ference, which arises when the spatial frequen-cies of the display pixel grid and the camera sensor array interact. We simulate this phe-nomenon through a physically-motivated digi-tal pipeline: 1. LCD Subpixel Resampling : The image is resampled to simulate the LCD screen format, where each pixel is represented by three monochromatic sub-pixel lamps. Ac-counting for physical inter-element spacing, each original pixel maps to a 3 × 3 block in the resampled image, with red, green, and blue sub-pixel values placed in the corresponding positions. 2. Random Perspective Transformation :A random perspective transformation is applied to the resampled image to gener-ate irregular Moiré textures, followed by Gaussian blur convolution to ensure partial texture retention after inverse transforma-tion. 3. Bayer CFA Interpolation : Color filter array interpolation simulates the RAW-to-RGB conversion process of the camera sen-sor, replicating the demosaicing artifacts that contribute to Moiré pattern appear-ance. 4. Inverse Perspective Transformation :The image is transformed back to the orig-inal perspective, yielding the final Moiré-contaminated image. Since the Moiré simulation introduces sub-stantial distortion, it is activated during the mid-to-late stages of training. As training pro-gresses, the overall noise intensity in the simula-tion layer gradually exceeds that of real screen-shooting scenarios, ensuring that the trained network acquires robustness margins sufficient for practical deployment. 3.4 Watermark Region Localization 3.4.1 Captured Image Region Localization 
+
+In practical deployment, a screen-captured pho-tograph typically contains not only the dis-played watermarked image but also surround-ing background elements (e.g., the screen bezel, desk surface, and ambient environment). These extraneous regions can severely degrade wa-termark extraction accuracy if fed directly to the decoder. We propose a hybrid localization method combining deep semantic segmentation with traditional image processing. Our approach is predicated on the assump-tion that the watermarked image occupies the majority of pixels in the captured photograph and that the background is relatively uniform. Under these conditions, watermark region lo-calization can be formulated as a foreground ex-traction problem. However, direct application of traditional thresholding-based segmentation often produces incomplete foreground masks due to complex image content and non-uniform illumination, resulting in disconnected regions that confound subsequent processing. To overcome this limitation, we train a binary semantic segmentation network based on the DeepLab V3+ architecture (Chen et al., 2018) that takes the initial (potentially incomplete) foreground mask from traditional processing as input and produces a complete, refined fore-ground mask as output. The training dataset is constructed by placing non-solid-color im-ages with random perspective transformations onto various uniform-color backgrounds, gener-ating pairs of incomplete foreground masks (via adaptive thresholding) and their corresponding ground-truth complete masks. The complete localization pipeline proceeds as follows: (1) convert the captured image to grayscale and apply median filtering; (2) perform foreground-background separation via adaptive thresholding to obtain the maximum connected component; (3) refine the initial mask through the trained segmentation net-work; (4) apply post-processing with median filtering and Canny edge detection; (5) detect edge lines using Hough transform, compute pairwise intersections, and cluster them into four groups via k-means++; (6) order the four cluster centers clockwise and apply perspective transformation to obtain the rectified water-marked image region. 
+
+3.4.2 Anti-Cropping Region Localization 
+
+While most digital attacks (filtering, noise ad-dition) can be subsumed under the screen-shooting noise model, digital cropping repre-sents a fundamentally different distortion that removes image content rather than degrading it (Fang et al., 2021). To address this challenge, we introduce a symmetric noise template mech-anism that enables watermark recovery from significantly cropped images. The approach operates as follows. First, the host image is partitioned into four equal sub-images (top-left, top-right, bottom-left, bottom-right), and each sub-image independently un-dergoes watermark encoding to produce a two-channel residual map embedded in the G and B channels. This quadruple embedding ensures that identical watermark information exists in four spatially distinct copies. Simultaneously, a symmetric Gaussian white noise template— constructed by horizontally flipping a random noise matrix and then vertically flipping the result—is embedded in the R channel to serve as a localization reference. At the extraction stage, the R channel is first processed to recover the noise template through Wiener filtering: 
+
+It = Iloc − fw(Iloc ) (14) where fw denotes the Wiener filtering operation. The column-wise symmetry S(j) of the filtered template is then computed by dividing each column into two equal segments J1 and J2 and measuring their normalized cross-correlation: 
+
+S(j) = 1
+
+m · djmX
+
+> x=1
+> dj
+
+X
+
+> y=1
+
+C [J1(x, y )] ·C [ψ[J2(x, y )]] 
+
+(15) where C(·) denotes the standardization opera-tion (zero-mean, unit-variance normalization), 
+
+ψ(·) denotes horizontal flipping, and dj is the distance from column j to the image boundary. The symmetry peak indicates the boundary of the watermarked sub-image. Row-wise symme-try is computed analogously, and the detected boundaries define the sub-image regions from which watermark extraction is attempted. To mitigate false symmetry peaks near image boundaries (where small dj values can inflate 
+
+S(j)), a high-pass filter is applied to the sym-metry sequence before peak detection. This approach enables accurate watermark recov-ery as long as at least one complete sub-image (25% of the original area) remains intact after cropping. Additionally, visual discontinuities at sub-image boundaries are ameliorated using Fast-Matching-based image inpainting (Telea, 2004). 
+
+4 Experiments 
+
+4.1 Experimental Setup Hardware Configuration. We evaluate our method using diverse combinations of capture and display devices to comprehensively assess screen-shooting robustness. The capture de-vices include a Redmi K30 Pro smartphone and a Sony Alpha 6100 mirrorless camera. The display devices comprise an HKCT279Q moni-tor, a MacBook Pro 2019 laptop, a Microsoft Surface Go tablet, and a Haire 65R1 Pro televi-sion. These devices span a representative range of screen technologies, resolutions, and form factors encountered in real-world scenarios. 
+
+Datasets. The training set consists of the first 100,000 images from Flickr1M (Flickr-1-Million) (Huiskes and Lew, 2008), while the test set comprises the first 2,000 images from Flickr2K (Flickr-2-Thousands) (Timofte et al., 2017). All images are resized to 512 ×512 pixels for network input. 
+
+Training Hyperparameters. Table 3 sum-marizes the key hyperparameter settings. The network is trained for 175,000 iterations with a batch size of 16 and a learning rate of 10 −4.The watermark length is L = 127 bits. Noise simulation parameters are configured with pro-gressive schedules to ensure stable convergence: brightness and contrast distortion ranges lin-early increase over the first 100 and 1,000 it-erations, respectively, while the Moiré pattern simulation is activated in the latter half of train-ing. 
+
+Evaluation Metrics. We evaluate visual quality using PSNR, SSIM (Wang et al., 2004), and LPIPS (Zhang et al., 2018). Robustness is measured by the bit error rate (BER) ε of extracted watermarks. Runtime is measured 
+
+Table 3: Key training hyperparameters and their values.                   
+
+> Category Parameter Value
+> Network Training iterations 175,000 Batch size 16 Watermark length L127 bits Learning rate 10 −4
+> Loss weights
+> λloss
+> 1(MSE) 2
+> λloss
+> 2(LPIPS) 1.5
+> λloss
+> 3(BCE) 1.5
+> λloss
+> 4(JND) 0.8 Noise sim. Moiré probability 0.75 Motion blur prob. 1.0
+
+Table 4: Ablation results for the JND loss function. BER ε is measured at 40 cm frontal screen-shooting distance.                            
+
+> Network ηPSNR (dB) SSIM LPIPS BER (%)
+> NET1 –19.73 0.737 0.125 0.13 NET2 122.86 0.772 0.109 0.14 0.5 23.59 0.806 0.098 0.36 0.2 25.00 0.845 0.075 0.49 NET3 130.94 0.942 0.048 2.86
+
+as the average processing time per image on hardware with an NVIDIA RTX 2070 Super GPU, AMD Ryzen 5 2600X CPU, and 32 GB RAM. 
+
+4.2 Ablation Studies 4.2.1 Effectiveness of the JND Loss Function 
+
+To validate the contribution of the JND loss function to watermarked image quality, we con-duct ablation experiments by training three network variants on 500 randomly selected test images from Flickr2K: (1) NET1 : no JND loss, 3-channel (R, G, B) residual; (2) NET2 : with JND loss, 3-channel residual; (3) NET3 : with JND loss, 2-channel (G, B) residual. All vari-ants share identical hyperparameters except for the JND weight η.As shown in Table 4, introducing the JND loss function consistently improves PSNR and SSIM while reducing LPIPS across all configura-tions, confirming its effectiveness in enhancing visual quality. Decreasing η further improves quality metrics but at the cost of higher BER, as weaker residuals become more susceptible to screen-shooting noise. The 2-channel resid-ual configuration (NET3, η = 1 ) achieves the best balance, attaining 30.94 dB PSNR and Table 5: Ablation results for Moiré noise simulation. BER difference ε1 − ε2 shows improvement.                                         
+
+> Angle NET4 ε1NET5 ε2ε1−ε2
+> −75 ◦7.46 8.27 −0.81
+> −60 ◦1.85 1.97 −0.12
+> −45 ◦2.55 2.73 −0.18
+> −30 ◦2.39 3.18 −0.80
+> −15 ◦2.53 3.68 −1.15 0◦1.09 1.20 −0.10 +15 ◦1.59 1.72 −0.13 +30 ◦1.87 2.26 −0.39 +45 ◦2.79 3.05 −0.26 +60 ◦2.81 3.20 −0.39 +75 ◦11.13 12.05 −0.92
+
+0.942 SSIM with an acceptable BER of 2.86%. This configuration is adopted for all subsequent experiments. 
+
+4.2.2 Effectiveness of Moiré Noise Simulation 
+
+To assess the impact of the Moiré noise simu-lation module on robustness, we compare two networks: NET4 (with Moiré simulation) and 
+
+NET5 (without Moiré simulation). Both are evaluated under multiple screen-shooting an-gles at a 40 cm distance. Table 5 demonstrates that NET4 consistently achieves lower BER across all angles, with im-provements ranging from 0.10 to 1.15 percent-age points. The improvement is particularly pronounced at extreme angles ( ±75 ◦) and mod-erate oblique angles ( ±15 ◦ to ±30 ◦), where Moiré patterns are most severe. These results confirm that our Moiré simulation module ef-fectively enhances the network’s resilience to real-world screen-shooting distortions. 
+
+4.2.3 Captured Image Region Localization 
+
+We evaluate the foreground extraction method under three conditions: (1) no localization, (2) traditional image processing-based localization without semantic segmentation refinement, and (3) full pipeline with semantic segmentation. The recall rate pr measures the fraction of the true watermarked image area correctly identi-fied by each method. As presented in Table 6, without localiza-tion, the decoder receives the entire captured photograph, including background content, re-sulting in near-random BER ( ∼45%). Tradi-tional segmentation alone yields extremely low 
+
+Table 6: Captured image region localization results.                      
+
+> Angle Method BER (%) pr
+> 0◦
+> No localization 46.72 –w/o segmentation 46.70 0.144 w/ segmentation 7.39 0.963
+> −15 ◦
+> No localization 44.54 –w/o segmentation 44.54 0.112 w/ segmentation 8.58 0.953
+> +15 ◦
+> No localization 45.42 –w/o segmentation 45.42 0.132 w/ segmentation 10.13 0.965
+
+Table 7: Anti-cropping localization results (BER in %).                               
+
+> Crop ratio Dir. w/ anti-crop w/o anti-crop
+> γ= 0 .05
+> Top 2.72 4.87 Left 2.46 5.90 Bottom 1.76 3.91 Right 2.47 4.93
+> γ= 0 .40
+> Top 4.96 53.10 Left 6.24 55.96 Bottom 5.67 49.80 Right 6.86 48.97
+> γ= 0 .55
+> Top 10.94 51.65 Left 14.19 49.72 Bottom 11.91 49.91 Right 14.06 45.52
+
+recall ( pr < 0.15 ) due to the difficulty of sep-arating complex watermarked image content from the background using simple thresholding. Incorporating the semantic segmentation net-work dramatically improves recall to >95% and reduces BER to the 7–10% range, confirming the effectiveness and necessity of our hybrid localization approach for practical deployment. 
+
+4.2.4 Anti-Cropping Localization 
+
+Table 7 presents the BER under various single-edge cropping ratios with and without our anti-cropping mechanism. Without anti-cropping localization, BER increases sharply beyond 5% cropping, reaching approximately 50% at mod-erate cropping levels. With our symmetric template-based localization, BER remains sta-ble until the cropping ratio exceeds 50% (i.e., more than three-quarters of the original im-age remains intact). This confirms that our method effectively resists cropping attacks of up to 50% per edge, as long as at least one complete sub-image ( ≥25% area) survives. Table 8: Screen-shooting robustness (BER %) of the proposed scheme under various conditions with HKCT279Q display.                            
+
+> Angle Distance Redmi K30 Sony A6100
+> 0◦40 cm 1.09 1.42
+> 0◦60 cm 1.57 1.81
+> 0◦100 cm 2.51 1.46
+> 0◦200 cm 11.65 3.33
+> −45 ◦40 cm 2.55 1.44
+> −15 ◦40 cm 2.53 1.65
+> +15 ◦40 cm 1.59 1.91
+> +45 ◦40 cm 2.79 4.35
+
+4.3 Robustness Analysis 
+
+We comprehensively evaluate the screen-shooting robustness of our method under di-verse conditions. Table 8 reports BER results across varying capture distances (40–200 cm), angles ( −45 ◦ to +45 ◦), and device combina-tions using the HKCT279Q display. The results demonstrate consistently low BER across the tested conditions. At the standard 40 cm frontal distance, BER ranges from 1.09% to 1.42%. Performance degrades gracefully with increasing distance and ex-treme angles but remains within correctable bounds (typically < 5% ) for all but the most extreme configurations (200 cm distance with Redmi K30). Across different display devices— including the MacBook Pro 2019 (2.95%), Sur-face Go (2.61%), and Haire 65R1 TV (4.05%)— the algorithm maintains robust performance, indicating good generalization to diverse screen technologies. 
+
+4.4 Comparison with State-of-the-Art 
+
+We compare our method against five represen-tative screen-shooting robust watermarking al-gorithms: Nakamura et al. (Nakamura et al., 2004), Pramila et al. (Pramila et al., 2012) (tra-ditional approaches), SSRW (Fang et al., 2019), DTW (Fang et al., 2021), and TERA (Fang et al., 2022) (deep learning approaches). 
+
+Robustness Comparison. Table 9 presents the average BER under varying capture dis-tances, angles, and cropping ratios. The tra-ditional methods of Nakamura et al. and Pramila et al. exhibit BER in the 14–30% range, far above practical thresholds. SSRW achieves comparable BER to ours for print-and-capture scenarios but fails for screen-shooting due to Moiré-induced SIFT feature degradation. DTW and TERA, while substantially outper-forming traditional methods, still yield higher BER than our approach across most conditions. Our method achieves 1–3% BER under stan-dard conditions, demonstrating clearly superior robustness. Notably, DTW achieves lower BER than our method for small cropping ratios ( γ ≤ 0.45 ) due to its binary codeword decomposition strategy, which reduces the decoding task to multiple independent binary classifications. However, our method exhibits significantly more graceful degradation under severe cropping and strong noise conditions, as the holistic multi-bit en-coding enables information complementation from undamaged regions—a critical advantage in practical applications where severe distor-tions are common. 
+
+Visual Quality Comparison. Table 10 compares watermark capacity and image qual-ity metrics. Our method embeds 127 bits— significantly more than the 32–64 bits of com-peting methods—while achieving PSNR of 31.77 dB and SSIM of 0.91. Although tra-ditional methods with lower capacity achieve higher PSNR/SSIM (as expected, given the fun-damental capacity-quality trade-off), our visual quality remains well within the perceptually ac-ceptable range, with LPIPS of 0.05 confirming minimal perceptual distortion. 
+
+4.5 Runtime Analysis 
+
+Table 11 reports the per-image processing time for each stage of our pipeline. The total end-to-end latency is below 0.1 seconds per image, satisfying the real-time constraints of practical deployment scenarios such as live screen content protection and on-the-fly leak tracing. 
+
+5 Conclusion 
+
+We have presented a comprehensive end-to-end framework for screen-shooting robust im-age watermarking that addresses the funda-mental challenges of robustness, visual quality, and practical deployability through four syn-ergistic innovations: a U-Net-based encoder-decoder architecture with STN-enabled geomet-ric rectification, a physically-motivated Moiré noise simulation layer that faithfully models the full spectrum of screen-shooting distor-Table 9: Robustness comparison (BER %) across different methods. “–” indicates excessively high BER precluding error correction.                                                                                                     
+
+> Method Cropping ratio Distance (cm) Angle range ( ◦)
+> 0.05 0.25 0.45 0.55 30–39 40–49 50–59 60–69 −40 –55 −30 –40 −15 –25 +15 –25 +30 –40 +40 –55
+> Nakamura (Nakamura et al., 2004) ––––14.75 17.81 18.44 19.50 19.63 16.31 15.44 13.88 22.27 16.11 Pramila (Pramila et al., 2012) ––––28.38 28.62 28.94 30.19 19.92 16.41 19.91 20.70 20.31 22.34 DTW (Fang et al., 2021) 0.31 0.31 0.31 22.34 4.81 2.73 12.11 11.72 16.02 5.47 3.91 2.73 2.73 3.52 SSRW (Fang et al., 2019) –––––0.78 1.08 2.64 1.08 1.75 3.42 1.56 5.95 5.17 TERA (Fang et al., 2022) ––––2.54 7.03 3.71 6.84 14.46 7.03 7.05 5.27 11.52 23.52
+> Ours 1.89 1.09 1.46 12.77 1.56 2.55 2.39 2.52 1.59 1.87 2.81 4.59 5.16 4.59
+
+Table 10: Visual quality comparison of water-marked images across different methods. 
+
+Method Bits PSNR SSIM LPIPS 
+
+Nakamura (Nakamura et al., 2004) 32 38.97 0.99 –Pramila (Pramila et al., 2012) 32 40.26 0.99 –DTW (Fang et al., 2021) 64 39.73 0.99 –SSRW (Fang et al., 2019) 64 42.30 – –
+
+Ours 127 31.77 0.91 0.05 
+
+Table 11: Per-image runtime analysis. 
+
+Stage Time (ms) Throughput (FPS) 
+
+Watermark Embedding 21.55 46.40 Region Localization 29.03 34.44 Watermark Extraction 13.43 74.46 
+
+Total 64.01 15.62 
+
+tions to enable adversarial robustness training, a JND-guided perceptual loss function that adaptively concentrates watermark energy in visually insensitive regions to maximize imper-ceptibility, and two complementary automatic localization modules—semantic-segmentation-based foreground extraction and symmetric-noise-template-based anti-cropping recovery— that enable fully automated watermark decod-ing in unconstrained capture scenarios. Exten-sive experiments demonstrate that our method embeds 127-bit watermarks with PSNR exceed-ing 31 dB and achieves 1–3% bit error rates across diverse screen-shooting conditions with total processing time under 0.1 seconds, sub-stantially outperforming state-of-the-art meth-ods in robustness while maintaining competi-tive visual quality. Future work will investigate watermark decoding from partial screen cap-tures (where only a portion of the displayed image is photographed, representing a more complex scenario than digital cropping) and further improve visual quality under high em-bedding capacity regimes. References 
+
+Josh Achiam, Steven Adler, Sandhini Agarwal, Lama Ahmad, Ilge Akkaya, Florencia Leoni Aleman, Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anadkat, and 1 others. 2023. Gpt-4 technical report. arXiv preprint arXiv:2303.08774 .Albert J Ahumada Jr and Heidi A Peterson. 1992. Luminance-model-based DCT quantization for color image compression. In Proceedings of SPIE: Human Vision, Visual Processing, and Digital Display III , volume 1666, pages 365–374, San Jose, USA. SPIE. B Seed. 2025. Seed1.8 model card: Towards gener-alized real-world agency. Technical report (model card) .Liang-Chieh Chen, Yukun Zhu, George Papan-dreou, Florian Schroff, and Hartwig Adam. 2018. Encoder-decoder with atrous separable convolu-tion for semantic image segmentation. In Pro-ceedings of the 15th European Conference on Computer Vision (ECCV) , pages 833–851, Mu-nich, Germany. Springer. Ingemar Cox, Matthew Miller, Jeffrey Bloom, Jes-sica Fridrich, and Ton Kalker. 2007. Digital watermarking and steganography. Morgan Kauf-mann .Benlei Cui, Shan He, Bukun Huang, Zhizeng Ye, Yanhao Sun, Longtao Huang, Hui Xue, Yue Yang, Jingqun Tang, and 1 others. 2026a. TC-Padé: Trajectory-consistent padé approxima-tion for diffusion acceleration. arXiv preprint arXiv:2603.02943 .Benlei Cui, Bukun Huang, Zhizeng Ye, Xuemei Dong, Tuo Chen, Hui Xue, Dingkang Yang, Long-tao Huang, Jingqun Tang, and Haiwen Hong. 2026b. Diffusion probe: Generated image re-sult prediction using cnn probes. arXiv preprint arXiv:2602.23783 .Luis A Delgado-Guillen, Jose J Garcia-Hernandez, and Cesar Torres-Huitzil. 2013. Digital water-marking of color images utilizing mobile plat-forms. In Proceedings of the 56th IEEE Inter-national Midwest Symposium on Circuits and Systems (MWSCAS) , pages 1363–1366, Colum-bus, USA. IEEE. Abhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Abhishek Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan Schelten, Amy Yang, Angela Fan, and 1 others. 2024. The llama 3 herd of models. arXiv preprint arXiv:2407.21783 .Han Fang, Dongdong Chen, Qidong Huang, Jing Zhang, Zhenhua Ma, Weiming Zhang, and Neng-hai Yu. 2021. Deep template-based watermark-ing. IEEE Transactions on Circuits and Systems for Video Technology , 31(4):1436–1451. Han Fang, Dongdong Chen, Feng Wang, Zhen-hua Ma, Honggang Liu, Wenbo Zhou, Weiming Zhang, and Nenghai Yu. 2022. TERA: Screen-to-camera image code with transparency, efficiency, robustness and adaptability. IEEE Transactions on Multimedia , 24:955–967. Han Fang, Weiming Zhang, Hang Zhou, Hao Cui, and Nenghai Yu. 2019. Screen-shooting resilient watermarking. IEEE Transactions on Informa-tion Forensics and Security , 14(6):1403–1418. Xiang Fei, Jinghui Lu, Qi Sun, Hao Feng, Yanjie Wang, Wei Shi, An-Lan Wang, Jingqun Tang, and Can Huang. 2025. Advancing sequential numerical prediction in autoregressive models. 
+
+arXiv preprint arXiv:2505.13077 .Hao Feng, Qi Liu, Hao Liu, Jingqun Tang, Wengang Zhou, Houqiang Li, and Can Huang. 2024. Doc-pedia: Unleashing the power of large multimodal model in the frequency domain for versatile docu-ment understanding. Science China Information Sciences , 67(12):1–14. Hao Feng, Wei Shi, Kaiwen Zhang, Xiang Fei, Lei Liao, Dingkang Yang, Yifeng Du, Xuecheng Wu, Jingqun Tang, Yuliang Liu, and 1 others. 2026. Dolphin-v2: Universal document parsing via scalable anchor prompting. arXiv preprint arXiv:2602.05384 .Hao Feng, Zijian Wang, Jingqun Tang, Jinghui Lu, Wengang Zhou, Houqiang Li, and Can Huang. 2023. Unidoc: A universal large multimodal model for simultaneous text detection, recogni-tion, spotting and understanding. arXiv preprint arXiv:2308.11592 .Hao Feng, Shu Wei, Xiang Fei, Wei Shi, Yingdong Han, Lei Liao, Jinghui Lu, Binghong Wu, Qi Liu, Chunhui Lin, and 1 others. 2025. Dolphin: Doc-ument image parsing via heterogeneous anchor prompting. arXiv preprint arXiv:2505.14059 .Ian Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bing Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, and Yoshua Bengio. 2014. Gen-erative adversarial nets. Advances in Neural Information Processing Systems , 27. Dong Guo, Faming Wu, Feida Zhu, Fuxing Leng, Guang Shi, Haobin Chen, Haoqi Fan, Jian Wang, Jianyu Jiang, Jiawei Wang, and 1 others. 2025. Seed1. 5-vl technical report. arXiv preprint arXiv:2505.07062 .Yangfan He, Shuai Li, Jianhui Wang, Kaicheng Li, Xinyuan Song, Xinhang Yuan, Kunyu Li, Ke Lu, Miao Huo, Jingqun Tang, Yi Xin, and 1 others. 2025a. Enhancing low-cost video editing with lightweight adaptors and temporal-aware inversion. arXiv preprint arXiv:2501.04606 .Yangfan He, Jianhui Wang, Yijin Wang, Yan Zhong, Xinyuan Song, Junjiang Lin, Xinhang Yuan, Jingqun Tang, Yi Xin, Hao Zhang, and 1 others. 2025b. Enhancing intent understanding for am-biguous prompt: A human-machine co-adaption strategy. arXiv preprint arXiv:2501.15167 .Jonathan Ho, Ajay Jain, and Pieter Abbeel. 2020. Denoising diffusion probabilistic models. Ad-vances in neural information processing systems ,33:6840–6851. Alain Horé and Djemel Ziou. 2010. Image quality metrics: PSNR vs. SSIM. pages 2366–2369. Bukun Huang, Benlei Cui, Zhizeng Ye, Xuemei Dong, Shiyi Yang, Yukun Bao, Hui Xue, Longtao Huang, Haiwen Hong, and Jingqun Tang. 2026. Curvature-aware residual prediction for stable and faithful diffusion transformer acceleration under large sampling intervals. arXiv preprint .Shuai Huang, Yongxiong Wang, Huan Luo, Haodong Jing, Chendong Qin, and Jingqun Tang. 2025. Mindev: Multi-modal integrated diffusion framework for video reconstruction from eeg sig-nals. pages 3350–3359. Mark J Huiskes and Michael S Lew. 2008. The MIR Flickr retrieval evaluation. In Proceedings of the 1st ACM International Conference on Multime-dia Information Retrieval , pages 39–43, Vancou-ver, Canada. ACM. Max Jaderberg, Karen Simonyan, Andrew Zisser-man, and Koray Kavukcuoglu. 2015. Spatial transformer networks. In Advances in Neural Information Processing Systems (NeurIPS) , vol-ume 28. Weitao Jia, Jinghui Lu, Haiyang Yu, Siqi Wang, Guozhi Tang, An-Lan Wang, Weijie Yin, Dingkang Yang, Yuxiang Nie, Bin Shan, and 1 others. 2025. Meml-grpo: Heterogeneous multi-expert mutual learning for rlvr advancement. 
+
+arXiv preprint arXiv:2508.09670 .Xiangui Kang, Jiwu Huang, and Wenjun Zeng. 2010. Efficient general print-scanning resilient data hid-ing based on uniform log-polar mapping. IEEE Transactions on Information Forensics and Se-curity , 5(1):1–12. Akihiro Katayama, Takashi Nakamura, Masashi Yamamuro, and Noboru Sonehara. 2004. New high-speed frame detection method: Side trace algorithm (STA) for i-appli on cellular phones to detect watermarks. In Proceedings of the 3rd International Conference on Mobile and Ubiqui-tous Multimedia , pages 109–116, College Park, USA. ACM. Chenyang Li, Jieyuan Liu, Bin Li, Bo Gao, Yilin Yuan, Yangfan He, Yuchen Li, and Jingqun Tang. 2026. Dtp: A simple yet effective distracting to-ken pruning framework for vision-language action models. arXiv preprint arXiv:2601.16065 .Xiwen Li, Tristalee Mangin, Surojit Saha, Rehman Mohammed, Evan Blanchard, Dillon Tang, Henry Poppe, Ouk Choi, Kerry Kelly, and Ross Whitaker. 2024. Real-time idling vehicles detec-tion using combined audio-visual deep learning. In Emerging Cutting-Edge Developments in Intel-ligent Traffic and Transportation Systems , pages 142–158. IOS Press. Xiwen Li, Rehman Mohammed, Tristalee Mangin, Surojit Saha, Kerry Kelly, Ross Whitaker, and Tolga Tasdizen. 2025a. Joint audio-visual idling vehicle detection with streamlined input depen-dencies. In Proceedings of the Winter Conference on Applications of Computer Vision , pages 885– 894. Xiwen Li, Ross Whitaker, and Tolga Tasdizen. 2025b. Audio and multiscale visual cues driven cross-modal transformer for idling vehicle detec-tion. arXiv preprint arXiv:2504.16102 .Keliang Liu, Zizhi Chen, Mingcheng Li, Jingqun Tang, Dingkang Yang, and Lihua Zhang. 2025. Resolving evidence sparsity: Agentic context engineering for long-document understanding. 
+
+arXiv preprint arXiv:2511.22850 .Yuliang Liu, Jiaxin Zhang, Dezhi Peng, Mingxin Huang, Xinyu Wang, Jingqun Tang, Can Huang, Dahua Lin, Chunhua Shen, Xiang Bai, and 1 others. 2023. Spts v2: single-point scene text spotting. IEEE Transactions on Pattern Analy-sis and Machine Intelligence .Jinghui Lu, Haiyang Yu, Yanjie Wang, Yongjie Ye, Jingqun Tang, Ziwei Yang, Binghong Wu, Qi Liu, Hao Feng, Han Wang, and 1 others. 2024. A bounding box is worth one token: Interleav-ing layout and text in a large language model for document understanding. arXiv preprint arXiv:2407.01976 .Jinghui Lu, Haiyang Yu, Siliang Xu, Shiwei Ran, Guozhi Tang, Siqi Wang, Bin Shan, Teng Fu, Hao Feng, Jingqun Tang, and 1 others. 2025. Pro-longed reasoning is not all you need: Certainty-based adaptive routing for efficient llm/mllm reasoning. arXiv preprint arXiv:2505.15154 .Takashi Nakamura, Akihiro Katayama, Masashi Yamamuro, and Noboru Sonehara. 2004. Fast watermark detection scheme for camera-equipped cellular phone. In Proceedings of the 3rd Inter-national Conference on Mobile and Ubiquitous Multimedia , pages 101–108, College Park, USA. ACM. Yuxiang Nie, Han Wang, Yongjie Ye, Haiyang Yu, Weitao Jia, Tao Zeng, Hao Feng, Xiang Fei, Yuchen Li, Xu Lv, and 1 others. 2025. Chinese-VideoBench: Benchmarking multi-modal large models for chinese video question answering. 
+
+arXiv preprint arXiv:2511.18399 .Ke Niu, Haiyang Yu, Zhuofan Chen, Zhengtao Yao, Weitao Jia, Xiaodong Ge, Jingqun Tang, Benlei Cui, Bin Li, and Xiangyang Xue. 2025. Cme-cad: Heterogeneous collaborative multi-expert reinforcement learning for cad code generation. 
+
+arXiv preprint arXiv:2512.23333 .Christine I Podilchuk and Edward J Delp. 2001. Digital watermarking: algorithms and appli-cations. IEEE Signal Processing Magazine ,18(4):33–46. Anu Pramila, Anja Keskinarkaus, and Tapio Sep-pänen. 2012. Toward an interactive poster us-ing digital watermarking and a mobile phone camera. Signal, Image and Video Processing ,6(2):211–222. Na Qin, Guicang Zhang, and Weiyi Wei. 2007. A new robust watermarking algorithm embedding text data into image. Journal of Image and Graphics , 12(2):195–199. J. Redmon, S. Divvala, R. Girshick, and A. Farhadi. 2016. You only look once: Unified, real-time object detection. Preprint. Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, and Björn Ommer. 2022. High-resolution image synthesis with latent dif-fusion models. Proceedings of the IEEE/CVF conference on computer vision and pattern recog-nition , pages 10684–10695. Olaf Ronneberger, Philipp Fischer, and Thomas Brox. 2015. U-Net: Convolutional networks for biomedical image segmentation. In Proceedings of the International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI) , pages 234–241. Springer. Bin Shan, Xiang Fei, Wei Shi, An-Lan Wang, Guozhi Tang, Lei Liao, Jingqun Tang, Xiang Bai, and Can Huang. 2024. Mctbench: Multi-modal cognition towards text-rich visual scenes benchmark. arXiv preprint arXiv:2410.11538 .Wenhao Sun, Xue-Mei Dong, Benlei Cui, and Jingqun Tang. 2025. Attentive eraser: Unleash-ing diffusion model’s object removal potential via self-attention redirection guidance. 39(19):20734– 20742. Matthew Tancik, Ben Mildenhall, and Ren Ng. 2020. StegaStamp: Invisible hyperlinks in physical pho-tographs. In Proceedings of the IEEE/CVF Con-ference on Computer Vision and Pattern Recog-nition (CVPR) , pages 2114–2123, Seattle, USA. IEEE. Jingqun Tang, Weidong Du, Bin Wang, Wenyang Zhou, Shuqi Mei, Tao Xue, Xing Xu, and Hai Zhang. 2023. Character recognition competition for street view shop signs. National Science Re-view , 10(6):nwad141. Jingqun Tang, Chunhui Lin, Zhen Zhao, Shu Wei, Binghong Wu, Qi Liu, Hao Feng, Yang Li, Siqi Wang, Lei Liao, and 1 others. 2024a. Textsquare: Scaling up text-centric visual instruction tuning. 
+
+arXiv preprint arXiv:2404.12803 .Jingqun Tang, Qi Liu, Yongjie Ye, Jinghui Lu, Shu Wei, Chunhui Lin, Wanqing Li, Mohamad Fitri Faiz Bin Mahmood, Hao Feng, Zhen Zhao, and 1 others. 2024b. Mtvqa: Benchmarking mul-tilingual text-centric visual question answering. 
+
+arXiv preprint arXiv:2405.11985 .Jingqun Tang, Wenming Qian, Luchuan Song, Xiena Dong, Lan Li, and Xiang Bai. 2022a. Opti-mal boxes: boosting end-to-end scene text recog-nition by adjusting annotated bounding boxes via reinforcement learning. In European Conference on Computer Vision , pages 233–248. Springer. Jingqun Tang, Su Qiao, Benlei Cui, Yuhang Ma, Sheng Zhang, and Dimitrios Kanoulas. 2022b. You can even annotate text with voice: Transcription-only-supervised text spotting. In 
+
+Proceedings of the 30th ACM International Con-ference on Multimedia , MM ’22, pages 4154–4163, New York, NY, USA. Association for Computing Machinery. Jingqun Tang, Wenqing Zhang, Hongye Liu, MingKun Yang, Bo Jiang, Guanglong Hu, and Xiang Bai. 2022c. Few could be better than all: Feature sampling and grouping for scene text de-tection. In Proceedings of the IEEE/CVF Con-ference on Computer Vision and Pattern Recog-nition , pages 4563–4572. Alexandru Telea. 2004. An image inpainting tech-nique based on the fast marching method. Jour-nal of Graphics Tools , 9(1):23–34. Radu Timofte, Eirikur Agustsson, Luc Van Gool, Ming-Hsuan Yang, Lei Zhang, and 1 others. 2017. NTIRE 2017 challenge on single image super-resolution: Methods and results. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops (CVPRW) , pages 1110–1121, Honolulu, USA. IEEE. An-Lan Wang, Bin Shan, Wei Shi, Kun-Yu Lin, Xiang Fei, Guozhi Tang, Lei Liao, Jingqun Tang, Can Huang, and Wei-Shi Zheng. 2025a. Pargo: Bridging vision-language with partial and global views. 39(7):7491–7499. An-Lan Wang, Jingqun Tang, Liao Lei, Hao Feng, Qi Liu, Xiang Fei, Jinghui Lu, Han Wang, Weiwei Liu, Hao Liu, and 1 others. 2025b. Wilddoc: How far are we from achieving comprehensive and robust document understanding in the wild? 
+
+arXiv preprint arXiv:2505.11015 .Han Wang, Yongjie Ye, Bingru Li, Yuxiang Nie, Jinghui Lu, Jingqun Tang, Yanjie Wang, and Can Huang. 2025c. Vision as lora. arXiv preprint arXiv:2503.20680 .Junqiao Wang, Zeng Zhang, Yangfan He, Yuyang Song, Tianyu Shi, Yuchen Li, Hengyuan Xu, Kunyu Wu, Guangwu Qian, Qiuwu Chen, and 1 others. 2024. Enhancing code llms with reinforce-ment learning in code generation. arXiv preprint arXiv:2412.20367 .Zhou Wang, Alan C Bovik, Hamid R Sheikh, and Eero P Simoncelli. 2004. Image quality assess-ment: from error visibility to structural simi-larity. IEEE Transactions on Image Processing ,13(4):600–612. Weixing Xue, Mingcheng Li, Xuecheng Wu, Jingqun Tang, Dingkang Yang, and Lihua Zhang. 2026. ProFocus: Proactive perception and fo-cused reasoning in vision-and-language naviga-tion. arXiv preprint arXiv:2603.05530 .Xiaokang Yang, Weisi Ling, Zhengkang Lu, Ee Ping Ong, and Susu Yao. 2005. Just noticeable dis-tortion model and its applications in video cod-ing. Signal Processing: Image Communication ,20(7):662–680. Qi Yi, Yangfan He, Jianhui Wang, Xinyuan Song, Shu Qian, Xinhang Yuan, Yi Xin, Yijin Wang, Jingqun Tang, Yuchen Li, and 1 others. 2025. SCORE: Story coherence and retrieval enhancement for ai narratives. arXiv preprint arXiv:2503.23512 .Shanxin Yuan, Radu Timofte, Gregory Slabaugh, and Ales Leonardis. 2019. AIM 2019 challenge on image demoireing: Dataset and study. In Pro-ceedings of the IEEE/CVF International Confer-ence on Computer Vision Workshop (ICCVW) ,pages 3526–3533, Seoul, Korea. IEEE. Richard Zhang, Phillip Isola, Alexei A Efros, Eli Shechtman, and Oliver Wang. 2018. The unrea-sonable effectiveness of deep features as a percep-tual metric. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 586–595, Salt Lake City, USA. IEEE. Weixia Zhang, Guangtao Zhai, Ying Wei, Xiaokang Yang, and Kede Ma. 2023. Blind image quality assessment via vision-language correspondence: A multitask learning perspective. pages 14071– 14081. Weichao Zhao, Hao Feng, Qi Liu, Jingqun Tang, Binghong Wu, Lei Liao, Shu Wei, Yongjie Ye, Hao Liu, Wengang Zhou, and 1 others. 2025. Tab-pedia: Towards comprehensive visual table un-derstanding with concept synergy. Advances in Neural Information Processing Systems , 37:7185– 7212. Zhen Zhao, Jingqun Tang, Chunhui Lin, Binghong Wu, Can Huang, Hao Liu, Xin Tan, Zhizhong Zhang, and Yuan Xie. 2024a. Multi-modal in-context learning makes an ego-evolving scene text recognizer. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pages 15567–15576. Zhen Zhao, Jingqun Tang, Binghong Wu, Chunhui Lin, Shu Wei, Hao Liu, Xin Tan, Zhizhong Zhang, Can Huang, and Yuan Xie. 2024b. Harmonizing visual text comprehension and generation. arXiv preprint arXiv:2407.16364 .Gang Zheng, Donghui Hu, Hao Ge, and Shuli Zheng. 2021. End-to-end image steganography and watermarking driven by generative adver-sarial networks. Journal of Image and Graphics ,26(10):2485–2502. Hanshen Zhu, Yuliang Liu, Xuecheng Wu, An-Lan Wang, Hao Feng, Dingkang Yang, Chao Feng, Can Huang, Jingqun Tang, and Xiang Bai. 2026. Textpecker: Rewarding structural anomaly quan-tification for enhancing visual text rendering. 
+
+arXiv preprint arXiv:2602.20903 .Jiren Zhu, Russell Kaplan, Justin Johnson, and Li Fei-Fei. 2018. HiDDeN: Hiding data with deep networks. In Proceedings of the European Conference on Computer Vision (ECCV) , pages 657–672. Springer.

@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.29742v2/fig-001.webp",
+      "caption": "Figure 3: Qualitative comparison with different attack.",
+      "page": 11,
+      "index": 1,
+      "width": 973,
+      "height": 510
+    },
+    {
+      "url": "assets/figures/arxiv/2603.29742v2/fig-002.webp",
+      "caption": "Figure 4: Qualitative comparison of visual fidelity before and after attack across nine watermarking methods. In each subfigure, the left column shows the watermarked images and the right column shows the attacked images at attack strength 𝜆 = 0.50.",
+      "page": 22,
+      "index": 2,
+      "width": 810,
+      "height": 1289
+    },
+    {
+      "url": "assets/figures/arxiv/2603.29742v2/fig-003.webp",
+      "caption": "Figure 2: Comparison of 𝐿1 and 𝐿2 noise distances across nine watermarking methods.",
+      "page": 10,
+      "index": 3,
+      "width": 964,
+      "height": 388
+    },
+    {
+      "url": "assets/figures/arxiv/2603.29742v2/fig-004.webp",
+      "caption": "Figure 5: Visual comparison of watermark robustness under different attack strengths. PRC, ROBIN, and Tree-Ring represent weakly, moderately, and highly robust watermarking methods, respectively. As 𝜆 increases, the attacked outputs reveal clear differences in the fidelity–evasion trade-off across robustness levels.",
+      "page": 23,
+      "index": 4,
+      "width": 944,
+      "height": 623
+    },
+    {
+      "url": "assets/figures/arxiv/2603.29742v2/fig-005.webp",
+      "caption": "Figure 6: Mean 𝐿1 and 𝐿2 noise distances as functions of attack strength𝜆 across nine watermarking methods. Both metrics increase monotonically with 𝜆, confirming that SHIFT progressively decouples the attacked image from the original watermark trajectory. The curves converge to a method-agnostic regime near the random Gaussian baseline at large 𝜆, consistent with the theoretical bound in Theorem A.7.",
+      "page": 24,
+      "index": 5,
+      "width": 979,
+      "height": 835
+    },
+    {
+      "url": "assets/figures/arxiv/2603.29742v2/fig-006.webp",
+      "caption": "Table 1: Overall attack results. All values are ASR (%).",
+      "page": 9,
+      "index": 6,
+      "width": 652,
+      "height": 443
+    },
+    {
+      "url": "assets/figures/arxiv/2603.29742v2/fig-007.webp",
+      "caption": "Figure 1: The overall framework of SHIFT",
+      "page": 5,
+      "index": 7,
+      "width": 786,
+      "height": 497
+    }
+  ]
+}

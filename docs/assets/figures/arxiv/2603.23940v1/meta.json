@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.23940v1/fig-001.webp",
+      "caption": "Figure 4: Visual comparison of tamper localization results across different methods.",
+      "page": 6,
+      "index": 1,
+      "width": 507,
+      "height": 498
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23940v1/fig-002.webp",
+      "caption": "Figure 5: Qualitative comparison of face recovery under SD Inpainting/HD-painter and Splicing.",
+      "page": 6,
+      "index": 2,
+      "width": 491,
+      "height": 296
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23940v1/fig-003.webp",
+      "caption": "Figure 6: Additional qualitative comparison of face recovery under InfoSwap/E4S on CelebA-HQ.",
+      "page": 6,
+      "index": 3,
+      "width": 501,
+      "height": 411
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23940v1/fig-004.webp",
+      "caption": "Table 2: Tamper-localization results on CelebA-HQ (1,000 images). Metrics: F1 / AUC / mIoU (higher is better). Best and second-best per column are bold and underlined, respectively.",
+      "page": 6,
+      "index": 4,
+      "width": 506,
+      "height": 435
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23940v1/fig-005.webp",
+      "caption": "Figure 1: Overview of our VeriFi framework. Our versatile watermarking architecture simultaneously achieves robust copyright protection, precise forgery localization, and highfidelity fake face recovery, providing comprehensive forensic capabilities essential for real-world deepfake defense scenarios.",
+      "page": 2,
+      "index": 5,
+      "width": 498,
+      "height": 402
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23940v1/fig-006.webp",
+      "caption": "Table 1: Functional comparison of representative proactive watermarking and forensicmethods. C: copyright protection; L: tamper localization; R: content recovery.",
+      "page": 2,
+      "index": 6,
+      "width": 498,
+      "height": 250
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23940v1/fig-007.webp",
+      "caption": "Figure 8: Additional qualitative comparison of face recovery under Splicing on CelebA-HQ.",
+      "page": 7,
+      "index": 7,
+      "width": 498,
+      "height": 345
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23940v1/fig-008.webp",
+      "caption": "Figure 7: Additional qualitative comparison of face recovery under SD Inpainting on CelebA-HQ.",
+      "page": 7,
+      "index": 8,
+      "width": 483,
+      "height": 387
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23940v1/fig-009.webp",
+      "caption": "Figure 2: Overview of our VeriFi. (1) Unified Recovery-Copyright Watermark Embedder 𝐸𝑛𝑐 inserts an ownership code𝑤𝑐𝑜𝑝 and a compact facial signature 𝑧𝑓 𝑎𝑐𝑒 . (2) AIGC Attack Simulator performs Latent Mixing and Poisson blending to mimic realistic deepfake attacks during training. (3) Watermark Extractor 𝐷𝑒𝑐 recovers ?̂?𝑐𝑜𝑝 and 𝑧𝑓 𝑎𝑐𝑒 , produces an content proxy 𝐼𝑏 , and uses ?̂?𝑐𝑜𝑝 to guide the Forgery Locator to predict the manipulation map ?̂? . (4) Watermark-Guided Deepfake Recovery Network uses a dual-stream Transformer with spatially gated cross-attention to fuse the edited image, 𝐼𝑏 , and ?̂? for selective restoration.",
+      "page": 3,
+      "index": 9,
+      "width": 1048,
+      "height": 637
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23940v1/fig-010.webp",
+      "caption": "Table 4: Quantitative comparison on CelebA-HQ. We report watermarked-image fidelity (PSNR in dB / SSIM) and watermark extraction accuracy (%) under representative AIGC manipulations and common degradations. The best results are in bold, and the second best are underlined.",
+      "page": 8,
+      "index": 10,
+      "width": 1052,
+      "height": 287
+    }
+  ]
+}

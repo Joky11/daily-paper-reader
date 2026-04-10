@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.14220v1/fig-001.webp",
+      "caption": "Table 1: Comparison of the accuracy of our method with existing methods. Each row in the table shows the average test accuracy of the corresponding method, calculated when trained on 8 subsets and tested on the respective test set. The last column gives the overall average accuracy. The symbol †indicates our reproduction from its source code on a CLIP-ViT-B/16 version. The proposed FIND outperforms the SOTAs on both RN50 and ViT-B/16 backbones.",
+      "page": 6,
+      "index": 1,
+      "width": 1048,
+      "height": 221
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14220v1/fig-002.webp",
+      "caption": "Figure 2: The training framework of FIND. Gaussian noise is added to real images, and these perturbed versions are labeled as synthetic within the training process. This enables FIND to mitigate the reconstruction model dependency, and learn the core distributional differences between real and synthetic images, resulting in a superior generalization ability.",
+      "page": 3,
+      "index": 2,
+      "width": 494,
+      "height": 248
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14220v1/fig-003.webp",
+      "caption": "Figure 4: Cross-validation results across different training and testing subsets. We report the accuracy for DIRE, LaRE2 and Ours on all 8 generators, where each row represents a corresponding training subset. Our method shows consistent and superior performance on different training sets and test sets.",
+      "page": 5,
+      "index": 3,
+      "width": 1023,
+      "height": 278
+    }
+  ]
+}

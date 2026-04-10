@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.26766v1/fig-001.webp",
+      "caption": "Table 3: Key training hyperparameters and their values.",
+      "page": 11,
+      "index": 1,
+      "width": 422,
+      "height": 287
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26766v1/fig-002.webp",
+      "caption": "Table 1: Architecture of the encoder network. k: kernel size; s: stride.",
+      "page": 7,
+      "index": 2,
+      "width": 478,
+      "height": 370
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26766v1/fig-003.webp",
+      "caption": "Table 2: Architecture of the decoder network. k: kernel size; s: stride. “–” indicates nonconvolutional layers.",
+      "page": 7,
+      "index": 3,
+      "width": 468,
+      "height": 479
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26766v1/fig-004.webp",
+      "caption": "Table 7: Anti-cropping localization results (BER in %).",
+      "page": 12,
+      "index": 4,
+      "width": 521,
+      "height": 319
+    }
+  ]
+}

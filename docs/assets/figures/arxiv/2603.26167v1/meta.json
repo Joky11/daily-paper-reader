@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.26167v1/fig-001.webp",
+      "caption": "Figure 5. Watermarked images under different noises or attacks. (a) JPEG quality factor 25. (b) Gaussian blur radius=4. (c) Median filter k=7. (d) Gaussian noise σ =0.05 (e) Brightness factor 2. (f) Scaling 0.3. (g) Random drop 0.25. (h) VAE compression (i) Diffusion attack. (j) Embedding attack.",
+      "page": 6,
+      "index": 1,
+      "width": 504,
+      "height": 251
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26167v1/fig-002.webp",
+      "caption": "Table 1. Performance comparisons of our proposed method and previous state-of-the-art methods. We evaluate TPR@10−6FPR, BitAcc. and TPR@BitAcc.100% on SDv1.4, 2.0, and 2.1, respectively. The “Noise” denotes the result under the average noise level.",
+      "page": 6,
+      "index": 2,
+      "width": 1036,
+      "height": 192
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26167v1/fig-003.webp",
+      "caption": "Figure 2. Modeling Watermarking as a Communication Process.The embedding and extraction of watermark information can be formulated as the transmission and reception of messages through a noisy channel. This perspective enables the application of established communication-theoretic techniques to enhance the reliability and fidelity of watermark recovery.",
+      "page": 2,
+      "index": 3,
+      "width": 631,
+      "height": 206
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26167v1/fig-004.webp",
+      "caption": "Figure 7. Experimental results under different intensities of 7 types of noise, with the last one being the results under different guidance scales. The x-axis represents the intensity of the variable. The different curves correspond to the metrics: TPR@10−6FPR, BitAcc. and TPR@BitAcc.100%. The y-axis shows the results for these respective metrics.",
+      "page": 7,
+      "index": 4,
+      "width": 1020,
+      "height": 437
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26167v1/fig-005.webp",
+      "caption": "Figure 3. Overview of the Gaussian Shannon framework. The watermark bitstream w is first encoded via LDPC into a codeword c, which is then expanded to match the latent space dimension to yield cR. A pseudo-random modulation produces the signal s, which guides the sampling of the initial Gaussian noise zT . The diffusion model subsequently denoises zT to generate the watermarked image. During extraction, the process is inverted to recover s′, followed by derandomization to obtain c′R. Watermark recovery proceeds in two stages: (i) direct LDPC decoding of individual codewords in c′R, or (ii) majority voting across redundant codewords to form an aggregated codeword c̃, which is then decoded to reconstruct w.",
+      "page": 3,
+      "index": 5,
+      "width": 797,
+      "height": 312
+    }
+  ]
+}

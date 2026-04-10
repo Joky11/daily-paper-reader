@@ -1,0 +1,158 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-001.webp",
+      "caption": "Figure 8: Cross-model transferability of DiffMark under attack. TPR@0.1%FPR is reported for five SD-family models across eight distortion attacks (left) and six regeneration attacks (right). DiffMark is trained exclusively on SD 1.5; no per-model fine-tuning is applied to the four unseen models.",
+      "page": 11,
+      "index": 1,
+      "width": 823,
+      "height": 327
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-002.webp",
+      "caption": "Figure 7: Cross-model transferability of DiffMark. Bit accuracy on four unseen SD-family models after training exclusively on SD 1.5, with no permodel fine-tuning.",
+      "page": 11,
+      "index": 2,
+      "width": 399,
+      "height": 385
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-003.webp",
+      "caption": "Table 4: Training hyperparameters.",
+      "page": 26,
+      "index": 3,
+      "width": 610,
+      "height": 302
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-004.webp",
+      "caption": "Table 5: Loss weights for main training.",
+      "page": 26,
+      "index": 4,
+      "width": 740,
+      "height": 277
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-005.webp",
+      "caption": "Figure 12: Watermark signal analysis. Columns from left to right: watermarked image, clean image (same zT and prompt), difference map (10× amplified), and delta heatmap (L2 norm across latent channels). The watermark perturbation is imperceptible in pixel space while maintaining spatially uniform energy in latent space.",
+      "page": 15,
+      "index": 5,
+      "width": 813,
+      "height": 763
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-006.webp",
+      "caption": "Figure 1: Comparison of watermarking paradigms for DMs. (a) Sampling-based methods, (b) Finetuning-based methods modify model weights for fast multi-bit detection, and (c) DiffMark (Ours) injects a learned perturbation δ at every step of a frozen UNet, enabling fast single-pass multi-bit detection without weight modification.",
+      "page": 2,
+      "index": 6,
+      "width": 820,
+      "height": 445
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-007.webp",
+      "caption": "Figure 6: Per-image BER as a function of Hamming distance from the training key s∗.",
+      "page": 10,
+      "index": 7,
+      "width": 784,
+      "height": 220
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-008.webp",
+      "caption": "Figure 11: Bit Length Ablation.",
+      "page": 14,
+      "index": 8,
+      "width": 822,
+      "height": 300
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-009.webp",
+      "caption": "Figure 10: LCM Step Ablation",
+      "page": 13,
+      "index": 9,
+      "width": 825,
+      "height": 320
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-010.webp",
+      "caption": "Table 1: Quantitative comparison on DiffusionDB, DALL-E3, and MS-COCO. “Plug&Play” indicates whether the method operates on a frozen, unmodified diffusion model. Detection accuracy is measured on clean (unattacked) watermarked images. Generation consistency metrics compare watermarked vs. unwatermarked images from the same noise. Best results among plug-and-play methods are bolded; overall best are underlined.",
+      "page": 8,
+      "index": 10,
+      "width": 829,
+      "height": 467
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-011.webp",
+      "caption": "Figure 2: Overview of DiffMark.",
+      "page": 4,
+      "index": 11,
+      "width": 858,
+      "height": 722
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-012.webp",
+      "caption": "Figure 18: Qualitative cross-model transferability of DiffMark. Each column shares the same prompt; each row corresponds to a different SD-family model. DiffMark is trained exclusively on SD 1.5 and applied to four unseen models (SD 2.1, DreamShaper 8, Realistic Vision 5.1, OpenJourney v4) without any per-model fine-tuning.",
+      "page": 19,
+      "index": 12,
+      "width": 814,
+      "height": 823
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-013.webp",
+      "caption": "Figure 15: Frequency domain analysis of the δ signal. (a) Average log power spectrum across all samples and channels, with DC at center. (b) Radial power profile showing suppressed lowfrequency energy below the configured radius (red dashed line). (c) Single-example power spectrum for channel 0.",
+      "page": 17,
+      "index": 13,
+      "width": 743,
+      "height": 220
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-014.webp",
+      "caption": "Figure 16: Difference map overlay on watermarked images. Top row: watermarked images. Bottom row: same images with the mean absolute difference rendered as a semi-transparent heatmap. Bright regions indicate stronger watermark perturbation, which concentrates at edges and textures.",
+      "page": 17,
+      "index": 14,
+      "width": 744,
+      "height": 391
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-015.webp",
+      "caption": "Table 2: Robustness evaluation across 13 attacks on DiffusionDB, DALL-E3, and MS-COCO (TPR@0.1%FPR). Best results are bolded.",
+      "page": 12,
+      "index": 15,
+      "width": 984,
+      "height": 1220
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-016.webp",
+      "caption": "Table 7: Summary of regeneration and adversarial attacks used for robustness evaluation.",
+      "page": 27,
+      "index": 16,
+      "width": 582,
+      "height": 219
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-017.webp",
+      "caption": "Table 6: Summary of distortion attacks used for robustness evaluation.",
+      "page": 27,
+      "index": 17,
+      "width": 764,
+      "height": 234
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-018.webp",
+      "caption": "Table 3: Parameter breakdown of the encoder and decoder.",
+      "page": 24,
+      "index": 18,
+      "width": 564,
+      "height": 242
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20304v1/fig-019.webp",
+      "caption": "Figure 13: Training progression of the watermark signal. Top row: δ heatmaps; bottom row: difference maps. Left to right: early training (pre-PRVL), mid training (post-PRVL), and late training (near convergence). The PRVL regularizer enforces spatial uniformity in δ, while Lfreq pushes pixel-space differences toward high-frequency regions.",
+      "page": 16,
+      "index": 19,
+      "width": 813,
+      "height": 531
+    }
+  ]
+}

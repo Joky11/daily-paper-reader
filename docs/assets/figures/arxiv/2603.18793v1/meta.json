@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.18793v1/fig-001.webp",
+      "caption": "Table 9. Optimal embedding dimension k selection across backbone models. The optimal k is determined by maximizing the retention rate (Ret.%) of detection scores after robustness attacks, ensuring an effective trade-off between watermark capacity and structural stability.",
+      "page": 15,
+      "index": 1,
+      "width": 1017,
+      "height": 181
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18793v1/fig-002.webp",
+      "caption": "Table 10. Training overhead of FSW compared to standard fine-tuning. While embedding introduces additional memory requirements due to dual-model consistency constraints, the overall time overhead remains within a manageable range for 7B-scale models.",
+      "page": 15,
+      "index": 2,
+      "width": 1017,
+      "height": 192
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18793v1/fig-003.webp",
+      "caption": "Figure 4. Bit Capacity vs. Utility and Detectability",
+      "page": 7,
+      "index": 3,
+      "width": 492,
+      "height": 283
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18793v1/fig-004.webp",
+      "caption": "Figure 5. Robustness–Capacity Trade-off under Different Embedding Dimensions",
+      "page": 7,
+      "index": 4,
+      "width": 492,
+      "height": 313
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18793v1/fig-005.webp",
+      "caption": "Figure 2. Overall framework of FSW.",
+      "page": 3,
+      "index": 5,
+      "width": 989,
+      "height": 557
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18793v1/fig-006.webp",
+      "caption": "Table 4. Ablation study of FSW components on Llama-2-7B-hf. Pre and post denote metrics before and after the robustness attack. Each variant systematically removes a key design element (Compression Invariance, Anchored Projection, Consistency Loss, or Adaptive Thresholding) to evaluate its individual contribution to robustness and utility.",
+      "page": 8,
+      "index": 6,
+      "width": 1017,
+      "height": 183
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18793v1/fig-007.webp",
+      "caption": "Table 1. Performance comparison of Functional Subspace Watermarking (FSW) across diverse LLM backbones. Our method achieves near-perfect bit accuracy and high detection scores while maintaining competitive functional utility.",
+      "page": 5,
+      "index": 7,
+      "width": 1019,
+      "height": 318
+    },
+    {
+      "url": "assets/figures/arxiv/2603.18793v1/fig-008.webp",
+      "caption": "Figure 3. Functional Preservation and Ownership Detectability.",
+      "page": 5,
+      "index": 8,
+      "width": 470,
+      "height": 276
+    }
+  ]
+}

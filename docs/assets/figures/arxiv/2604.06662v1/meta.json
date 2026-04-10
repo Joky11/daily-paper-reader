@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.06662v1/fig-001.webp",
+      "caption": "Table 1. The detection metric (AUC/TPR@1%FPR) of various watermarking methods against removal attacks. “Average” means the average AUC/TPR@1%FPR across three removal attacks, Imp-Removal, Avg-Removal and VAE-Removal. “Worst-Case” means the worst performance against these removal attacks, i.e., the lowest AUC and TPR@1%FPR under a certain attack. Our ISTS demonstrates the strongest robustness against Imp-Removal and Avg-Removal, and outperforms all existing baselines in both averaged and worst-case scenarios for removal attacks.",
+      "page": 7,
+      "index": 1,
+      "width": 932,
+      "height": 232
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06662v1/fig-002.webp",
+      "caption": "Table 2. The detection metric (AUC/TPR@1%FPR) of various watermarking methods against forgery attacks. “Average” and “WorstCase” mean the average and the lowest AUC/TPR@1%FPR across three forgery attacks, Imp-Forgery, Avg-Forgery and VAE-Forgery, respectively. Our ISTS demonstrates the strongest robustness against Imp-Forgery, and outperforms all existing baselines in both averaged and worst-case scenarios for forgery attacks.",
+      "page": 7,
+      "index": 2,
+      "width": 906,
+      "height": 231
+    },
+    {
+      "url": "assets/figures/arxiv/2604.06662v1/fig-003.webp",
+      "caption": "Figure 1. Overview of our ISTS method. The top row shows the original Tree-Ring watermarking. To generate watermarked images, it injects tree-ring patterns in the center of the frequency domain at the initial noisy space. Such a static scheme leaks information about the watermark pattern and thus exposes high vulnerability to removal and forgery attacks. The bottom row shows our dynamic approach. For each generation, we first generate a non-watermarked image and decide time and location parameters (t, l) using a semantic-based selector. Then, we execute the first T − t steps of DDIM, inject watermarks at coordinate l in the frequency domain, and continue the rest of DDIM generation. During detection, we retrieve the parameters from a suspicious image and extract the watermarking area, followed by two-sided detection. In adversarial settings, an attacker unaware of time and location parameters fails to extract the ground-truth watermark patterns from reference images. Thus, the proposed approach achieves enhanced robustness against removal and forgery attacks.",
+      "page": 3,
+      "index": 3,
+      "width": 900,
+      "height": 403
+    }
+  ]
+}

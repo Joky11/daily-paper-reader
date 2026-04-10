@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.14968v1/fig-001.webp",
+      "caption": "Figure 5: Instruction template used to construct the LoRA fine-tuning data for representation extraction models.",
+      "page": 15,
+      "index": 1,
+      "width": 950,
+      "height": 233
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14968v1/fig-002.webp",
+      "caption": "Table 1: Watermark detection performance of various watermarking schemes under TTP-Detect framework.",
+      "page": 7,
+      "index": 2,
+      "width": 946,
+      "height": 282
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14968v1/fig-003.webp",
+      "caption": "Figure 2: Robustness across various attack types.",
+      "page": 7,
+      "index": 3,
+      "width": 447,
+      "height": 305
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14968v1/fig-004.webp",
+      "caption": "Table 3: Parameter configuration for chosen watermarking algorithms.",
+      "page": 14,
+      "index": 4,
+      "width": 908,
+      "height": 1257
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14968v1/fig-005.webp",
+      "caption": "Figure 9: Module ablation results for various watermarking schemes.",
+      "page": 18,
+      "index": 5,
+      "width": 897,
+      "height": 1155
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14968v1/fig-006.webp",
+      "caption": "Figure 1: TTP-Detect framework overview.",
+      "page": 4,
+      "index": 6,
+      "width": 934,
+      "height": 329
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14968v1/fig-007.webp",
+      "caption": "Figure 8: Hyperparameter analysis of λ in Adaptive Rank Test module.",
+      "page": 16,
+      "index": 7,
+      "width": 454,
+      "height": 297
+    },
+    {
+      "url": "assets/figures/arxiv/2603.14968v1/fig-008.webp",
+      "caption": "Figure 7: Impact of generated text length.",
+      "page": 16,
+      "index": 8,
+      "width": 455,
+      "height": 303
+    }
+  ]
+}

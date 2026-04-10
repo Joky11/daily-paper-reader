@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.23178v1/fig-001.webp",
+      "caption": "Fig. 2: Qualitative analysis of the proposed framework SAiW on IndicSideFace [33]. Softcopy exhibits better display.",
+      "page": 9,
+      "index": 1,
+      "width": 702,
+      "height": 531
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23178v1/fig-002.webp",
+      "caption": "Fig. 3: Robustness evaluation of SAiW under diverse real-world distortions. Top: The embedded “Aol.” logo is perfectly recovered from an IndicSideFace [33] sample after multiple distortions. Bottom: The “©” watermark is recovered from CelebA [36] sample after distortions.",
+      "page": 9,
+      "index": 2,
+      "width": 752,
+      "height": 266
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23178v1/fig-003.webp",
+      "caption": "TABLE I: Quantitative comparison of watermarking methods across multiple deepfake generators on IndicSideFace [33]",
+      "page": 7,
+      "index": 3,
+      "width": 806,
+      "height": 758
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23178v1/fig-004.webp",
+      "caption": "TABLE II: Cross-dataset robustness evaluation on public datasets",
+      "page": 7,
+      "index": 4,
+      "width": 434,
+      "height": 334
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23178v1/fig-005.webp",
+      "caption": "Fig. 1: Workflow of the proposed framework, SAiW",
+      "page": 3,
+      "index": 5,
+      "width": 968,
+      "height": 756
+    }
+  ]
+}

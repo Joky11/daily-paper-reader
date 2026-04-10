@@ -1,0 +1,150 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-001.webp",
+      "caption": "Figure 1: CANON can recover a strengthened NSO variant that generalizes the original layer-local edits into graphaware structural transformations that remain consistent across branches and merges, enabling attacks to be injected globally rather than only in isolated layers. The three NSO attacks correspond to different constrained forms of M (zero injection, clique cancellation ∑w = 0, and split preservation ∑α = 1).",
+      "page": 1,
+      "index": 1,
+      "width": 504,
+      "height": 362
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-002.webp",
+      "caption": "Table 3: Watermark similarity restoration for InceptionV3 and DenseNet under NSO cat-ops attacks (0.2 attack ratio). Tier-1 verification passes (✓) in all runs and is used as the primary outcome, while Tier-2 serves as a conservative fallback.",
+      "page": 11,
+      "index": 2,
+      "width": 1048,
+      "height": 388
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-003.webp",
+      "caption": "Table 10: False positive evaluation. Inception recovery on clean (non-attacked) watermarked models. All test cases show zero structural false positives (no parameter pruning, no layer shape changes), perfect accuracy preservation (∆acc = 0), and 100% Tier-1 reference-equivalence certificate pass rate. Watermark similarity gaps are minimal (within noise tolerance).",
+      "page": 21,
+      "index": 3,
+      "width": 504,
+      "height": 300
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-004.webp",
+      "caption": "Figure 3: Recovery. By clustering activation signatures from probe inputs, we infer a compacting transform Me. Rather than local pruning, our graph-consistent policy propagates Me to all downstream linear consumers via Wnew =Wold Me, enforcing consistent channel layouts across residual add and enabling block-diagonal handling of cat. This restores watermark verification on the recovered parameters θ̂.",
+      "page": 7,
+      "index": 4,
+      "width": 504,
+      "height": 271
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-005.webp",
+      "caption": "Table 11: Watermark similarity restoration for ResNet-18 under NSO add-ops attacks (0.2 attack ratio) without permutation or scaling. Tier-1 reference-equivalence verification passes (✓) in all runs. Tier-1 watermark similarity of the recovered models is the primary outcome, while Tier-2 similarity is the conservative fallback under the assumption that Tier-1 failed.",
+      "page": 22,
+      "index": 5,
+      "width": 1048,
+      "height": 250
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-006.webp",
+      "caption": "Table 2: Watermark similarity restoration for ResNet-18 and EfficientNet under NSO add-ops attacks (0.2 attack ratio). Tier-1 reference-equivalence verification passes (✓) in all runs. We thus use Tier-1 watermark similarity of the recovered models as the primary outcome. Tier-2 similarity is included only as a conservative fallback for completeness rather than an invoked decision.",
+      "page": 10,
+      "index": 6,
+      "width": 1048,
+      "height": 392
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-007.webp",
+      "caption": "Table 1: What a robust NSO defense must provide",
+      "page": 3,
+      "index": 7,
+      "width": 497,
+      "height": 258
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-008.webp",
+      "caption": "Table 13: Tier-1 reference-equivalence sensitivity for ResNet-18 under NSO add-ops attacks (0.2 attack ratio) with permutation or scaling. Each cell reports the Tier-1 certificate statistics across permutation tolerance (Perm Tol.): maximum relative error (max_rel_err) and greedy match fraction (match_frac).",
+      "page": 23,
+      "index": 8,
+      "width": 1048,
+      "height": 235
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-009.webp",
+      "caption": "Table 12: Watermark similarity restoration for ResNet-18 under CIFAR-100 dataset. Tier-1 verification passes (✓) in all runs and is used as the primary outcome, while Tier-2 serves as a conservative fallback.",
+      "page": 23,
+      "index": 9,
+      "width": 1048,
+      "height": 659
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-010.webp",
+      "caption": "Table 4: False positive evaluation. ResNet-18 recovery on clean (non-attacked) watermarked models. All test cases show zero structural false positives (no parameter pruning, no layer shape changes), perfect accuracy preservation (∆acc = 0), and 100% Tier-1 reference-equivalence certificate pass rate. Watermark similarity gaps are minimal (within noise tolerance), with one case showing slight improvement.",
+      "page": 13,
+      "index": 10,
+      "width": 500,
+      "height": 298
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-011.webp",
+      "caption": "Table 6: Watermark similarity restoration for ResNet-18 and EfficientNet under NSO add-ops attacks (0.5 attack ratio). Tier-1 verification passes (✓) in all runs and is used as the primary outcome, while Tier-2 serves as a conservative fallback.",
+      "page": 19,
+      "index": 11,
+      "width": 1048,
+      "height": 390
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-012.webp",
+      "caption": "Figure 4: CANON recovery time on ResNet-18 versus the number of probe inputs under different probe batch sizes and attack ratios. Each plot includes the clean baseline and the attacked cases (nso_zero, nso_split, nso_clique, mix-opseq, mix-opseq (per-merge-group)). Increasing the probe number generally increases runtime due to additional activation collection and clustering, while higher injection ratios amplify the cost of redundancy detection and graph-consistent consumer rewrites. The legend is shown only in the first subgraph, as it applies to all subgraphs.",
+      "page": 12,
+      "index": 12,
+      "width": 1067,
+      "height": 254
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-013.webp",
+      "caption": "Figure 5: CANON recovery time under five NSO attack variants for ResNet-18 and DenseNet across multiple white-box watermarking schemes. Overall, recovery cost is attack-dependent and consistently highest for the composed mix-opseq setting, with a pronounced increase at ρ = 0.5, while simpler attacks (nso_zero / nso_split / nso_clique) remain comparatively inexpensive and stable across watermark methods.",
+      "page": 12,
+      "index": 13,
+      "width": 1058,
+      "height": 519
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-014.webp",
+      "caption": "Table 7: Watermark similarity restoration for InceptionV3 and DenseNet under NSO cat-ops attacks (0.5 attack ratio). Tier-1 verification passes (✓) in all runs and is used as the primary outcome, while Tier-2 serves as a conservative fallback.",
+      "page": 20,
+      "index": 14,
+      "width": 1048,
+      "height": 392
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-015.webp",
+      "caption": "Table 8: False positive evaluation. DenseNet recovery on clean (non-attacked) watermarked models. All test cases show zero structural false positives (no parameter pruning, no layer shape changes), perfect accuracy preservation (∆acc = 0), and 100% Tier-1 reference-equivalence certificate pass rate. Watermark similarity gaps are minimal (within noise tolerance).",
+      "page": 20,
+      "index": 15,
+      "width": 504,
+      "height": 289
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-016.webp",
+      "caption": "Table 9: False positive evaluation. EfficientNet recovery on clean (non-attacked) watermarked models. All test cases show zero structural false positives (no parameter pruning, no layer shape changes), perfect accuracy preservation (∆acc = 0), and 100% Tier-1 reference-equivalence certificate pass rate. Watermark similarity gaps are minimal (within noise tolerance).",
+      "page": 20,
+      "index": 16,
+      "width": 506,
+      "height": 301
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-017.webp",
+      "caption": "Figure 2: Neuron-view global synchronization. An adversary performs channel layout obfuscation by introducing a linear map on activations, writing ybefore = Minj,yafter (with Minj typically sparse/structured and possibly non-square), and injecting redundant dummy channels (gray) via primitives such as nso_split and nso_clique while preserving end-to-end input–output behavior. (i) For residual add (ResNet), From probe activations, we infer a channel transform MA on one branch. Since element-wise add requires layout compatibility, we enforce layout synchronization by applying a compatible rewrite on the sibling edge, even if it is attack-free. The unified add-output layout is then propagated by rewriting all downstream linear consumers (fan-out) via W ←W MA, without requiring local rediscovery of redundancy. (ii) For channel concatenation (Inception), each branch is compacted independently with transforms (MX ,MY ). At cat, these compose into a block-diagonal transform blkdiag(MX ,MY ), which is propagated to all downstream consumers via W ←W ×blkdiag(MX ,MY ).",
+      "page": 5,
+      "index": 17,
+      "width": 1044,
+      "height": 482
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12679v1/fig-018.webp",
+      "caption": "Table 5: Notations",
+      "page": 16,
+      "index": 18,
+      "width": 506,
+      "height": 731
+    }
+  ]
+}

@@ -1,0 +1,903 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-10T08:50:11.387333+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 22,
+    "deep_cap": 6,
+    "deep_selected": 20,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2603.12749v1",
+      "source": "arxiv",
+      "title": "SLICE: Semantic Latent Injection via Compartmentalized Embedding for Image Watermarking",
+      "abstract": "Watermarking the initial noise of diffusion models has emerged as a promising approach for image provenance, but content-independent noise patterns can be forged via inversion and regeneration attacks. Recent semantic-aware watermarking methods improve robustness by conditioning verification on image semantics. However, their reliance on a single global semantic binding makes them vulnerable to localized but globally coherent semantic edits. To address this limitation and provide a trustworthy semantic-aware watermark, we propose $\\underline{\\textbf{S}}$emantic $\\underline{\\textbf{L}}$atent $\\underline{\\textbf{I}}$njection via $\\underline{\\textbf{C}}$ompartmentalized $\\underline{\\textbf{E}}$mbedding ($\\textbf{SLICE}$). Our framework decouples image semantics into four semantic factors (subject, environment, action, and detail) and precisely anchors them to distinct regions in the initial Gaussian noise. This fine-grained semantic binding enables advanced watermark verification where semantic tampering is detectable and localizable. We theoretically justify why SLICE enables robust and reliable tamper localization and provides statistical guarantees on false-accept rates. Experimental results demonstrate that SLICE significantly outperforms existing baselines against advanced semantic-guided regeneration attacks, substantially reducing attack success while preserving image quality and semantic fidelity. Overall, SLICE offers a practical, training-free provenance solution that is both fine-grained in diagnosis and robust to realistic adversarial manipulations.",
+      "authors": [
+        "Zheng Gao",
+        "Yifan Yang",
+        "Xiaoyu Li",
+        "Xiaoyan Feng",
+        "Haoran Fan",
+        "Yang Song",
+        "Jiaojiao Jiang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.CR",
+        "cs.LG"
+      ],
+      "published": "2026-03-13T07:49:01+00:00",
+      "link": "https://arxiv.org/pdf/2603.12749v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Semantic-aware watermarking for diffusion models",
+      "llm_evidence_cn": "扩散模型的语义感知水印",
+      "llm_evidence": "扩散模型的语义感知水印",
+      "canonical_evidence": "扩散模型的语义感知水印",
+      "llm_tldr_en": "Introduces SLICE, a semantic-aware watermarking framework for diffusion models to improve robustness against edits.",
+      "llm_tldr_cn": "引入 SLICE，一种用于扩散模型的语义感知水印框架，以提高抗编辑鲁棒性。",
+      "llm_tldr": "引入 SLICE，一种用于扩散模型的语义感知水印框架，以提高抗编辑鲁棒性。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "查找探讨水印嵌入与扩散模型结合的最新研究论文",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.12873v1",
+      "source": "arxiv",
+      "title": "TRACE: Structure-Aware Character Encoding for Robust and Generalizable Document Watermarking",
+      "abstract": "We propose TRACE, a structure-aware framework leveraging diffusion models for localized character encoding to embed data. Unlike existing methods that rely on edge features or pre-defined codebooks, TRACE exploits character structures that provide inherent resistance to noise interference due to their stability and unified representation across diverse characters. Our framework comprises three key components: (1) adaptive diffusion initialization that automatically identifies handle points, target points, and editing regions through specialized algorithms including movement probability estimator (MPE), target point estimation (TPE) and mask drawing model (MDM), (2) guided diffusion encoding for precise movement of selected point, and (3) masked region replacement with a specialized loss function to minimize feature alterations after the diffusion process. Comprehensive experiments demonstrate \\name{}'s superior performance over state-of-the-art methods, achieving more than 5 dB improvement in PSNR and 5\\% higher extraction accuracy following cross-media transmission. \\name{} achieves broad generalizability across multiple languages and fonts, making it particularly suitable for practical document security applications.",
+      "authors": [
+        "Jiale Meng",
+        "Jie Zhang",
+        "Runyi Hu",
+        "Zhe-Ming Lu",
+        "Tianwei Zhang",
+        "Yiming Li"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-13T10:21:40+00:00",
+      "link": "https://arxiv.org/pdf/2603.12873v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "leveraging diffusion models for document watermarking",
+      "llm_evidence_cn": "利用扩散模型进行文档水印嵌入",
+      "llm_evidence": "利用扩散模型进行文档水印嵌入",
+      "canonical_evidence": "利用扩散模型进行文档水印嵌入",
+      "llm_tldr_en": "A structure-aware framework using diffusion models for robust and generalizable document watermarking.",
+      "llm_tldr_cn": "一种利用扩散模型进行鲁棒且通用的文档水印嵌入的结构感知框架。",
+      "llm_tldr": "一种利用扩散模型进行鲁棒且通用的文档水印嵌入的结构感知框架。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "查找探讨水印嵌入与扩散模型结合的最新研究论文",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.12949v1",
+      "source": "arxiv",
+      "title": "Editing Away the Evidence: Diffusion-Based Image Manipulation and the Failure Modes of Robust Watermarking",
+      "abstract": "Robust invisible watermarks are widely used to support copyright protection, content provenance, and accountability by embedding hidden signals designed to survive common post-processing operations. However, diffusion-based image editing introduces a fundamentally different class of transformations: it injects noise and reconstructs images through a powerful generative prior, often altering semantic content while preserving photorealism. In this paper, we provide a unified theoretical and empirical analysis showing that non-adversarial diffusion editing can unintentionally degrade or remove robust watermarks. We model diffusion editing as a stochastic transformation that progressively contracts off-manifold perturbations, causing the low-amplitude signals used by many watermarking schemes to decay. Our analysis derives bounds on watermark signal-to-noise ratio and mutual information along diffusion trajectories, yielding conditions under which reliable recovery becomes information-theoretically impossible. We further evaluate representative watermarking systems under a range of diffusion-based editing scenarios and strengths. The results indicate that even routine semantic edits can significantly reduce watermark recoverability. Finally, we discuss the implications for content provenance and outline principles for designing watermarking approaches that remain robust under generative image editing.",
+      "authors": [
+        "Qian Qi",
+        "Jiangyun Tang",
+        "Jim Lee",
+        "Emily Davis",
+        "Finn Carter"
+      ],
+      "primary_category": "eess.IV",
+      "categories": [
+        "eess.IV",
+        "cs.CR",
+        "cs.MM"
+      ],
+      "published": "2026-03-13T12:46:27+00:00",
+      "link": "https://arxiv.org/pdf/2603.12949v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Analysis of diffusion-based image editing on robust watermarking degradation",
+      "llm_evidence_cn": "分析基于扩散的图像编辑对鲁棒水印退化的影响",
+      "llm_evidence": "分析基于扩散的图像编辑对鲁棒水印退化的影响",
+      "canonical_evidence": "分析基于扩散的图像编辑对鲁棒水印退化的影响",
+      "llm_tldr_en": "Analyzes how diffusion-based image manipulation unintentionally degrades or removes robust invisible watermarks.",
+      "llm_tldr_cn": "分析了基于扩散模型的图像篡改如何无意中破坏或移除鲁棒隐形水印。",
+      "llm_tldr": "分析了基于扩散模型的图像篡改如何无意中破坏或移除鲁棒隐形水印。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "探讨扩散模型在添加水印后保持性能稳定的鲁棒性",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.17531v1",
+      "source": "arxiv",
+      "title": "Rel-Zero: Harnessing Patch-Pair Invariance for Robust Zero-Watermarking Against AI Editing",
+      "abstract": "Recent advancements in diffusion-based image editing pose a significant threat to the authenticity of digital visual content. Traditional embedding-based watermarking methods often introduce perceptible perturbations to maintain robustness, inevitably compromising visual fidelity. Meanwhile, existing zero-watermarking approaches, typically relying on global image features, struggle to withstand sophisticated manipulations. In this work, we uncover a key observation: while individual image patches undergo substantial alterations during AI-based editing, the relational distance between patch pairs remains relatively invariant. Leveraging this property, we propose Relational Zero-Watermarking (Rel-Zero), a novel framework that requires no modification to the original image but derives a unique zero-watermark from these editing-invariant patch relations. By grounding the watermark in intrinsic structural consistency rather than absolute appearance, Rel-Zero provides a non-invasive yet resilient mechanism for content authentication. Extensive experiments demonstrate that Rel-Zero achieves substantially improved robustness across diverse editing models and manipulations compared to prior zero-watermarking approaches.",
+      "authors": [
+        "Pengzhen Chen",
+        "Yanwei Liu",
+        "Xiaoyan Gu",
+        "Xiaojun Chen",
+        "Wu Liu",
+        "Weiping Wang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.CR"
+      ],
+      "published": "2026-03-18T09:40:00+00:00",
+      "link": "https://arxiv.org/pdf/2603.17531v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "robust zero-watermarking against diffusion-based AI editing",
+      "llm_evidence_cn": "针对扩散模型AI编辑的鲁棒零水印技术",
+      "llm_evidence": "针对扩散模型AI编辑的鲁棒零水印技术",
+      "canonical_evidence": "针对扩散模型AI编辑的鲁棒零水印技术",
+      "llm_tldr_en": "Proposes Rel-Zero, a robust zero-watermarking framework to protect images against AI-based editing.",
+      "llm_tldr_cn": "提出Rel-Zero，一种鲁棒的零水印框架，用于保护图像免受AI编辑影响。",
+      "llm_tldr": "提出Rel-Zero，一种鲁棒的零水印框架，用于保护图像免受AI编辑影响。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "探讨扩散模型在添加水印后保持性能稳定的鲁棒性",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.20304v1",
+      "source": "arxiv",
+      "title": "Transferable Multi-Bit Watermarking Across Frozen Diffusion Models via Latent Consistency Bridges",
+      "abstract": "As diffusion models (DMs) enable photorealistic image generation at unprecedented scale, watermarking techniques have become essential for provenance establishment and accountability. Existing methods face challenges: sampling-based approaches operate on frozen models but require costly $N$-step Denoising Diffusion Implicit Models (DDIM) inversion (typically N=50) for zero-bit-only detection; fine-tuning-based methods achieve fast multi-bit extraction but couple the watermark to a specific model checkpoint, requiring retraining for each architecture. We propose DiffMark, a plug-and-play watermarking method that offers three key advantages over existing approaches: single-pass multi-bit detection, per-image key flexibility, and cross-model transferability. Rather than encoding the watermark into the initial noise vector, DiffMark injects a persistent learned perturbation $δ$ at every denoising step of a completely frozen DM. The watermark signal accumulates in the final denoised latent $z_0$ and is recovered in a single forward pass. The central challenge of backpropagating gradients through a frozen UNet without traversing the full denoising chain is addressed by employing Latent Consistency Models (LCM) as a differentiable training bridge. This reduces the number of gradient steps from 50 DDIM to 4 LCM and enables a single-pass detection at 16.4 ms, a 45x speedup over sampling-based methods. Moreover, by this design, the encoder learns to map any runtime secret to a unique perturbation at inference time, providing genuine per-image key flexibility and transferability to unseen diffusion-based architectures without per-model fine-tuning. Although achieving these advantages, DiffMark also maintains competitive watermark robustness against distortion, regeneration, and adversarial attacks.",
+      "authors": [
+        "Hong-Hanh Nguyen-Le",
+        "Van-Tuan Tran",
+        "Thuc D. Nguyen",
+        "Nhien-An Le-Khac"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-19T13:13:34+00:00",
+      "link": "https://arxiv.org/pdf/2603.20304v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "watermarking for diffusion models, provenance establishment, and multi-bit detection",
+      "llm_evidence_cn": "扩散模型水印、来源确立及多比特检测",
+      "llm_evidence": "扩散模型水印、来源确立及多比特检测",
+      "canonical_evidence": "扩散模型水印、来源确立及多比特检测",
+      "llm_tldr_en": "DiffMark enables plug-and-play multi-bit watermarking for diffusion models to ensure provenance.",
+      "llm_tldr_cn": "DiffMark 为扩散模型提供即插即用的多比特水印技术，用于确立来源和版权保护。",
+      "llm_tldr": "DiffMark 为扩散模型提供即插即用的多比特水印技术，用于确立来源和版权保护。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 检索与水印及扩散模型相关的学术论文, especially work that connects or combines: d; w; 用于识别或保护图像内容的数字水印技术; 探讨扩散模型在添加水印后保持性能稳定的鲁棒性; 研究隐写或信息隐藏方法与水印技术的关系; 通过水印验证图像或模型输出的真伪; 查找探讨水印嵌入与扩散模型结合的最新研究论文; 检索关于生成模型中水印鲁棒性与验证机制的学术资料; 获取讨论扩散模型内容保护和版权标记方法的论文.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.23178v1",
+      "source": "arxiv",
+      "title": "SAiW: Source-Attributable Invisible Watermarking for Proactive Deepfake Defense",
+      "abstract": "Deepfakes generated by modern generative models pose a serious threat to information integrity, digital identity, and public trust. Existing detection methods are largely reactive, attempting to identify manipulations after they occur and often failing to generalize across evolving generation techniques. This motivates the need for proactive mechanisms that secure media authenticity at the time of creation. In this work, we introduce SAiW, a Source-Attributed Invisible watermarking Framework for proactive deepfake defense and media provenance verification. Unlike conventional watermarking methods that treat watermark payloads as generic signals, SAiW formulates watermark embedding as a source-conditioned representation learning problem, where watermark identity encodes the originating source and modulates the embedding process to produce discriminative and traceable signatures. The framework integrates feature-wise linear modulation to inject source identity into the embedding network, enabling scalable multi-source watermark generation. A perceptual guidance module derived from human visual system priors ensures that watermark perturbations remain visually imperceptible while maintaining robustness. In addition, a dual-purpose forensic decoder simultaneously reconstructs the embedded watermark and performs source attribution, providing both automated verification and interpretable forensic evidence. Extensive experiments across multiple deepfake datasets demonstrate that SAiW achieves high perceptual quality while maintaining strong robustness against compression, filtering, noise, geometric transformations, and adversarial perturbations. By binding digital media to its origin through invisible yet verifiable markers, SAiW enables reliable authentication and source attribution, providing a scalable foundation for proactive deepfake defense and trustworthy media provenance.",
+      "authors": [
+        "Bibek Das",
+        "Chandranath Adak",
+        "Soumi Chattopadhyay",
+        "Zahid Akhtar",
+        "Soumya Dutta"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-03-24T13:26:52+00:00",
+      "link": "https://arxiv.org/pdf/2603.23178v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "invisible watermarking for deepfake defense and provenance verification",
+      "llm_evidence_cn": "用于深度伪造防御和来源验证的隐形水印",
+      "llm_evidence": "用于深度伪造防御和来源验证的隐形水印",
+      "canonical_evidence": "用于深度伪造防御和来源验证的隐形水印",
+      "llm_tldr_en": "A source-attributable invisible watermarking framework for proactive deepfake defense and media verification.",
+      "llm_tldr_cn": "一种用于主动深度伪造防御和媒体来源验证的可溯源隐形水印框架。",
+      "llm_tldr": "一种用于主动深度伪造防御和媒体来源验证的可溯源隐形水印框架。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "通过水印验证图像或模型输出的真伪",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.23940v1",
+      "source": "arxiv",
+      "title": "High-Fidelity Face Content Recovery via Tamper-Resilient Versatile Watermarking",
+      "abstract": "The proliferation of AIGC-driven face manipulation and deepfakes poses severe threats to media provenance, integrity, and copyright protection. Prior versatile watermarking systems typically rely on embedding explicit localization payloads, which introduces a fidelity--functionality trade-off: larger localization signals degrade visual quality and often reduce decoding robustness under strong generative edits. Moreover, existing methods rarely support content recovery, limiting their forensic value when original evidence must be reconstructed. To address these challenges, we present VeriFi, a versatile watermarking framework that unifies copyright protection, pixel-level manipulation localization, and high-fidelity face content recovery. VeriFi makes three key contributions: (1) it embeds a compact semantic latent watermark that serves as an content-preserving prior, enabling faithful restoration even after severe manipulations; (2) it achieves fine-grained localization without embedding localization-specific artifacts by correlating image features with decoded provenance signals; and (3) it introduces an AIGC attack simulator that combines latent-space mixing with seamless blending to improve robustness to realistic deepfake pipelines. Extensive experiments on CelebA-HQ and FFHQ show that VeriFi consistently outperforms strong baselines in watermark robustness, localization accuracy, and recovery quality, providing a practical and verifiable defense for deepfake forensics.",
+      "authors": [
+        "Peipeng Yu",
+        "Jinfeng Xie",
+        "Chengfu Ou",
+        "Xiaoyu Zhou",
+        "Jianwei Fei",
+        "Yunshu Dai",
+        "Zhihua Xia",
+        "Chip Hong Chang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-03-25T05:02:48+00:00",
+      "link": "https://arxiv.org/pdf/2603.23940v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Versatile watermarking for face content recovery, manipulation localization, and copyright protection.",
+      "llm_evidence_cn": "用于人脸内容恢复、篡改定位和版权保护的多功能水印技术。",
+      "llm_evidence": "用于人脸内容恢复、篡改定位和版权保护的多功能水印技术。",
+      "canonical_evidence": "用于人脸内容恢复、篡改定位和版权保护的多功能水印技术。",
+      "llm_tldr_en": "VeriFi is a watermarking framework for face integrity, manipulation localization, and high-fidelity recovery.",
+      "llm_tldr_cn": "VeriFi 是一个用于人脸完整性验证、篡改定位和高保真内容恢复的水印框架。",
+      "llm_tldr": "VeriFi 是一个用于人脸完整性验证、篡改定位和高保真内容恢复的水印框架。",
+      "llm_tags": [
+        "query:q3"
+      ],
+      "matched_query_tag": "query:q3",
+      "matched_query_text": "用于识别或保护图像内容的数字水印技术",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.26167v1",
+      "source": "arxiv",
+      "title": "Gaussian Shannon: High-Precision Diffusion Model Watermarking Based on Communication",
+      "abstract": "Diffusion models generate high-quality images but pose serious risks like copyright violation and disinformation. Watermarking is a key defense for tracing and authenticating AI-generated content. However, existing methods rely on threshold-based detection, which only supports fuzzy matching and cannot recover structured watermark data bit-exactly, making them unsuitable for offline verification or applications requiring lossless metadata (e.g., licensing instructions). To address this problem, in this paper, we propose Gaussian Shannon, a watermarking framework that treats the diffusion process as a noisy communication channel and enables both robust tracing and exact bit recovery. Our method embeds watermarks in the initial Gaussian noise without fine-tuning or quality loss. We identify two types of channel interference, namely local bit flips and global stochastic distortions, and design a cascaded defense combining error-correcting codes and majority voting. This ensures reliable end-to-end transmission of semantic payloads. Experiments across three Stable Diffusion variants and seven perturbation types show that Gaussian Shannon achieves state-of-the-art bit-level accuracy while maintaining a high true positive rate, enabling trustworthy rights attribution in real-world deployment. The source code have been made available at: https://github.com/Rambo-Yi/Gaussian-Shannon",
+      "authors": [
+        "Yi Zhang",
+        "Hongbo Huang",
+        "Liang-Jie Zhang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.CR"
+      ],
+      "published": "2026-03-27T08:34:53+00:00",
+      "link": "https://arxiv.org/pdf/2603.26167v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "watermarking framework for diffusion models enabling robust tracing and exact bit recovery",
+      "llm_evidence_cn": "扩散模型水印框架，支持鲁棒追踪和精确比特恢复",
+      "llm_evidence": "扩散模型水印框架，支持鲁棒追踪和精确比特恢复",
+      "canonical_evidence": "扩散模型水印框架，支持鲁棒追踪和精确比特恢复",
+      "llm_tldr_en": "Introduces Gaussian Shannon, a high-precision watermarking framework for diffusion model content protection.",
+      "llm_tldr_cn": "提出Gaussian Shannon框架，通过将扩散过程视为通信信道实现高精度水印嵌入与恢复。",
+      "llm_tldr": "提出Gaussian Shannon框架，通过将扩散过程视为通信信道实现高精度水印嵌入与恢复。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "查找探讨水印嵌入与扩散模型结合的最新研究论文",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.26766v1",
+      "source": "arxiv",
+      "title": "JND-Guided Neural Watermarking with Spatial Transformer Decoding for Screen-Capture Robustness",
+      "abstract": "Screen-shooting robust watermarking aims to imperceptibly embed extractable information into host images such that the watermark survives the complex distortion pipeline of screen display and camera recapture. However, achieving high extraction accuracy while maintaining satisfactory visual quality remains an open challenge, primarily because the screen-shooting channel introduces severe and entangled degradations including Moiré patterns, color-gamut shifts, perspective warping, and sensor noise. In this paper, we present an end-to-end deep learning framework that jointly optimizes watermark embedding and extraction for screen-shooting robustness. Our framework incorporates three key innovations: (i) a comprehensive noise simulation layer that faithfully models realistic screen-shooting distortions -- notably including a physically-motivated Moiré pattern generator -- enabling the network to learn robust representations against the full spectrum of capture-channel noise through adversarial training; (ii) a Just Noticeable Distortion (JND) perceptual loss function that adaptively modulates watermark embedding strength by supervising the perceptual discrepancy between the JND coefficient map and the watermark residual, thereby concentrating watermark energy in perceptually insensitive regions to maximize visual quality; and (iii) two complementary automatic localization modules -- a semantic-segmentation-based foreground extractor for captured image rectification and a symmetric noise template mechanism for anti-cropping region recovery -- that enable fully automated watermark decoding under realistic deployment conditions. Extensive experiments demonstrate that our method achieves an average PSNR of 30.94~dB and SSIM of 0.94 on watermarked images while embedding 127-bit payloads.",
+      "authors": [
+        "Jiayi Qin",
+        "Jingwei Li",
+        "Chuan Wu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-24T03:38:42+00:00",
+      "link": "https://arxiv.org/pdf/2603.26766v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Neural watermarking for screen-capture robustness and image protection",
+      "llm_evidence_cn": "用于屏幕拍摄鲁棒性和图像保护的神经水印技术",
+      "llm_evidence": "用于屏幕拍摄鲁棒性和图像保护的神经水印技术",
+      "canonical_evidence": "用于屏幕拍摄鲁棒性和图像保护的神经水印技术",
+      "llm_tldr_en": "Presents a deep learning framework for screen-shooting robust watermarking using JND and spatial transformers.",
+      "llm_tldr_cn": "提出一种利用JND和空间变换器的深度学习框架，用于实现抗屏摄的鲁棒水印嵌入。",
+      "llm_tldr": "提出一种利用JND和空间变换器的深度学习框架，用于实现抗屏摄的鲁棒水印嵌入。",
+      "llm_tags": [
+        "query:q3"
+      ],
+      "matched_query_tag": "query:q3",
+      "matched_query_text": "用于识别或保护图像内容的数字水印技术",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.29742v1",
+      "source": "arxiv",
+      "title": "SHIFT: Stochastic Hidden-Trajectory Deflection for Removing Diffusion-based Watermark",
+      "abstract": "Diffusion-based watermarking methods embed verifiable marks by manipulating the initial noise or the reverse diffusion trajectory. However, these methods share a critical assumption: verification can succeed only if the diffusion trajectory can be faithfully reconstructed. This reliance on trajectory recovery constitutes a fundamental and exploitable vulnerability. We propose $\\underline{\\mathbf{S}}$tochastic $\\underline{\\mathbf{Hi}}$dden-Trajectory De$\\underline{\\mathbf{f}}$lec$\\underline{\\mathbf{t}}$ion ($\\mathbf{SHIFT}$), a training-free attack that exploits this common weakness across diverse watermarking paradigms. SHIFT leverages stochastic diffusion resampling to deflect the generative trajectory in latent space, making the reconstructed image statistically decoupled from the original watermark-embedded trajectory while preserving strong visual quality and semantic consistency. Extensive experiments on nine representative watermarking methods spanning noise-space, frequency-domain, and optimization-based paradigms show that SHIFT achieves 95%--100% attack success rates with nearly no loss in semantic quality, without requiring any watermark-specific knowledge or model retraining.",
+      "authors": [
+        "Rui Bao",
+        "Zheng Gao",
+        "Xiaoyu Li",
+        "Xiaoyan Feng",
+        "Yang Song",
+        "Jiaojiao Jiang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.CR"
+      ],
+      "published": "2026-03-31T13:39:37+00:00",
+      "link": "https://arxiv.org/pdf/2603.29742v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Attacking diffusion-based watermarking robustness",
+      "llm_evidence_cn": "攻击扩散模型水印的鲁棒性",
+      "llm_evidence": "攻击扩散模型水印的鲁棒性",
+      "canonical_evidence": "攻击扩散模型水印的鲁棒性",
+      "llm_tldr_en": "Proposes SHIFT, an attack that removes diffusion-based watermarks by deflecting the generative trajectory.",
+      "llm_tldr_cn": "提出 SHIFT，一种通过偏转生成轨迹来移除扩散模型水印的攻击方法。",
+      "llm_tldr": "提出 SHIFT，一种通过偏转生成轨迹来移除扩散模型水印的攻击方法。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.06662v1",
+      "source": "arxiv",
+      "title": "Towards Robust Content Watermarking Against Removal and Forgery Attacks",
+      "abstract": "Generated contents have raised serious concerns about copyright protection, image provenance, and credit attribution. A potential solution for these problems is watermarking. Recently, content watermarking for text-to-image diffusion models has been studied extensively for its effective detection utility and robustness. However, these watermarking techniques are vulnerable to potential adversarial attacks, such as removal attacks and forgery attacks. In this paper, we build a novel watermarking paradigm called Instance-Specific watermarking with Two-Sided detection (ISTS) to resist removal and forgery attacks. Specifically, we introduce a strategy that dynamically controls the injection time and watermarking patterns based on the semantics of users' prompts. Furthermore, we propose a new two-sided detection approach to enhance robustness in watermark detection. Experiments have demonstrated the superiority of our watermarking against removal and forgery attacks.",
+      "authors": [
+        "Yifan Zhu",
+        "Yihan Wang",
+        "Xiao-Shan Gao"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-04-08T04:28:56+00:00",
+      "link": "https://arxiv.org/pdf/2604.06662v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Robust content watermarking for text-to-image diffusion models against removal and forgery",
+      "llm_evidence_cn": "针对文本生成图像扩散模型的抗移除与抗伪造鲁棒水印",
+      "llm_evidence": "针对文本生成图像扩散模型的抗移除与抗伪造鲁棒水印",
+      "canonical_evidence": "针对文本生成图像扩散模型的抗移除与抗伪造鲁棒水印",
+      "llm_tldr_en": "Proposes ISTS, a novel watermarking paradigm to protect diffusion model content from removal and forgery attacks.",
+      "llm_tldr_cn": "提出 ISTS 水印范式，保护扩散模型生成内容免受移除和伪造攻击。",
+      "llm_tldr": "提出 ISTS 水印范式，保护扩散模型生成内容免受移除和伪造攻击。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.14968v1",
+      "source": "arxiv",
+      "title": "Rethinking LLM Watermark Detection in Black-Box Settings: A Non-Intrusive Third-Party Framework",
+      "abstract": "While watermarking serves as a critical mechanism for LLM provenance, existing secret-key schemes tightly couple detection with injection, requiring access to keys or provider-side scheme-specific detectors for verification. This dependency creates a fundamental barrier for real-world governance, as independent auditing becomes impossible without compromising model security or relying on the opaque claims of service providers. To resolve this dilemma, we introduce TTP-Detect, a pioneering black-box framework designed for non-intrusive, third-party watermark verification. By decoupling detection from injection, TTP-Detect reframes verification as a relative hypothesis testing problem. It employs a proxy model to amplify watermark-relevant signals and a suite of complementary relative measurements to assess the alignment of the query text with watermarked distributions. Extensive experiments across representative watermarking schemes, datasets and models demonstrate that TTP-Detect achieves superior detection performance and robustness against diverse attacks.",
+      "authors": [
+        "Zhuoshang Wang",
+        "Yubing Ren",
+        "Yanan Cao",
+        "Fang Fang",
+        "Xiaoxue Li",
+        "Li Guo"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.CL"
+      ],
+      "published": "2026-03-16T08:28:48+00:00",
+      "link": "https://arxiv.org/pdf/2603.14968v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 9.5,
+      "llm_evidence_en": "TTP-Detect framework for non-intrusive third-party watermark verification to ensure model provenance",
+      "llm_evidence_cn": "TTP-Detect框架用于非侵入式第三方水印验证，以确保模型出处真伪",
+      "llm_evidence": "TTP-Detect框架用于非侵入式第三方水印验证，以确保模型出处真伪",
+      "canonical_evidence": "TTP-Detect框架用于非侵入式第三方水印验证，以确保模型出处真伪",
+      "llm_tldr_en": "Introduces a black-box framework for third-party LLM watermark verification without requiring secret keys.",
+      "llm_tldr_cn": "引入了一种黑盒框架，用于在不需要密钥的情况下进行第三方大语言模型水印验证。",
+      "llm_tldr": "引入了一种黑盒框架，用于在不需要密钥的情况下进行第三方大语言模型水印验证。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "通过水印验证图像或模型输出的真伪",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.12089v1",
+      "source": "arxiv",
+      "title": "EmbTracker: Traceable Black-box Watermarking for Federated Language Models",
+      "abstract": "Federated Language Model (FedLM) allows a collaborative learning without sharing raw data, yet it introduces a critical vulnerability, as every untrustworthy client may leak the received functional model instance. Current watermarking schemes for FedLM often require white-box access and client-side cooperation, providing only group-level proof of ownership rather than individual traceability. We propose EmbTracker, a server-side, traceable black-box watermarking framework specifically designed for FedLMs. EmbTracker achieves black-box verifiability by embedding a backdoor-based watermark detectable through simple API queries. Client-level traceability is realized by injecting unique identity-specific watermarks into the model distributed to each client. In this way, a leaked model can be attributed to a specific culprit, ensuring robustness even against non-cooperative participants. Extensive experiments on various language and vision-language models demonstrate that EmbTracker achieves robust traceability with verification rates near 100\\%, high resilience against removal attacks (fine-tuning, pruning, quantization), and negligible impact on primary task performance (typically within 1-2\\%).",
+      "authors": [
+        "Haodong Zhao",
+        "Jinming Hu",
+        "Yijie Bai",
+        "Tian Dong",
+        "Wei Du",
+        "Zhuosheng Zhang",
+        "Yanjiao Chen",
+        "Haojin Zhu",
+        "Gongshen Liu"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-03-12T15:57:32+00:00",
+      "link": "https://arxiv.org/pdf/2603.12089v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Traceable black-box watermarking for federated language models to prove ownership and individual traceability",
+      "llm_evidence_cn": "联邦语言模型的追踪式黑盒水印，用于证明所有权和个人可追溯性",
+      "llm_evidence": "联邦语言模型的追踪式黑盒水印，用于证明所有权和个人可追溯性",
+      "canonical_evidence": "联邦语言模型的追踪式黑盒水印，用于证明所有权和个人可追溯性",
+      "llm_tldr_en": "Presents EmbTracker, a server-side framework for traceable black-box watermarking in federated learning.",
+      "llm_tldr_cn": "提出了EmbTracker，一种用于联邦学习中可追踪黑盒水印的服务端框架。",
+      "llm_tldr": "提出了EmbTracker，一种用于联邦学习中可追踪黑盒水印的服务端框架。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.12679v1",
+      "source": "arxiv",
+      "title": "Why Neural Structural Obfuscation Can't Kill White-Box Watermarks for Good!",
+      "abstract": "Neural Structural Obfuscation (NSO) (USENIX Security'23) is a family of ``zero cost'' structure-editing transforms (\\texttt{nso\\_zero}, \\texttt{nso\\_clique}, \\texttt{nso\\_split}) that inject dummy neurons. By combining neuron permutation and parameter scaling, NSO makes a radical modification to the network structure and parameters while strictly preserving functional equivalence, thereby disrupting white-box watermark verification. This capability has been a fundamental challenge to the reliability of existing white-box watermarking schemes.   We rethink NSO and, for the first time, fully recover from the damage it has caused. We redefine NSO as a graph-consistent threat model within a \\textit{producer--consumer} paradigm. This formulation posits that any obfuscation of a producer node necessitates a compatible layout update in all downstream consumers to maintain structural integrity. Building on these consistency constraints on signal propagation, we present \\textsc{Canon}, a recovery framework that probes the attacked model to identify redundancy/dummy channels and then \\textit{globally} canonicalizes the network by rewriting \\textit{all} downstream consumers by construction, synchronizing layouts across \\texttt{fan-out}, \\texttt{add}, and \\texttt{cat}. Extensive experiments demonstrate that, even under strong composed and extended NSO attacks, \\textsc{Canon} achieves \\textbf{100\\%} recovery success, restoring watermark verifiability while preserving task utility. Our code is available at https://anonymous.4open.science/r/anti-NSO-9874.",
+      "authors": [
+        "Yanna Jiang",
+        "Guangsheng Yu",
+        "Qingyuan Yu",
+        "Yi Chen",
+        "Qin Wang"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-03-13T05:50:26+00:00",
+      "link": "https://arxiv.org/pdf/2603.12679v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "The paper addresses white-box watermark verification and its robustness against structural obfuscation attacks.",
+      "llm_evidence_cn": "该论文探讨了白盒水印验证及其在结构混淆攻击下的鲁棒性。",
+      "llm_evidence": "该论文探讨了白盒水印验证及其在结构混淆攻击下的鲁棒性。",
+      "canonical_evidence": "该论文探讨了白盒水印验证及其在结构混淆攻击下的鲁棒性。",
+      "llm_tldr_en": "This paper investigates recovering white-box watermarks from neural structural obfuscation to ensure model verification.",
+      "llm_tldr_cn": "该研究探讨了如何从神经结构混淆中恢复白盒水印，以确保模型验证的可靠性。",
+      "llm_tldr": "该研究探讨了如何从神经结构混淆中恢复白盒水印，以确保模型验证的可靠性。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.13722v1",
+      "source": "arxiv",
+      "title": "TableMark: A Multi-bit Watermark for Synthetic Tabular Data",
+      "abstract": "Watermarking has emerged as an effective solution for copyright protection of synthetic data. However, applying watermarking techniques to synthetic tabular data presents challenges, as tabular data can easily lose their watermarks through shuffling or deletion operations. The major challenge is to provide traceability for tracking multiple users of the watermarked tabular data while maintaining high data utility and robustness (resistance to attacks). To address this, we design a multi-bit watermarking scheme TableMark that encodes watermarks into synthetic tabular data, ensuring superior traceability and robustness while maintaining high utility. We formulate the watermark encoding process as a constrained optimization problem, allowing the data owner to effectively trade off robustness and utility. Additionally, we propose effective optimization mechanisms to solve this problem to enhance the data utility. Experimental results on four widely used real-world datasets show that TableMark effectively traces a large number of users, is resilient to attacks, and preserves high utility. Moreover, TableMark significantly outperforms state-of-the-art tabular watermarking schemes.",
+      "authors": [
+        "Yuyang Xia",
+        "Yaoqiang Xu",
+        "Chen Qian",
+        "Yang Li",
+        "Guoliang Li",
+        "Jianhua Feng"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.DB"
+      ],
+      "published": "2026-03-14T03:01:00+00:00",
+      "link": "https://arxiv.org/pdf/2603.13722v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Watermarking for copyright protection of synthetic data and robustness against attacks",
+      "llm_evidence_cn": "用于合成数据版权保护的水印技术及其抗攻击鲁棒性",
+      "llm_evidence": "用于合成数据版权保护的水印技术及其抗攻击鲁棒性",
+      "canonical_evidence": "用于合成数据版权保护的水印技术及其抗攻击鲁棒性",
+      "llm_tldr_en": "Proposes TableMark, a multi-bit watermarking scheme for synthetic tabular data to ensure traceability and utility.",
+      "llm_tldr_cn": "提出TableMark，一种用于合成表格数据的多位水印方案，以确保可追溯性和数据效用。",
+      "llm_tldr": "提出TableMark，一种用于合成表格数据的多位水印方案，以确保可追溯性和数据效用。",
+      "llm_tags": [
+        "query:q3"
+      ],
+      "matched_query_tag": "query:q3",
+      "matched_query_text": "用于识别或保护图像内容的数字水印技术",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.18793v1",
+      "source": "arxiv",
+      "title": "Functional Subspace Watermarking for Large Language Models",
+      "abstract": "Model watermarking utilizes internal representations to protect the ownership of large language models (LLMs). However, these features inevitably undergo complex distortions during realistic model modifications such as fine-tuning, quantization, or knowledge distillation, making reliable extraction extremely challenging. Despite extensive research on model-side watermarking, existing methods still lack sufficient robustness against parameter-level perturbations. To address this gap, we propose \\texttt{\\textbf{Functional Subspace Watermarking (FSW)}}, a framework that anchors ownership signals into a low-dimensional functional backbone. Specifically, we first solve a generalized eigenvalue problem to extract a stable functional subspace for watermark injection, while introducing an adaptive spectral truncation strategy to achieve an optimal balance between robustness and model utility. Furthermore, a vector consistency constraint is incorporated to ensure that watermark injection does not compromise the original semantic performance. Extensive experiments across various LLM architectures and datasets demonstrate that our method achieves superior detection accuracy and statistical verifiability under multiple model attacks, maintaining robustness that outperforms existing state-of-the-art (SOTA) methods.",
+      "authors": [
+        "Zikang Ding",
+        "Junhao Li",
+        "Suling Wu",
+        "Junchi Yao",
+        "Hongbo Liu",
+        "Lijie Hu"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI"
+      ],
+      "published": "2026-03-19T11:44:34+00:00",
+      "link": "https://arxiv.org/pdf/2603.18793v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "model watermarking for ownership protection and robustness against perturbations",
+      "llm_evidence_cn": "用于所有权保护和抗扰动鲁棒性的模型水印技术",
+      "llm_evidence": "用于所有权保护和抗扰动鲁棒性的模型水印技术",
+      "canonical_evidence": "用于所有权保护和抗扰动鲁棒性的模型水印技术",
+      "llm_tldr_en": "Proposes Functional Subspace Watermarking to protect LLM ownership with robustness against parameter changes.",
+      "llm_tldr_cn": "提出功能子空间水印框架，通过锚定稳定信号保护大语言模型的所有权并提高鲁棒性。",
+      "llm_tldr": "提出功能子空间水印框架，通过锚定稳定信号保护大语言模型的所有权并提高鲁棒性。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.27513v1",
+      "source": "arxiv",
+      "title": "Understanding Semantic Perturbations on In-Processing Generative Image Watermarks",
+      "abstract": "The widespread deployment of high-fidelity generative models has intensified the need for reliable mechanisms for provenance and content authentication. In-processing watermarking, embedding a signature into the generative model's synthesis procedure, has been advocated as a solution and is often reported to be robust to standard post-processing (such as geometric transforms and filtering). Yet robustness to semantic manipulations that alter high-level scene content while maintaining reasonable visual quality is not well studied or understood. We introduce a simple, multi-stage framework for systematically stress-testing in-processing generative watermarks under semantic drift. The framework utilizes off-the-shelf models for object detection, mask generation, and semantically guided inpainting or regeneration to produce controlled, meaning-altering edits with minimal perceptual degradation. Based on extensive experiments on representative schemes, we find that robustness varies significantly with the degree of semantic entanglement: methods by which watermarks remain detectable under a broad suite of conventional perturbations can fail under semantic edits, with watermark detectability in many cases dropping to near zero while image quality remains high. Overall, our results reveal a critical gap in current watermarking evaluations and suggest that watermark designs and benchmarking must explicitly account for robustness against semantic manipulation.",
+      "authors": [
+        "Anirudh Nakra",
+        "Min Wu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-03-29T04:34:44+00:00",
+      "link": "https://arxiv.org/pdf/2603.27513v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "stress-testing in-processing generative watermarks under semantic drift for content authentication",
+      "llm_evidence_cn": "针对内容认证，对生成模型水印在语义偏移下的鲁棒性进行压力测试",
+      "llm_evidence": "针对内容认证，对生成模型水印在语义偏移下的鲁棒性进行压力测试",
+      "canonical_evidence": "针对内容认证，对生成模型水印在语义偏移下的鲁棒性进行压力测试",
+      "llm_tldr_en": "Evaluates the robustness of generative image watermarks against semantic perturbations for better authentication.",
+      "llm_tldr_cn": "评估生成图像水印在语义扰动下的鲁棒性，以增强内容认证的可靠性。",
+      "llm_tldr": "评估生成图像水印在语义扰动下的鲁棒性，以增强内容认证的可靠性。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.29742v2",
+      "source": "arxiv",
+      "title": "SHIFT: Stochastic Hidden-Trajectory Deflection for Removing Diffusion-based Watermark",
+      "abstract": "Diffusion-based watermarking methods embed verifiable marks by manipulating the initial noise or the reverse diffusion trajectory. However, these methods share a critical assumption: verification can succeed only if the diffusion trajectory can be faithfully reconstructed. This reliance on trajectory recovery constitutes a fundamental and exploitable vulnerability. We propose $\\underline{\\mathbf{S}}$tochastic $\\underline{\\mathbf{Hi}}$dden-Trajectory De$\\underline{\\mathbf{f}}$lec$\\underline{\\mathbf{t}}$ion ($\\mathbf{SHIFT}$), a training-free attack that exploits this common weakness across diverse watermarking paradigms. SHIFT leverages stochastic diffusion resampling to deflect the generative trajectory in latent space, making the reconstructed image statistically decoupled from the original watermark-embedded trajectory while preserving strong visual quality and semantic consistency. Extensive experiments on nine representative watermarking methods spanning noise-space, frequency-domain, and optimization-based paradigms show that SHIFT achieves 95%--100% attack success rates with nearly no loss in semantic quality, without requiring any watermark-specific knowledge or model retraining.",
+      "authors": [
+        "Rui Bao",
+        "Zheng Gao",
+        "Xiaoyu Li",
+        "Xiaoyan Feng",
+        "Yang Song",
+        "Jiaojiao Jiang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.CR"
+      ],
+      "published": "2026-03-31T13:39:37+00:00",
+      "link": "https://arxiv.org/pdf/2603.29742v2",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "exploits vulnerabilities in diffusion-based watermarking verification mechanisms",
+      "llm_evidence_cn": "利用扩散模型水印验证机制中的漏洞进行攻击研究",
+      "llm_evidence": "利用扩散模型水印验证机制中的漏洞进行攻击研究",
+      "canonical_evidence": "利用扩散模型水印验证机制中的漏洞进行攻击研究",
+      "llm_tldr_en": "Proposes SHIFT, an attack that removes diffusion-based watermarks by deflecting the generative trajectory.",
+      "llm_tldr_cn": "提出SHIFT攻击方法，通过偏转生成轨迹来移除扩散模型水印，揭示了验证机制的脆弱性。",
+      "llm_tldr": "提出SHIFT攻击方法，通过偏转生成轨迹来移除扩散模型水印，揭示了验证机制的脆弱性。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.03693v1",
+      "source": "arxiv",
+      "title": "ResGuard: Enhancing Robustness Against Known Original Attacks in Deep Watermarking",
+      "abstract": "Deep learning-based image watermarking commonly adopts an \"Encoder-Noise Layer-Decoder\" (END) architecture to improve robustness against random channel distortions, yet it often overlooks intentional manipulations introduced by adversaries with additional knowledge. In this paper, we revisit this paradigm and expose a critical yet underexplored vulnerability: the Known Original Attack (KOA), where an adversary has access to multiple original-watermarked image pairs, enabling various targeted suppression strategies. We show that even a simple residual-based removal approach, namely estimating an embedding residual from known pairs and subtracting it from unseen watermarked images, can almost completely remove the watermark while preserving visual quality. This vulnerability stems from the insufficient image dependency of residuals produced by END frameworks, which makes them transferable across images. To address this, we propose ResGuard, a plug-and-play module that enhances KOA robustness by enforcing image-dependent embedding. Its core lies in a residual specificity enhancement loss, which encourages residuals to be tightly coupled with their host images and thus improves image dependency. Furthermore, an auxiliary KOA noise layer injects residual-style perturbations during training, allowing the decoder to remain reliable under stronger embedding inconsistencies. Integrated into existing frameworks, ResGuard boosts KOA robustness, improving average watermark extraction accuracy from 59.87% to 99.81%.",
+      "authors": [
+        "Hanyi Wang",
+        "Han Fang",
+        "Yupeng Qiu",
+        "Shilin Wang",
+        "Ee-Chien Chang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-04T11:45:48+00:00",
+      "link": "https://arxiv.org/pdf/2604.03693v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Enhancing robustness of deep watermarking against Known Original Attacks (KOA) and intentional manipulations.",
+      "llm_evidence_cn": "增强深度水印在已知原始攻击（KOA）和故意篡改下的鲁棒性。",
+      "llm_evidence": "增强深度水印在已知原始攻击（KOA）和故意篡改下的鲁棒性。",
+      "canonical_evidence": "增强深度水印在已知原始攻击（KOA）和故意篡改下的鲁棒性。",
+      "llm_tldr_en": "ResGuard improves deep watermarking robustness against adversarial removal attacks using residual estimation.",
+      "llm_tldr_cn": "ResGuard 通过残差估计提高了深度水印对抗恶意删除攻击的鲁棒性。",
+      "llm_tldr": "ResGuard 通过残差估计提高了深度水印对抗恶意删除攻击的鲁棒性。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.05242v1",
+      "source": "arxiv",
+      "title": "XMark: Reliable Multi-Bit Watermarking for LLM-Generated Texts",
+      "abstract": "Multi-bit watermarking has emerged as a promising solution for embedding imperceptible binary messages into Large Language Model (LLM)-generated text, enabling reliable attribution and tracing of malicious usage of LLMs. Despite recent progress, existing methods still face key limitations: some become computationally infeasible for large messages, while others suffer from a poor trade-off between text quality and decoding accuracy. Moreover, the decoding accuracy of existing methods drops significantly when the number of tokens in the generated text is limited, a condition that frequently arises in practical usage. To address these challenges, we propose \\textsc{XMark}, a novel method for encoding and decoding binary messages in LLM-generated texts. The unique design of \\textsc{XMark}'s encoder produces a less distorted logit distribution for watermarked token generation, preserving text quality, and also enables its tailored decoder to reliably recover the encoded message with limited tokens. Extensive experiments across diverse downstream tasks show that \\textsc{XMark} significantly improves decoding accuracy while preserving the quality of watermarked text, outperforming prior methods. The code is at https://github.com/JiiahaoXU/XMark.",
+      "authors": [
+        "Jiahao Xu",
+        "Rui Hu",
+        "Olivera Kotevska",
+        "Zikai Zhang"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.CR"
+      ],
+      "published": "2026-04-06T23:08:01+00:00",
+      "link": "https://arxiv.org/pdf/2604.05242v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Watermarking for LLM-generated text verification",
+      "llm_evidence_cn": "用于大语言模型生成文本验证的水印",
+      "llm_evidence": "用于大语言模型生成文本验证的水印",
+      "canonical_evidence": "用于大语言模型生成文本验证的水印",
+      "llm_tldr_en": "Proposes XMark, a multi-bit watermarking method for reliable attribution and tracing of LLM-generated texts.",
+      "llm_tldr_cn": "提出 XMark，一种用于大语言模型生成文本可靠归因和追踪的多位水印方法。",
+      "llm_tldr": "提出 XMark，一种用于大语言模型生成文本可靠归因和追踪的多位水印方法。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "通过水印验证图像或模型输出的真伪",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.14220v1",
+      "source": "arxiv",
+      "title": "FIND: A Simple yet Effective Baseline for Diffusion-Generated Image Detection",
+      "abstract": "The remarkable realism of images generated by diffusion models poses critical detection challenges. Current methods utilize reconstruction error as a discriminative feature, exploiting the observation that real images exhibit higher reconstruction errors when processed through diffusion models. However, these approaches require costly reconstruction computations and depend on specific diffusion models, making their performance highly model-dependent. We identify a fundamental difference: real images are more difficult to fit with Gaussian distributions compared to synthetic ones. In this paper, we propose Forgery Identification via Noise Disturbance (FIND), a novel method that requires only a simple binary classifier. It eliminates reconstruction by directly targeting the core distributional difference between real and synthetic images. Our key operation is to add Gaussian noise to real images during training and label these noisy versions as synthetic. This step allows the classifier to focus on the statistical patterns that distinguish real from synthetic images. We theoretically prove that the noise-augmented real images resemble diffusion-generated images in their ease of Gaussian fitting. Furthermore, simply by adding noise, they still retain visual similarity to the original images, highlighting the most discriminative distribution-related features. The proposed FIND improves performance by 11.7% on the GenImage benchmark while running 126x faster than existing methods. By removing the need for auxiliary diffusion models and reconstruction, it offers a practical, efficient, and generalizable way to detect diffusion-generated content.",
+      "authors": [
+        "Jie Li",
+        "Yingying Feng",
+        "Chi Xie",
+        "Jie Hu",
+        "Lei Tan",
+        "Jiayi Ji"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-15T04:49:30+00:00",
+      "link": "https://arxiv.org/pdf/2603.14220v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Verification of diffusion-generated image authenticity via noise disturbance",
+      "llm_evidence_cn": "通过噪声干扰验证扩散模型生成图像的真伪",
+      "llm_evidence": "通过噪声干扰验证扩散模型生成图像的真伪",
+      "canonical_evidence": "通过噪声干扰验证扩散模型生成图像的真伪",
+      "llm_tldr_en": "Introduces FIND, a method to detect diffusion-generated images by analyzing Gaussian distribution fitting.",
+      "llm_tldr_cn": "引入FIND方法，通过分析高斯分布拟合情况来检测扩散模型生成的图像。",
+      "llm_tldr": "引入FIND方法，通过分析高斯分布拟合情况来检测扩散模型生成的图像。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "通过水印验证图像或模型输出的真伪",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2603.27708v1",
+      "source": "arxiv",
+      "title": "A Nonlinear Incremental Approach for Replay Attack Detection",
+      "abstract": "Replay attacks comprise replaying previously recorded sensor measurements and injecting malicious signals into a physical plant, causing great damage to cyber-physical systems. Replay attack detection has been widely studied for linear systems, whereas limited research has been reported for nonlinear cases. In this paper, the replay attack is studied in the context of a nonlinear plant controlled by an observer-based output feedback controller. We first analyze replay attack detection using an innovation-based detector and reveal that this detector alone may fail to detect such attacks. Consequently, we turn to a watermark-based design framework to improve the detection. In the proposed framework, the effects of the watermark on attack detection and closed-loop system performance loss are quantified by two indices, which exploit the incremental gains of nonlinear systems. To balance the detection performance and control system performance loss, an explicit optimization problem is formulated. Moreover, to achieve a better balance, we generalize the proposed watermark design framework to co-design the watermark, controller and observer. Numerical simulations are presented to validate the proposed frameworks.",
+      "authors": [
+        "Tao Chen",
+        "Andreu Cecilia",
+        "Lei Wang",
+        "Daniele Astolfi",
+        "Zhitao Liu"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-29T14:17:45+00:00",
+      "link": "https://arxiv.org/pdf/2603.27708v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "watermark-based design for replay attack detection and verification",
+      "llm_evidence_cn": "基于水印的设计用于重放攻击检测与验证",
+      "llm_evidence": "基于水印的设计用于重放攻击检测与验证",
+      "canonical_evidence": "基于水印的设计用于重放攻击检测与验证",
+      "llm_tldr_en": "Proposes a watermark-based framework to detect replay attacks in nonlinear cyber-physical systems.",
+      "llm_tldr_cn": "提出一种基于水印的框架，用于检测非线性信息物理系统中的重放攻击。",
+      "llm_tldr": "提出一种基于水印的框架，用于检测非线性信息物理系统中的重放攻击。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "通过水印验证图像或模型输出的真伪",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.16805v1",
+      "source": "arxiv",
+      "title": "Making Separation-First Multi-Stream Audio Watermarking Feasible via Joint Training",
+      "abstract": "Modern audio is created by mixing stems from different sources, raising the question: can we independently watermark each stem and recover all watermarks after separation? We study a separation-first, multi-stream watermarking framework-embedding distinct information into stems using unique keys but a shared structure, mixing, separating, and decoding from each output. A naive pipeline (robust watermarking + off-the-shelf separation) yields poor bit recovery, showing robustness to generic distortions does not ensure robustness to separation artifacts. To enable this, we jointly train the watermark system and the separator in an end-to-end manner, encouraging the separator to preserve watermark cues while adapting embedding to separation-specific distortions. Experiments on speech+music and vocal+accompaniment mixtures show substantial gains in post-separation recovery while maintaining perceptual quality.",
+      "authors": [
+        "Houmin Sun",
+        "Zi Hu",
+        "Linxi Li",
+        "Yechen Wang",
+        "Liwei Jin",
+        "Ming Li"
+      ],
+      "primary_category": "cs.SD",
+      "categories": [
+        "cs.SD"
+      ],
+      "published": "2026-03-17T17:09:45+00:00",
+      "link": "https://arxiv.org/pdf/2603.16805v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "robust audio watermarking and joint training",
+      "llm_evidence_cn": "鲁棒音频水印与联合训练",
+      "llm_evidence": "鲁棒音频水印与联合训练",
+      "canonical_evidence": "鲁棒音频水印与联合训练",
+      "llm_tldr_en": "Develops a multi-stream audio watermarking framework robust to separation artifacts via joint training.",
+      "llm_tldr_cn": "开发了一种通过联合训练抵御分离伪影的多流音频水印框架。",
+      "llm_tldr": "开发了一种通过联合训练抵御分离伪影的多流音频水印框架。",
+      "llm_tags": [
+        "query:q3"
+      ],
+      "matched_query_tag": "query:q3",
+      "matched_query_text": "用于识别或保护图像内容的数字水印技术",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    }
+  ]
+}

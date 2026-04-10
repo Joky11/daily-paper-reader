@@ -1,0 +1,2106 @@
+Title: A Nonlinear Incremental Approach for Replay Attack Detection
+
+URL Source: https://arxiv.org/pdf/2603.27708v1
+
+Published Time: Tue, 31 Mar 2026 02:40:42 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+> I1
+
+# A Nonlinear Incremental Approach for Replay Attack Detection 
+
+Tao Chen, Andreu Cecilia, Lei Wang*, Daniele Astolfi, Zhitao Liu 
+
+Abstract— Replay attacks comprise replaying previously recorded sensor measurements and injecting malicious signals into a physical plant, causing great damage to cyber-physical systems. Replay attack detection has been widely studied for linear systems, whereas limited research has been reported for nonlinear cases. In this paper, the replay attack is studied in the context of a nonlinear plant controlled by an observer-based output feedback controller. We first analyze replay attack detection using an innovation-based detector and reveal that this detector alone may fail to detect such attacks. Conse-quently, we turn to a watermark-based design framework to improve the detection. In the proposed framework, the effects of the watermark on attack detection and closed-loop system performance loss are quantified by two indices, which exploit the incremental gains of nonlinear systems. To balance the detection performance and control system performance loss, an explicit optimization problem is formulated. Moreover, to achieve a better balance, we generalize the proposed watermark design framework to co-design the watermark, controller and observer. Numerical simulations are presented to validate the proposed frameworks. Index Terms— Cyber-physical systems, nonlinear systems, replay attack detection, incremental gains. 
+
+I. I NTRODUCTION 
+
+Cyber-physical systems (CPSs) seamlessly integrate computational algorithms with physical components [1]. Such integrations rely on (wireless) communication net-works, raising security risks. To analyze and improve the resilience of CPSs to security risks, multiple types of attacks are studied in the literature, e.g., false data injection attack [2], [3], replay attack [4], [5], deny-of-service attack [6], [7], eavesdropping attack [8], etc. Among them, the replay attack has received significant attention due to its simplicity, stealthiness and model-free nature. For attack detection, one commonly used detector is the χ2 detector [9], [10], which is innovation-based, that is, it relies on the discrepancy between the predicted and received sensor outputs. However, as demonstrated in [4], [11], an innovation-based detector may fail to detect replay attacks in the sense that, under some stability conditions, its detection rate converges to the false alarm rate. To address this issue, lots of mechanisms have been proposed 
+
+Tao Chen, Lei Wang and Zhitao Liu are with the College of Control Science and Engineering, Zhejiang University, P.R. China (e-mail: tao_chen; lei.wangzju; ztliu@zju.edu.cn). Andreu Cecilia is with the Universitat Politécnica de Catalunya, Avinguda Diagonal, 647, 08028 Barcelona, Spain. (e-mail: andreu.cecilia@upc.edu).Daniele Astolfi is with the Univ. Lyon, Université Claude Bernard Lyon 1, CNRS, LAGEPP UMR 5007, F-69100 Villeurbanne, France (e-mail: daniele.astolfi@univ-lyon1.fr). Corresponding author: Lei Wang 
+
+in the literature, which can be broadly classified into two categories. The first involves “encoding-decoding” the sensor measurement to be replayed. Specifically, these methods use a random pair (e.g., two identical random numbers) to encode the sensor measurements to be trans-mitted and then decode it at the receiver’s side [12]– [14]. Under a replay attack, the detection is facilitated by the mismatch of the random pair. However, to achieve synchronization of the random pair, prior information available to both sides [12], [13] or an extra communication channel [14] is required, which reduces the applicability and the inherent robustness against adversaries [15]. An alternative to detect a replay attack is to add a “watermark” [4] to the control input and stimulating the physical plant. Under a replay attack, the incoherence between the expected stimulation and the actual sen-sor measurements facilitates the replay attack detection. Nonetheless, since the watermark is essentially a distur-bance directly acting on the physical plant, it inevitably affects the control system performance. Therefore, both detection performance and control system performance loss are considered when designing a watermark. In [4], the detection performance is evaluated by the difference between the healthy innovation covariance and the attacked one, while the system performance loss is evaluated by the watermark-induced extra linear-quadratic-Gaussian (LQG) cost. Then, based on these evaluations, an optimization problem is constructed in [11] to balance these two factors. Motivated by these results, various strategies have been reported to further reduce the control system performance loss or, equivalently, to enhance detection performance with the same amount of watermarking. For example, [16] proposes a periodic watermarking scheduling approach. In [17], a parsimo-nious policy is proposed to limit the average number of watermarking events. In [18], an event-based physical watermark is designed, where the probability of adding the watermark is determined by the innovation. In [19], sensitive states are considered, and additional constraints are developed to strictly limit the effect of the watermark on these states. Moreover, numerous watermark design methods have been developed to achieve specific objectives in replay attack detection, e.g., minimizing the average detection delay [17], making the watermark unpredictable [20], extending the watermark for industrial process op-eration optimization of cyber-physical systems [21], and automatically learning and recognizing replay attacks [22].  
+
+> arXiv:2603.27708v1 [eess.SY] 29 Mar 2026 2I
+
+To sum up, watermark approaches have been widely used to enhance χ2 detectors. Moreover, the detection performance and the control system performance loss have been well quantified and balanced. However, all of these studies have been conducted in the context of linear systems, and it is not straightforward to extend these methods to nonlinear cases. For example, in [4], [16], [18]–[20], the detection performance is evaluated by the difference between the attacked and the healthy innovation covariance, which can be explicitly computed for linear cases, but is significantly more complex in nonlinear scenarios. In view of the above discussion, in this work, we study the replay attack detection problem for nonlinear systems. Specifically, we first analyze the detection performance with an innovation-based detector and show that, by itself, it may fail to detect such attacks. We therefore adopt a watermark-based design framework. To evaluate the detection performance and control system performance loss, we employ incremental gain-based methods, which are broadly applicable in nonlinear scenarios. Further-more, incremental gains allow us to bound the output (or state) of a system without requiring explicit calculation of variable distributions and independently of the sys-tem’s equilibrium point. With these evaluations, sufficient conditions for specific detection performance and control system performance loss can be rigorously established and exploited, which support the watermark design. The main contributions are summarized as follows.  
+
+> •
+
+A new watermark design framework for nonlinear systems replay attack detection is proposed, where the detection performance and the control system performance loss caused by the watermark are evalu-ated by some indices that are induced by incremental gains.  
+
+> •
+
+Sufficient conditions for specific detection perfor-mance and control system performance loss are estab-lished, thereby enabling the construction of a solvable optimization problem for the watermark design.  
+
+> •
+
+A systematic approach based on LMIs for co-designing the watermark, the controller and the observer is further developed to achieve a better tradeoff between the detection performance and the control performance loss.  
+
+> •
+
+For detection performance evaluation, a lower bound between the input difference and the output difference for nonlinear systems is required. However, this index, referred to as the incremental L− 
+
+> 2
+
+gain and denoted as L−
+
+> δ2
+
+, has not been well developed in the literature. Extending the L− 
+
+> 2
+
+gain to L− 
+
+> δ2
+
+and developing its corresponding Lyapunov (Proposition 2) and LMI (Lemma 2) characterizations are two contributions of the work.  
+
+> •
+
+The connection between detection performance and 
+
+L− 
+
+> δ2
+
+gain is not straightforward. Establishing a clear link between the detector and the L− 
+
+> δ2
+
+gain for effec-tive performance evaluation is another contribution. Notation. We denote by N the set of natural numbers, Rn
+
+the set of real numbers of dimension n ∈ N, R≥0 the set of non-negative reals, R>0 the set of positive reals. For a vector x ∈ Rn, ∥x∥ denotes the Euclidean norm and 
+
+∥x∥Λ := √x⊤Λx for Λ ∈ Rn×n. For random vector x, x ∼N (μ, Σ) denotes that x follows a Gaussian distribution with mean μ and covariance Σ. For column vectors x ∈ Rm
+
+and y ∈ Rn, col (x, y ) := [ x⊤, y ⊤]⊤. For matrix A ∈ Rn×n,
+
+λmax (A) denotes the largest eigenvalue of A (λmin (·) for the minimum). For matrices A ∈ Rm×m and B ∈ Rn×n,diag (A, B ) denotes a matrix with A and B in the main diagonal and 0 everywhere else. In denotes identity matrix of dimension n × n. For real-valued Lebesgue integrable functions f : R≥t0 → Rn, ∥f ∥L2 := ∫ ∞ 
+
+> t0
+
+∥f (t)∥2dt for some 
+
+t0 ∈ R≥0. Given a function u : R≥0 → Rm, we define 
+
+∥u(·)∥∞ = sup t∈[0 ,∞)∥u(t)∥. Given a signal u : R[0 ,∞) →
+
+Rm and a scalar τ ∈ [0 , ∞), we denote by (u(t)) τ the τ -truncation of u(t) defined as (u(t)) τ = u(t) for all t ∈ [0 , τ ]
+
+and (u(t)) τ = 0 , for all t > τ . A mapping f : Rp → Rq is 
+
+Cn if it is n-times continuously differentiable. In addition, a continuous function α : R≥0 → R≥0 is of class K, if it is strictly increasing and α(0) = 0 . A continuous function 
+
+β : R≥0 ×R≥0 → R≥0 is of class KL if, for each fixed s ≥ 0,the function β(·, s ) is of class K and, for each fixed r > 0,
+
+β(r, s ) is strictly decreasing and lim r→∞ β(r, s ) → 0.
+
+II. P RELIMINARIES ON INCREMENTAL GAIN PROPERTIES 
+
+Consider a system of the form 
+
+˙x = f (x) + Bu, y = Cx + Du (1) where f : Rn → Rn is a (locally) Lipschitz function satisfying f (0) = 0 , x ∈ Rn is the state, u : [0 , ∞) → Rm
+
+is a measurable and locally essentially bounded function taking values on a set of U ⊂ Rm containing the origin, and 
+
+y ∈ Rp the output. Furthermore, we denote by X(t, x 0, u )
+
+the unique solution of system (1) at time t, with initial state x0 ∈ Rn and input u(t) ∈ U . Similarly, we denote by 
+
+Y (t, x 0, u ) = CX (t, x 0, u ) + Du (t) its output trajectory. For system (1), we provide the definitions of input-to-state stable [23], denoted as ISS, and incremental input-to-state stable [24], denoted as δISS. Definition 1 (ISS). System (1) is said to be input-to-state stable (ISS) if there exist α ∈ K and β ∈ KL such that the following holds for all t ≥ 0
+
+∥X(t, x 0, u )∥ ≤ β(∥x0∥, t ) + α(∥u(·)∥∞) (2) for any x0 ∈ Rn and u(t) ∈ U .Definition 2 ( δISS). System (1) is said to be incrementally input-to-state stable if there exist α ∈ K and β ∈ KL such that the following holds for all t ≥ 0
+
+∥X(t, x 1, u 1) − X(t, x 2, u 2)∥ ≤ β(∥x1 − x2|, t )+ α(∥u1(·) − u2(·)∥∞)
+
+for any x1, x 2 ∈ Rn and 
+
+u1(t), u 2(t) ∈ U .A NONLINEAR INCREMENTAL APPROACH FOR REPLAY ATTACK DETECTION 3
+
+Next, based on [25], [26], we define the incremental L+2
+
+gain, denoted as L+
+
+> δ2
+
+.Definition 3 ( L+ 
+
+> δ2
+
+gain). The L+ 
+
+> δ2
+
+gain of system (1) is defined as L+ 
+
+> δ2
+
+:= inf γ+, if there exist γ+ < ∞ and α+ ∈K such that for all t ≥ 0 and τ ≥ 0,
+
+∥(( Y (t, x 1, u 1) − Y (t, x 2, u 2)) τ ∥L2 ≤
+
+γ+∥(u1(t) − u2(t)) τ ∥L2 + α+(∥x1 − x2∥) (3) holds for any x1, x 2 ∈ Rn and u1(t), u 2(t) ∈ U .In the following, we also use [L+
+
+> δ2
+
+]uy to indicate the input and output with respect to which the L+ 
+
+> δ2
+
+gain is defined. With the definition of L+
+
+> δ2
+
+, an upper bound on the 
+
+L+2 norm of the error between two different output trajectories of system (1) can be effectively estimated. Correspondingly, to get a lower bound, we turn to the 
+
+L− 
+
+> δ2
+
+gain, which is an incremental version of the L− 
+
+> 2
+
+gain [27]. The formal definition of the L− 
+
+> δ2
+
+gain is provided below. Definition 4 ( L− 
+
+> δ2
+
+gain). The L− 
+
+> δ2
+
+gain of system (1) is defined as L− 
+
+> δ2
+
+:= sup γ−, if there exist γ− > 0 and α− ∈ K 
+
+such that for all t ≥ 0 and τ ≥ 0,
+
+∥(( Y (t, x 1, u 1) − Y (t, x 2, u 2)) τ ∥L2 ≥
+
+γ−∥(u1(t) − u2(t)) τ ∥L2 − α−(∥x1 − x2∥) (4) holds for any x1, x 2 ∈ Rn and u1(t), u 2(t) ∈ U .Remark 1. Note that for system (1) δISS implies an L+
+
+> δ2
+
+gain because the output is linear (this may be not hold for generic nonlinear functions). However, the converse is true only under additional (differential) detectability conditions. Remark 2. Incremental properties, such as those consid-ered in this section, relate the state and output differences between any pair of the system’s trajectories with distinct initial states and inputs. As extensively studied in the literature (e.g. [24], [28]) one has the implications δISS ⇒ ISS and L+ 
+
+> δ2
+
+gain ⇒ L 2
+
+gain, while the converse generically does not hold true. In view of the previous definitions, we now provide two Lyapunov characterizations of the L+ 
+
+> δ2
+
+and L− 
+
+> δ2
+
+gains. The proof of the former can be found in [26, Appendix B.1], while the proof of the latter is postponed to Appendix A. Concerning the Lyapunov characterization of δISS we refer to [24]. Proposition 1 (Lyapunov L+ 
+
+> δ2
+
+characterization). Suppose there exist a C1 function V + : Rn × Rn × R → R≥0 ,functions α+, α + ∈ K ∞ and γ+ > 0 such that 
+
+α+(∥x1 − x2∥) ≤ V +(x1, x 2, t ) ≤ α+(∥x1 − x2∥) (5) 
+
+∂V +
+
+∂t (x1, x 2, t )+ ∂V +
+
+∂x 1
+
+(f (x1)+ Bu 1)+ ∂V +
+
+∂x 2
+
+(f (x2)+ Bu 2)
+
+≤ γ+∥u1 − u2∥2 − ∥ y1 − y2∥2 (6) for all t ≥ 0, x1, x 2 ∈ Rn, and u1, u 2 ∈ U . Then the L+
+
+> δ2
+
+gain of system (1) satisfies [L+
+
+> δ2
+
+]uy ≤ γ+.Proposition 2 (Lyapunov L− 
+
+> δ2
+
+characterization). Suppose there exist a C1 function V − : Rn × Rn × R → R≥0,functions α−, α − ∈ K ∞ and γ− > 0 such that 
+
+α−(∥x1 − x2∥) ≤ V −(x1, x 2, t ) ≤ α−(∥x1 − x2∥) (7) 
+
+∂V −
+
+∂t (x1, x 2, t )+ ∂V −
+
+∂x 1
+
+(f (x1)+ Bu 1)+ ∂V −
+
+∂x 2
+
+(f (x2)+ Bu 2)
+
+≤ − γ−∥u1 − u2∥2 + ∥y1 − y2∥2 (8) for all t ≥ 0, x1, x 2 ∈ Rn, and u1, u 2 ∈ U . Then the L−
+
+> δ2
+
+gain of system (1) satisfies [L−
+
+> δ2
+
+]uy ≥ γ−.Finally, for systems of form (1), if we assume that 
+
+f : Rn → Rn is C1, we can provide matrix inequality characterizations of the previous incremental gains, which will be useful in the subsequent development of a compu-tationally viable design methodology. A matrix inequality characterization for the [L+
+
+> δ2
+
+]uy gain follows from [26, Corollary 14], and is recalled in the next Lemma. For convenience, define Ax := ∂f ∂x (x).Lemma 1. Suppose there exist a symmetric positive definite matrix P ∈ Rn×n and γ+ ≥ 0 satisfying 
+
+[A⊤ 
+
+> x
+
+P +P A x +C⊤C P B +C⊤D⋆ D⊤D−γ+Im
+
+]
+
+⪯ 0, (9) for all x ∈ Rn. Then, V +(x1, x 2) = ( x1 − x2)⊤P (x1 − x2)
+
+satisfies (5), (6) and system (1) has an incremental L+
+
+> δ2
+
+gain [L+
+
+> δ2
+
+]uy ≤ γ+.Motivated by the previous result, we propose a similar characterization for the [L−
+
+> δ2
+
+]uy gain in the next Lemma. Lemma 2. Suppose there exist a symmetric negative definite matrix Q ∈ Rn×n and γ− ≥ 0 satisfying 
+
+[A⊤ 
+
+> x
+
+Q+QA x +C⊤C QB +C⊤D⋆ D⊤D−γ−Im
+
+]
+
+⪰ 0 (10) for all x ∈ Rn. Then, V −(x1, x 2) = −(x1 −x2)⊤Q(x1 −x2)
+
+satisfies (7), (8) and system (1) has an incremental L−
+
+> δ2
+
+gain [L−
+
+> δ2
+
+]uy ≥ γ−.The proof of Lemma 2 is postponed to Appendix B. Remark 3. From (10), it is evident that if D = 0 , then γ−
+
+is always 0. To obtain a positive γ−, the relative degree of system (1) between u and y must be 0. For systems whose relative degree is greater than 0, one can reduce its relative degree to 0 by redefining a new output to include an auxiliary direct channel [27]. 
+
+III. P ROBLEM FORMULATION 
+
+A. System Description Consider continuous-time nonlinear plants of the form 
+
+Σnp :
+
+{ ˙x = f (x) + Bu + ωy = Cx + Du + ν, (11) 4 I
+
+where x ∈ Rn is the plant state, u ∈ Rm is the input signal, y ∈ Rp is the sensor measurement, and ω ∈ Rn
+
+and ν ∈ Rp are the system and sensor measurement noise, respectively, which are assumed to be Lebesgue integrable and bounded as ∥ω∥∞ ≤ ω and ∥ν∥∞ ≤ ν with ω > 0 and 
+
+ν > 0. Finally, f : Rn → Rn is C1.Furthermore, we denote by X(t, x 0, u, ω ) the unique solution of system (11) at time t, with initial states x0 ∈
+
+Rn and subject to the input u and noise ω. Similarly, we denote by Y (t, x 0, u, ω, ν ) = CX (t, x 0, u, ω ) + Du (t) + ν(t)
+
+its output trajectory. For convenience, we omit the noise signal ω and ν and use notations X(t, x 0, u ) and Y (t, x 0, u )
+
+in the following. For output feedback control purpose, we assume that a Luenberger-type observer [29], [30] and a state feedback controller are deployed, taking the form of 
+
+Σo :
+
+{ ˙ˆx = f (ˆ x) + Bu + L(y − ˆy)ˆy = C ˆx + Du, (12) and 
+
+Σc : u = κ(ˆ x) + v (13) respectively, where ˆx ∈ Rn and ˆy ∈ Rp are the estimated state and output, respectively, L ∈ Rn×p is the gain of observer, κ : Rn → Rm is a Lipschitz feedback map, that is, there exists a constant lκ > 0 such that 
+
+∥κ(x1) − κ(x2)∥ ≤ lκ∥x1 − x2∥, (14) for all x1, x 2 ∈ Rn, and v denotes a residual control signal to be addressed later. We denote by ̂ X(t, ˆx0, v, y ) and ̂
+
+Y (t, ˆx0, v, y ) = Ĉ X(t, ˆx0, v, y ) + Du the solution and the output trajectory of the observer (12), respectively. Define ˜x := x − ˆx as the observation error, whose dynamics are given as follows 
+
+˙˜x = f (x) − f (x − ˜x) + L˜y + ω, 
+
+˜y = C ˜x + ν (15) where u = κ(x − ˜x) + v. We denote by ˜X(t, x0, v, y ) = 
+
+X(t, x 0, u ) −̂ X(t, ˆx0, v, y ) the solution and ˜Y (t, x0, v, y ) = 
+
+Y (t, x 0, u ) −̂ Y (t, ˆx0, v, y ) the output trajectory of (15), respectively, where x 0 := col (x0, ˆx0).In addition, with the controller (13), the physical plant (11) evolves as follows 
+
+˙x = f (x) + B(κ(x − ˜x) + v) + ω. (16) Then, we assume that the error dynamic system (15) and the controlled plant (16) and satisfy input-to-state stability (ISS) property [24], [31]. That is, Assumption 1. The error dynamic system (15) is ISS w.r.t. inputs ν and ω (see Definition 1) uniformly on x, and the controlled plant (16) is δISS w.r.t. inputs ˜x, v, ω (see Definition 2). Designing controllers and observers to achieve Assump-tion 1 has been well studied, see for instance [32], and a methodology can be found in Lemma 3. Remark 4. We analyze the nonlinear system of the form (11) and assume a linear output, as both choices are necessary to develop computationally tractable conditions. While parts of this theory might extend to more gen-eral (e.g., non-smooth) systems or those with nonlinear outputs, these generalizations would likely prevent the tractable LMI characterizations for L− 
+
+> δ2
+
+and L+ 
+
+> δ2
+
+gains presented in Lemmas 1 and 2. For instance, a nonlinear output would likely require state-dependent matrices P (x)
+
+and Q(x), rendering the conditions intractable. B. Communication Topology and Replay Attack In practice, for remote control purpose, the controller and observer may be deployed in a remote control center. In this case, as shown in Fig. 1, the sensor measurement y
+
+and the control signal u are transmitted through networks, making them susceptible to attacks. Controller Observer Plant yyu ˆx  
+
+> Network Network Attacker
+> yaua
+> Plant layer Control layer Network layer
+> Control center
+> Fig. 1. Scheme of the communication topology.
+
+In this paper, we suppose that the network suffers from a replay attack, and is free from delays and noise for simplicity. The following resources are supposed to be available to the adversary: (i) The adversary can monitor and record the sensor measurement y for all time t.(ii) The adversary can arbitrarily modify the transmitted signals u and y to ua and ya, respectively. With the above resources, the replay attack strategy is given as follows. 1) (Record) From time 0 to time T , the adversary records a sequence of sensor measurements y.2) (Replay) From time T to time 2T , the adversary replays the recorded sensor measurements to tamper the true sensor outputs, i.e., 
+
+ya(t) = Y (t − T, x 0, u ), T ≤ t < 2T. (17) 3) (Contamination) During replay, the adversary con-taminates the nominal control signal with a series of malicious control sequences ua to damage the plant. Remark 5. From the attacker’s perspective, one of the main benefits of replay attacks is their simplicity and the possibility of executing them without any system knowledge. For this reason, we assume that the attacker A NONLINEAR INCREMENTAL APPROACH FOR REPLAY ATTACK DETECTION 5
+
+has no system knowledge, in particular no knowledge of the watermarking signal. Before presenting the main detection mechanism of this work, we state the last assumption. We assume that the replay attack occurs when the system, and in particular its observer, has already reached a steady state. Otherwise the replayed signal will not be consistent with the model and can be easily detected. Assumption 2. The observer (12) has already reached its steady state at time instant 0. That is, we have 
+
+∥ ˜X(t, x0, v, y )∥ ≤ αω (∥ω(s)∥∞) + αν (∥ν(s)∥∞),
+
+for all t ≥ 0, where αω , α ν ∈ K .In this paper, we focus on the replay attack detection problem for nonlinear systems described by plant (11), observer (12) and controller (13). For linear systems, it has been shown that the innovation-based detector is not sufficient for replay attack detection under some stability conditions (see [4], [11]), and thus the watermark-based detection is employed [4], [11], [16]–[22]. Motivated by these works, we consider the following two problems. P1) For nonlinear systems (11), (12) and (13), is the innovation-based detector sufficient for replay attack detection? P2) If the innovation-based detector is not sufficient, how can we develop a systematic watermark-based replay detection method for nonlinear systems? 
+
+IV. I NNOVATION -BASED REPLAY ATTACK DETECTION 
+
+In this section, we aim to answer the P1) by revealing conditions under which the innovation-based detector may fail to detect the replay attack. Specifically, the detector is assumed to have access to the sensor measurement y
+
+(or ya if under attack) and its estimation ˆy, taking the form of 
+
+Σd : ψ =
+
+{Attack , g(t) > ϑ 
+
+No Attack , g(t) ≤ ϑg(t) := 1
+
+σ
+
+∫ tt−σ
+
+∥ ˜Y (s, x0, v, y )∥2ds 
+
+(18) where g(t) is referred to as the monitoring signal of the detector, ˜Y (s, x0, v, y ) is the innovation trajectory given by (15), and σ ∈ R>0 is the window size. In the following, we say that the detector is triggered if ψ = Attack. Remark 6. The detector (18) is a modification of the well-known χ2 detector [9], [10], which is widely used in CPSs and takes the form 
+
+Σχ : ψχ =
+
+{Attack , gχ(t) > ϑ χ
+
+No Attack , gχ(t) ≤ ϑχ
+
+gχ(t) = 1
+
+σ
+
+∫ tt−σ
+
+∥ ˜Y (s, x0, v, y )∥2 
+
+> P−1
+
+ds 
+
+(19) where P is the variance of the innovation for normalization and ϑχ > 0 is the threshold. For nonlinear systems, the innovation variance is generally nontrivial to compute, and thus we omit the normalization in (19) and employ (18). Under the replay attack, at time t ∈ [T, 2T ), the observer evolves as follows, 
+
+˙ˆx = f (ˆ x) + B(κ(ˆ x) + v) − L[C ˆx + D(κ(ˆ x) + v)] + Ly a
+
+ˆy = C ˆx + D(κ(ˆ x) + v)
+
+(20) where ya is the replayed data given in (17). We denote by ̂ X(t, ˆxT , v, y a) and ̂ Y (t, ˆxT , v, y a) := Ĉ X(t, ˆxT , v, y a) + 
+
+D(κ(̂ X(t, ˆxT , v, y a)) + v) the solution and output trajec-tory of observer (20) with initial state xT ∈ Rn and subject to the replay attack ya. In addition, the innovation trajectory under attack is denoted as ˜Y (t, x0, v, y a) := 
+
+Y (t − T, x 0, u ) −̂ Y (t, ˆxT , v, y a), with x 0 := col (x0, ˆxT ).Then, the following proposition summarizes a scenario where the detector may fail to detect the replay attack. Proposition 3. Consider the system (11) with observer (12), controller (13) with v(t) = 0 , ∀t ∈ R≥0, detector (18) and suppose that Assumption 1 holds. Then, if σ ≤ T
+
+and (20) is δISS with input ya and state ˆx, there exists a 
+
+KL function β such that 
+
+g(t) ≤ 1
+
+σ
+
+∫ Tt−σ
+
+∥ ˜Y (s, x0, v, y )∥2ds + 1
+
+σ
+
+∫ tT
+
+∥ ˜Y (s−T, x0, v, y )∥2ds 
+
++ β(∥ˆx(T ) − ˆx(0) ∥, t ), t ∈ [T, T + σ),g(t) ≤ 1
+
+σ
+
+∫ tt−σ
+
+∥ ˜Y (s − T, x0, v, y )∥2ds +β(∥ˆx(T ) − ˆx(0) ∥, t ),t ∈ [T + σ, 2T ).
+
+(21) The proof is postponed to Appendix C. Proposition 3 shows that, if v(t) = 0 , ∀t ∈ R≥0 and (20) is δISS, the detector (18) is insufficient for reliably detecting replay attacks. Specifically, because all of the innovation terms ˜Y (t, x0, v, y ) in (21) are integrated over 
+
+t ∈ [0 , T ) and the replay occurs since time instant T ,the monitoring signal g(t) under attack will converge to some values bounded as in the No Attack scenario. As a result, the detector may be triggered only immediately after the replay occurs, and it fails to raise any alarm as time tends to infinity. Furthermore, a skilled adversary can potentially avoid even this initial trigger, as demonstrated in the following example. Example 1. For systems whose steady state is periodic/quasi-periodic and whose estimator satisfies the 
+
+δISS property given in Proposition 3, the adversary could wait until the initial portion of the recorded signal closely matches the current measurements before starting replay. In this case, ˆx(T ) is close to ˆx(0) , making the term 
+
+β(∥ˆx(T ) − ˆx(0) ∥, t ) sufficiently small so that the resulting monitoring signal is indistinguishable (considering sensor noise) from nominal measurements. We highlight that Proposition 3 motivates a detection mechanism for replay attacks. Indeed, the replay attack 6 I
+
+can be detected if (20) satisfies 
+
+lim  
+
+> t→∞
+
+∥̂X(t, ˆxT , 0, y a) −̂ X(t − T, ˆx0, 0, y )∥ = ∞. (22) Then, it is obvious that during a replay attack the signal g(t) will grow until the detector is triggered. A similar strategy has been explored for instance in [11] for linear systems. However, two issues should be addressed when imposing (22). First, it opens the possibility of compromising the stability of the whole system by merely replaying the sensor measurements. Second, designing feedback gains K and L that enable the system to satisfy Assumption 1 and (22) simultaneously is usually nontrivial in nonlinear cases. In view of the previous analysis, we turn to a watermark-based approach, providing a positive answer to the P2). 
+
+V. W ATERMARK -BASED REPLAY ATTACK DETECTION 
+
+The watermarking signal is introduced through the term 
+
+v in controller (13). As shown in Fig. 2, it is an additional signal added to the feedback control signal, without requiring a redesign of the controller, observer or detector. In this section, we use the incremental gains introduced in Section II to evaluate the detection performance and the control system performance loss. Then, a systematic watermark design approach is proposed based on this evaluation framework. For convenience, the watermark signal is separated into two parts, i.e., 
+
+v = Gξ (t), (23) where G ∈ Rm×m is the weight (gain) matrix to be designed and ξ(t) is a Lebesgue integrable watermark signal satisfying 
+
+1
+
+t
+
+∫ t0+tt0
+
+∥ξ(s)∥2ds ≤ 1, ∀t > t 0. (24) Denote Uξ the set of ξ that satisfying (24). With the watermark given in (23), the attacked observer (20) becomes 
+
+˙ˆx = f (ˆ x) + B(κ(ˆ x) + Gξ ) − L[C ˆx+D(κ(ˆ x) + Gξ )]+ Ly a
+
+ˆy = C ˆx + D(κ(ˆ x) + Gξ ).
+
+(25) Remark 7. Watermark design is well studied for linear systems, but it is not straightforward to extend these methods to the nonlinear case. For linear systems, one of the most widely used watermarks is independent and identically distributed (i.i.d.) Gaussian noise [4], [16], [18]– [20], i.e., v ∼ N (0 , Σ) . With v, the covariance of the inno-vation under a replay attack differs from the healthy case, and this difference can be calculated precisely to evaluate the detection performance. In addition, the performance loss caused by the watermark can also be calculated precisely by extra watermark-induced LQG performance loss. However, when the plant is nonlinear, the exact evaluation of these two factors is much more complex. Therefore, appropriate indices and, correspondingly, a new framework are required, which motivates the present work. Controller Observer Plant     
+
+> yyuˆx
+> Network Network Attacker Watermark Generator
+> ya
+> Detector
+> ua
+> rvSecure layer Plant layer Control layer Network layer
+> Control center
+> Fig. 2. Scheme of the communication topology and security layer.
+
+A. Replay Attack Detection Performance An ideal detection mechanism will never trigger an alarm in the absence of an attack (no false positives) and must trigger an alarm under the replay attack (no false negatives). Under Assumption 1, the ISS property of the error dynamics holds independent of the inputs. Therefore, in the absence of an attack, even if the watermarking signal changes the statistics of the innovation, the upper bound on the estimation error, and hence the upper bound on 
+
+g(t), remains unchanged. In addition, under the replay attack, the difference between the current and historical watermark employed by the estimator guarantees a lower bound on g(t), thus ensuring attack detection. Hence, to quantify the detection performance of the system, the following theorem presents the upper bound on g(t) in the absence of an attack and the lower bound on g(t)
+
+under the replay attack. Additionally, this result can be used to design the threshold ϑ in the detector (18), to avoid false positives induced by the noise. Theorem 1. Consider system (11) with observer (12), controller (13), detector (18) and let Assumptions 1 and 2 hold. In addition, suppose that system (25) has an [L−
+
+> δ2
+
+]ξ
+
+> ˆy
+
+gain as defined in Definition 4. Then, in the absence of replay attack, for all t ≥ 0,
+
+g(t) ≤
+
+[
+
+∥C∥(αω (ω) + αν (ν)) + ν
+
+]2
+
+=: gn, (26) where ω and ν are the upper bounds of ∥ω∥∞ and ∥ν∥∞,respectively, αω and αν are given in Assumption 2. In the presence of a replay attack launched at T , for all 
+
+t ∈ [T, 2T ),
+
+g(t) ≥ [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+− εσ
+
+∫ t
+
+> Θ
+
+∥ξ(s) − ξ(s − T )∥2ds 
+
+− α− 
+
+> a
+
+(∥ˆx(Θ) − ˆx(Θ − T )∥)
+
+σ − gn =: ga(t),
+
+(27) where ε > 0 is an arbitrarily small constant, Θ = T if 
+
+T ≤ t < T + σ and Θ = t − σ if t ∈ [T + σ, 2T ).The proof is postponed to Appendix D. A NONLINEAR INCREMENTAL APPROACH FOR REPLAY ATTACK DETECTION 7
+
+With Proposition 1, we obtain the following corollary. Corollary 1. Under the conditions in Theorem 1, the detector will have no false positive alarms for t ≥ 0 and no false negative alarms for t ∈ [T, 2T ) if 
+
+gn < g a(t), ∀t ∈ [T, 2T ) (28) and the threshold ϑ is chosen such that 
+
+gn ≤ ϑ < g a(t), ∀t ∈ [T, 2T ). (29) Remark 8. Under the replay attack, the sensor mea-surements are substituted by the previously recorded healthy data, so any modifications to the control input introduced by the attacker are not reflected in the sensor measurements received by the control center. Hence, the attack input signal does not appear in either the detection mechanism or the detection performance analysis. Remark 9. The term −(1 /σ )α− 
+
+> a
+
+(∥ˆx(Θ) − ˆx(Θ − T )∥) in (27) is negative because, in the worst case, the initial state difference, i.e. ˆx(Θ) − ˆx(Θ −T ), may cancel out the effect of the watermark signal on the detector’s output. However, in most cases, this term will be small over t ∈ [T, T + σ),because in this period ˆx(Θ) − ˆx(Θ − T ) = ˆ x(T ) − ˆx(0) ,which is typically chosen to be small by the adversary to avoid triggering the detector immediately, as analyzed in Section IV. B. Control System Performance Loss Since the watermark is essentially a disturbance act-ing on the physical plant, it inevitably degrades the performance of the closed-loop control system. In this subsection, this degradation is evaluated by comparing the output difference of the physical plant with and without the watermark. With the watermark, by (11)-(13), the observer and nonlinear plant evolve as 
+
+˙ˆx = f (ˆ x) + B(κ(ˆ x) + Gξ ) + L(Cx − C ˆx + ν)˙x = f (x) + B(κ(ˆ x) + Gξ ) + ωy = Cx + D(κ(ˆ x) + Gξ ) + ν. 
+
+(30) By Assumption 1, the effect of the watermark on the trajectories of the closed-loop system is bounded. In this subsection, we provide a bound on the degradation via an 
+
+L+ 
+
+> δ2
+
+gain, to quantify how different the system response becomes once the watermark is implemented. Theorem 2. Suppose that system (30) has an [L+
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+gain as defined in Definition 3. Then for any given time instant 
+
+τ > 0, the following bound holds 
+
+∥(Y (t, x ¯t0 , ξ ) − Y (t, x ¯t0 , 0) τ ∥L2 ≤ ([ L+
+
+> δ2
+
+]ξy + ε′)( τ − t0),
+
+(31) where ε′ > 0 is an arbitrary small constant. The proof of Theorem 2 can be obtained by comparing (30) with and without the watermark, along with the fact that ξ(t) is Lebesgue-integrable and satisfies (24). To simplify the analysis and the design procedure, for the rest of the paper, we will not consider the effect of the estimation error ˜x when computing the control system performance loss, i.e., instead of using (30), the following approximated system is adopted 
+
+˙x′ = f (x′) + B(κ(x′) + Gξ ) + ωy′ = Cx ′ + D(κ(x′) + Gξ ) + ν. (32) Since the estimation error is ISS by means of Assumption 1 independently on the watermarking signal, this simplifi-cation is reasonable if lκ is relatively small. C. Two Examples of Watermark Signal ξ(t)
+
+This subsection gives two examples for the design of the watermark signal ξ(t), and the watermark gain G will be optimized in the next subsection. The watermarking signal must satisfy the Lebesgue integrability of ξ(t) and (24) in order to ensure that the system performance loss is bounded as (31). In addition, to achieve (28), a relatively large ∫ t 
+
+> Θ
+
+∥ξ(s) − ξ(s − T )∥2ds 
+
+is required. Therefore, for some s ∈ [Θ , t ], we need that 
+
+ξ(s)̸ = ξ(s − T ), implying that ξ(t) cannot be a periodic signal. We highlight that quasi-periodic signals may also be undesired as ∫ t 
+
+> Θ
+
+∥ξ(s) − ξ(s − T )∥2ds is small if ξ(s) is close to ξ(s − T ) for all s ∈ [Θ , t ].Following the above analysis, we give two desirable examples of ξ(t). 
+
+> 1) Chaotic Watermark:
+
+Chaotic systems are determinis-tic systems, but appear random and non-periodic [33]. The chaotic signal ξ(t) can be generated by a chaotic system of the following form { ˙θ = Aθ + ϕ(θ)
+
+ξ = Λ θ (33) where θ ∈ Θ ⊂ Rnξ with Θ a compact set, ξ ∈ U ξ ⊂
+
+Rm, ϕ : Rnξ → Rnξ is a nonlinear vector field. Since 
+
+ξ(t) is continuous, it is Lebesgue integrable and (24) can be achieved by adjusting the output matrix Λ. In addition, since the chaotic signal is non-periodic, it is clear ∫ t 
+
+> Θ
+
+∥ξ(s) − ξ(s − T )∥2ds > 0 for all t > Θ. Moreover, even if ξ(T ) is close to ξ(t − T ), ξ(t) and ξ(t − T ) may deviate from each other exponentially [34, Chapter 26].   
+
+> 2) Bernoulli Watermark:
+
+The watermark can also be generated by stochastic systems. Here we consider a simple watermark generated by Bernoulli distribution. For i = 1 , 2, .., m , let the watermark be, for t ∈ [ti, t i +
+
+δt),
+
+ξi(t) = 
+
+
+
+1
+
+√m , ϱ(ti) = 1 ,
+
+− 1
+
+√m , ϱ(ti) = 0 
+
+(34) where {ϱ(ti)} is a series of random variables and each of them follows Bernoulli distribution with P(ϱ(ti) = 1) = 
+
+P(ϱ(ti) = 0) = 0 .5, and E(ϱ(ti)ϱ(tj )) = 0 , ∀i̸ = j. With fixed δt > 0, ξ(t) is Lebesgue integrable and it is easy to verify that this watermark satisfies (24). In addition, 8 I
+
+with this watermark, ∫ t
+
+> Θ
+
+(∥ξ(s) − ξ(s − T )∥2)ds > 0 can be guaranteed with high probability if the term σ is selected sufficiently large. The main difference between watermark signals lies in how they guarantee a sufficiently large ∫ t 
+
+> Θ
+
+∥ξ(s) − ξ(s −
+
+T )∥2ds . For example, the detection performance of the chaotic watermark is guaranteed by the inherent prop-erties of chaotic systems, e.g., non-periodic and positive Lyapunov exponents. On the other hand, for the Bernoulli watermark, the detection performance is guaranteed in a probabilistic sense. 
+
+VI. D ESIGN OF THE WATERMARK GAIN 
+
+In this section, we aim to design the watermark gain G.According to Theorems 1 and 2, a relatively large value of [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+for (25) implies a better detection performance, while a relatively small value of [L+
+
+> δ2
+
+]ξy′ for (32) corresponds to a less degradation in control system performance. From (25) and (32), it is clear that both incremental gains de-pend on the watermark gain G. To show this relationship, we denote these two incremental gains as [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+(G) and 
+
+[L+
+
+> δ2
+
+]ξy′ (G), respectively. In the following, we proceed to design the watermark gain G to achieve a balance between detection performance and control system performance loss. A feasible balance is to maximize the [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+(G) gain while constraining the [L+
+
+> δ2
+
+]ξy′ (G) gain. Consequently, the following optimization problem is constructed, 
+
+max  
+
+> G,β
+
+β
+
+s.t. [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+(G) ≥ β and [L+
+
+> δ2
+
+]ξy′ (G) ≤ α
+
+(35) for a given α > 0 which bounds the allowable performance loss. The detailed process for solving (35) is given in the following. Deriving tractable matrix inequalities in order to solve (35) and solving the resulting bilinear matrix inequalities are two main difficulties in this section. For simplicity, we assume that κ(ˆ x) = −K ˆx.A. Sufficient Conditions for Incremental Gains For preparation, a sufficient condition such that 
+
+[L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+(G) ≥ β holds for a given β is given below. This condition will be used later to develop a design methodology that optimizes the detection performance. Proposition 4. For system (25), the bound [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+(G) ≥ β
+
+holds for some positive constant β > 0 if there exists a symmetric negative definite matrix Q ∈ Rn×n and matrix 
+
+G ∈ Rm×m such that, for all x ∈ Rn,
+
+[M11 Q(B − LD )G + ( C − DK )⊤DG ⋆ G⊤D⊤DG − βI m
+
+]
+
+⪰ 0 (36) where M11 = [ Ax − BK − L(C − DK )] ⊤Q + Q[Ax − BK −
+
+L(C − DK )] + ( C − DK )⊤(C − DK ).The proof is obtained by directly applying Lemma 2. Below, we provide a sufficient condition such that 
+
+[L+
+
+> δ2
+
+]ξy (G) ≤ α for some given α. This condition will be fun-damental for developing a methodology that constraints the system performance loss. Proposition 5. For system (32), the bound [L+
+
+> δ2
+
+]ξy′ (G) ≤ α
+
+holds for some positive constant α > 0 if there exists a symmetric positive definite matrix Ps ∈ Rn×n and matrix 
+
+G ∈ Rm×m such that, for all x ∈ Rn,
+
+N11 BG PsC⊤ − P K ⊤D⊤
+
+⋆ −αI m (DG )⊤
+
+⋆ ⋆ −Ip
+
+ ⪯ 0 (37) where N11 := AxPs + PsA⊤ 
+
+> x
+
+− BKP s − PsK⊤B⊤ + ϵP s
+
+with ϵ > 0.The proof is postponed to Appendix E. Remark 10. Due to the existence of state dependent differ-ential terms, i.e., Ax, an infinite set of matrix inequalities should be considered when solving (36) and (37). One way to deal with this problem is to convexify the state variation, referred to as the differential parameter-varying inclusion in [26, Sec. 4.5]. With this convexification, we are able to solve (36) and (37) with a finite number of matrix inequalities via polytopic or multiplier-based methods [35]. Alternatively, a finite set of LMIs can be obtained for particular partially linear systems. For example, one can refer to [36] for the case where Ax = A + ϕ(x) with ϕ(x)
+
+satisfying some differential quadratic constraint. B. An Algorithm for Watermark Gain Design For solving the optimization problem (35), the sufficient conditions for [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+(G) ≥ β in Proposition 4 and for 
+
+[L+
+
+> δ2
+
+]ξy′ (G) ≤ α in Proposition 5 should be used. It is noted that due to the presence of the bilinear terms 
+
+Q(BG − LDG ) and G⊤D⊤DG , (36) is not an LMI. To solve this problem, we resort to the iterative LMI technique [37], where an equivalent condition to (36) is utilized, as presented in the following proposition. Proposition 6. Condition (36) holds if and only if there exist symmetric negative definite matrices Q0, Q ∈ Rn×n
+
+and matrices G0, G ∈ Rm×m such that, for all x ∈ Rn
+
+
+
+M′ 
+
+> 11
+
+(C − DK )⊤DG −Q⋆ M′ 
+
+> 22
+
+(BG − LDG )⊤
+
+⋆ ⋆ I
+
+ ⪰ 0 (38) where M′ 
+
+> 11
+
+= QQ 0 +Q0Q−Q0Q0 +QA x +A⊤ 
+
+> x
+
+Q−QBK −
+
+(BK )⊤Q − QLC − (LC )⊤Q + QLDK + ( LDK )⊤Q + ( C −
+
+DK )⊤(C − DK ), M′ 
+
+> 22
+
+= G⊤[( B − LD )⊤(B − LD ) + 
+
+D⊤D]G0 + G⊤ 
+
+> 0
+
+[( B − LD )⊤(B − LD ) + D⊤D]G − G⊤ 
+
+> 0
+
+[( B −
+
+LD )⊤(B − LD ) + D⊤D]G0 − βI m.The proof is postponed to Appendix F. It is clear that (38) is an LMI for any given Q0 and G0.Then (37) and (38) can be used to replace [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+(G) ≥ β
+
+and [L+
+
+> δ2
+
+]ξy′ (G) ≤ α in (35), respectively. It is noted that with this replacement, we may only obtain a sub-optimal solution, as (37) and (38) are not guaranteed to be the A NONLINEAR INCREMENTAL APPROACH FOR REPLAY ATTACK DETECTION 9
+
+necessary conditions of [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+(G) ≥ β and [L+
+
+> δ2
+
+]ξy′ (G) ≤ α,respectively. Specifically, an iterating process for solving 
+
+G is given in Algorithm 1. Algorithm 1: Solving the watermark gain G
+
+Require: Parameters Ax, B, C, D , K, L , Ginit , Qinit , α, β0,number of iterations N
+
+Ensure: Gopt ; 
+
+> 1:
+
+Set G0 = Ginit , Q0 = Qinit , i = 1  
+
+> 2:
+
+while i ≤ N do  
+
+> 3:
+
+With the obtained G0, Q0, maximize βi subject to (37) and (38) to get G, Q. Let G0 = G, Q0 = Q. 
+
+> 4:
+
+i = i + 1 . 
+
+> 5:
+
+end while Remark 11. In Algorithm 1, Ginit and Qinit ≺ 0 can be any matrices such that the maximization at Step 3 is solvable. Then, at each iteration of Step 3, the LMIs (37) and (38) are always solvable since the optimization variables can always take their initial values (in this case 
+
+G = G0, Q = Q0 and βi+1 = βi), implying that βi
+
+increases monotonically. Meanwhile, according to (37) and applying the Schur complement lemma to (38), we have 
+
+βiIm ⪯ (DG )⊤DG ⪯ αI m,
+
+ensuring that βi is bounded. Then combining the fact that βi is monotonically increasing and bounded, it is convergent. However, βi is guaranteed to converge to a local maximum, denoted as βopt , rather than to the global one. Finally, with βi converging to βopt , G will also converge to the set 
+
+G = {G | (37) and (38) with β = βopt }.
+
+C. Co-design of Watermark, Controller and Observer From dynamics (25) and (32) and matrix inequalities (36) and (37), it is clear that the parameters of the observer L, and controller K, also affect the incremen-tal gains of the system, which are therefore denoted by [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+(G, L ) and [L+
+
+> δ2
+
+]ξy′ (G, K, L ). Hence, to gain a better balance between detection performance and control system performance loss, we extend our main results to co-design G, K and L.When designing K and L, we must ensure that Assump-tion 1 is satisfied, as it guarantees that the plant and the error dynamics have δISS and ISS properties, respectively. Consequently, the optimization problem (35) is extended to 
+
+max  
+
+> G,K,L,β
+
+β
+
+s.t. [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+(G, L ) ≥ β, [L+
+
+> δ2
+
+]ξy′ (G, K, L ) ≤ α
+
+and Assumption 1 holds (39) for some given α.To solve (39), a sufficient condition to achieve Assump-tion 1 is first provided below. Algorithm 2: Solving K, L, and G
+
+Require: Parameters Ax, B, C, D , α, β0, Ginit , number of iterations N
+
+Ensure: Kopt , Lopt , and Gopt ; 
+
+> 1:
+
+Set G = Ginit and let G0 = G. Solve (37) to get K
+
+and Ps, and let K0 = K, Ps0 = Ps. Solve (40a) to get 
+
+L and R, and let L0 = L, R0 = Q. 
+
+> 2:
+
+With G, K and L obtained at Step 1, solve (36) to get Q and let Q0 = Q. 
+
+> 3:
+
+Set i = 1 . 
+
+> 4:
+
+while i ≤ N do  
+
+> 5:
+
+With the obtained G0, K 0, L0, Ps0, Q0 and R0,maximize βi subject to (41), (42), and (43) to get 
+
+Gopt , K opt , Lopt , Popt , Qopt and Ropt . Let G0 =
+
+Gopt , K 0 = Kopt , L0 = Lopt , Ps0 = Psopt , Q0 = Qopt 
+
+and R0 = Ropt . 
+
+> 6:
+
+i = i + 1 . 
+
+> 7:
+
+end while Lemma 3. Consider the system (11) with observer (12), controller (13). Assumption 1 holds with κ(ˆ x) = −K ˆx if there exist positive definite matrices R, S, matrices L and 
+
+K, and real constants ϵ1, ϵ 2 such that, for all x ∈ Rn,
+
+A⊤ 
+
+> x
+
+R + RA x−C⊤L⊤R − RLC ⪯ − ϵ1R (40a) 
+
+AxS + SA ⊤ 
+
+> x
+
+− BKS − SK ⊤B⊤ ⪯ − ϵ2S (40b) The proof is postponed to Appendix G. Now we can use (36), (37), (40a) and (40b) for solving (39). It is noted that the condition (40b) has already been involved in N11 ⪯ 0 in (37), and thus it is omitted in the following design process. Then similar to the iterating process to (35), the iterative LMI technique should be employed to solve (39). To do so, we first give equivalent conditions to (36), (37) and (40a), respectively. Their proofs are similar to the proof of Proposition 6, and thus omitted here. 
+
+1) An Equivalent Condition to (36) : 
+
+Proposition 7. Condition (36) holds if and only if there exist symmetric negative definite matrices Q0, Q and matrices K0, L 0, G 0, K, L and G such that 
+
+Ξ ⪰ 0 (41) for all x ∈ Rn, where Ξ is given at the bottom of this page. 
+
+2) An Equivalent Condition to (37): 
+
+Proposition 8. Condition (37) holds if and only if there exist symmetric positive definite matrices Ps0, Ps and matrices K0, K such that, for all x ∈ Rn,
+
+
+
+N ′ 
+
+> 11
+
+BG PsC⊤ Ps − BK Ps
+
+⋆ −αI m (DG )⊤ 0 0
+
+⋆ ⋆ N ′ 
+
+> 33
+
+0 −DK ⋆ ⋆ ⋆ −In 0
+
+⋆ ⋆ ⋆ ⋆ −In
+
+ ⪯ 0 (42) 10 I
+
+where N ′ 
+
+> 11
+
+= AxPs + PsA⊤ 
+
+> x
+
+− 2Ps0Ps − 2PsPs0 + 2 Ps0Ps0 −
+
+BK 0(BK )⊤ − BK (BK 0)⊤ + BK 0(BK 0)⊤ and N ′ 
+
+> 33
+
+=
+
+−Ip − DK 0(DK )⊤ − DK (DK 0)⊤ + DK 0(DK 0)⊤.
+
+3) An Equivalent Condition to (40a): 
+
+Proposition 9. Condition (40a) holds if and only if there exist symmetric positive definite matrices R0, R and matrices L0, L such that, for all x ∈ Rn,
+
+[U11 R − (LC )⊤
+
+⋆ −In
+
+]
+
+⪯ 0 (43) where U11 = A⊤ 
+
+> x
+
+R + RA x − R0R − RR 0 + R0R0 −
+
+(L0C)⊤LC − (LC )⊤L0C + ( L0C)⊤L0C.Then, with [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+(G, L ) ≥ β, [L+
+
+> δ2
+
+]ξy′ (G, K, L ) ≤ α and (40a) in the optimization problem (39) replaced by (41), (42) and (43), respectively, the iterating process to K, L
+
+and G is given in Algorithm 2. Remark 12. With a similar analysis to Algorithm 1 (in Remark 11), βi will converge to a local maximum. Remark 13. According to Proposition 1, the detection performance can also be improved by reducing gn if K
+
+and L can be designed. In (39) we still focus on improving 
+
+ga(t) for simplicity. 
+
+VII. S PECIAL CASE : L INEAR SYSTEMS 
+
+In this section, we consider the case where the plant is linear. In particular, we consider the following plant 
+
+Σlp :
+
+{ ˙x = Ax + Bu + ω, y = Cx + Du + ν, 
+
+where ω ∼ N (0 , Q) and ν ∼ N (0 , R) are the plant noise and measurement noise, respectively, with covariance 
+
+Q ≥ 0, R ≥ 0. A, B, C, D are constant matrices of the appropriate dimension. We first analyze the control performance loss. With the above linear plant, (31) becomes 
+
+∥(∆ Y (t, x ¯t0 , ξ )) τ ∥L2 ≤ [L+
+
+> δ2
+
+]ξy′ ∥(ξ(t)) τ ∥L2 ,
+
+where ∆Y (t, x ¯t0 , ξ ) is the output trajectory of 
+
+∆ ˙ x′ = ( A − BK )∆ x′ + BGξ 
+
+∆y′ = ( C − DK )∆ x′ + DGξ. 
+
+This means that the incremental gain [L+
+
+> δ2
+
+]ξy′ reduces to its non-incremental version, i.e., the [L+2 ]ξy′ gain. In addition, we can obtain the similar results if we analyze the detection performance in linear case, that is, the incremental gain [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+reduces to [L− 
+
+> 2
+
+]ξ 
+
+> ˆy
+
+.Then for designing the watermark gain, we can use optimization problems (35) and (39) with non-incremental gains [L+2 ]ξy and [L− 
+
+> 2
+
+]ξ 
+
+> ˆy
+
+, and employ Algorithm 1 and Algorithm 2 to solve them, respectively, with Ax = A.Remark 14. Most existing watermark-based detection methods, e.g., [4], [11], [16], [18]–[20], follow a traditional framework that requires explicit calculation of the detec-tion performance and control system performance loss. Typically, the detection performance is calculated by the exact difference of innovation variances, e.g., [11, Theorem 6], and the control system performance loss is calculated by the exact additional LQG cost, e.g., [11, Theorem 5]. Both calculations crucially rely on the linear property of the Gaussian watermark. In contrast, our framework avoids this explicit calculation by employing the lower bound of the detection performance and the upper bound of the control system performance loss. This difference allows for the generalization to the nonlinear scenarios. In the linear system scenario, our framework has two main advantages compared with the traditional framework mentioned above. First, we do not limit the watermark to be i.i.d. Gaussian noise, allowing for a broader class of watermark signals to be employed. In addition, with the LMI technique, we are able to extend our framework 
+
+Ξ := 
+
+
+
+M′′  
+
+> 11
+
+⋆ ⋆ ⋆ ⋆ ⋆ ⋆ ⋆ ⋆ ⋆ ⋆
+
+(DG )⊤C M′′  
+
+> 22
+
+⋆ ⋆ ⋆ ⋆ ⋆ ⋆ ⋆ ⋆ ⋆Q + LC 0 In ⋆ ⋆ ⋆ ⋆ ⋆ ⋆ ⋆ ⋆Q + BK 0 0 In ⋆ ⋆ ⋆ ⋆ ⋆ ⋆ ⋆
+
+−Q BG 0 0 In ⋆ ⋆ ⋆ ⋆ ⋆ ⋆DK DG 0 0 0 Im ⋆ ⋆ ⋆ ⋆ ⋆
+
+−DK 0 0 0 0 0 M′′  
+
+> 77
+
+⋆ ⋆ ⋆ ⋆Q 0 0 0 0 0 −L In ⋆ ⋆ ⋆
+
+0 DG 0 0 0 0 0 0 M′′  
+
+> 99
+
+⋆ ⋆Q 0 0 0 0 0 0 0 −L In ⋆
+
+2Q − L(Q0L0)⊤ 0 0 0 0 0 0 0 0 0 In
+
+
+
+where M′′  
+
+> 11
+
+= QA x + A⊤ 
+
+> x
+
+Q + ( BK )⊤BK 0 + ( BK 0)⊤BK − (BK 0)⊤BK 0 + 9 QQ 0 + 9 Q0Q − 9Q0Q0 + ( LC )⊤L0C +(L0C)⊤LC − (L0C)⊤L0C + 2( DK )⊤DK 0 + 2( DK 0)⊤DK − 2( DK 0)⊤DK 0 − 2Q0L0(Q0L0)⊤ +(Q0L0)L⊤L0(Q0L0)⊤ + ( Q0L0)L⊤ 
+
+> 0
+
+L(Q0L0)⊤ − (Q0L0)L⊤ 
+
+> 0
+
+L0(Q0L0)⊤,
+
+M′′  
+
+> 22
+
+= 3 G⊤D⊤DG 0 + 3 G⊤ 
+
+> 0
+
+D⊤DG − 3G⊤ 
+
+> 0
+
+D⊤DG 0 + G⊤B⊤BG 0 + G⊤ 
+
+> 0
+
+B⊤BG − G⊤ 
+
+> 0
+
+B⊤BG 0 − βI m,
+
+M′′  
+
+> 77
+
+= Im + L⊤L0 + L⊤ 
+
+> 0
+
+L − L⊤ 
+
+> 0
+
+L0, and M′′  
+
+> 99
+
+= Im + L⊤L0 + L⊤ 
+
+> 0
+
+L − L⊤ 
+
+> 0
+
+L0.A NONLINEAR INCREMENTAL APPROACH FOR REPLAY ATTACK DETECTION 11 
+
+to co-design the watermark with controller and observer, whereas this kind of extension is not easy for the literature mentioned above. However, we acknowledge that for linear systems with Gaussian noise, using the exact difference of innovation variances and the exact additional LQG cost can yield better performance than our framework. 
+
+VIII. N UMERICAL SIMULATION 
+
+In this section, we validate the proposed framework by considering a single-link robot system [38, Section 4.10] of the form (11) with 
+
+f (x) = 
+
+
+
+x2
+
+− kJ2 x1 − mgd J2 cos (x1) − F2 
+
+> J2
+
+x2 + kJ2b x3
+
+x4 
+
+> kJ1b
+
+x1 − kJ2b2 x3 − F1 
+
+> J1
+
+x4
+
+
+
+B = [0 0 0 1]⊤ , C = [1 0 0 0] , D = [1 0 0 0]⊤
+
+where k = 0 .4kg · m2/s 2, m = 0 .1kg , g = 9 .81 m/s 2, d =0.1m, b = 2 , F1 = 0 .1kg · m2/s , F2 = 0 .7kg · m2/s , J1 =0.15 kg · m2, J2 = 0 .2kg · m2 are parameters of the plant. In addition, the noise bounds ν = ω = 0 .05 . The observer and controller take forms of (12) and (13), respectively, with κ(ˆ x) = −K ˆx.In this simulation, we focus on the co-designing of the watermark, controller and observer and employing Algorithm 2. Letting α = 4 , Ginit = 1 and according to Step 1 of Algorithm 2, the original K, L, and G are calculated as 
+
+K0 = [1.1525 0.1535 0.0755 0.1651 ]
+
+L0 = [0.3974 3.8453 0.2410 0.9848 ]⊤ , G0 = 1 .
+
+Then letting N = 30 and choosing β0 = 0 .01 , Kopt , L opt 
+
+and Gopt solved by Algorithm 2 are 
+
+Kopt = [1.1426 0.4401 0.0673 0.1895 ]
+
+Lopt = [0.1623 3.7539 0.1596 0.7642 ]⊤ , G opt = 1 .33 .
+
+The βi obtained at each iteration of the algorithm is shown in Fig. 3, which represents the detection perfor-mance improvement by the iterative LMI. In the following, both chaotic watermark and Bernoulli watermark are tested. The chaotic watermark is generated 0 5 10 15 20 25 30  
+
+> 00.5 11.5
+
+Detection performance improvement by iterative LMI                     
+
+> Fig. 3. The βisolved by iterative LMI. 020 40 60 80 100
+> 0246
+> Fig. 4. The detection performance with chaotic watermark. 050 100
+> -5 05
+> (a) 050 100
+> -5 05(b) Fig. 5. The states of the plant with chaotic watermark. (a) With
+> K0, L 0and G0. (b) With Kopt , L opt and Gopt .
+
+by a R ¨ossler prototype-4 system [39] of form (33) with 
+
+A =
+
+
+
+0 −1 −11 0 00 0.5 −0.5
+
+ , ϕ (θ) = 
+
+
+
+00
+
+−0.5θ22
+
+ , Λ = 
+
+
+
+0.500
+
+
+
+> ⊤
+
+.
+
+First of all, the detection performance of the innovation-based detector is illustrated in Fig. 4, where σ = 2
+
+and ϑ takes ∥C ˜x∥2 
+
+> ∞
+
+for simplicity, which is calculated according to [40, Theorem 4.19]. In Fig. 4, ϑopt and ϑ0
+
+are the thresholds calculated by the optimized parameters 
+
+Kopt , L opt and Gopt and the original parameters K0, L0
+
+and G0, respectively. It is shown that, without watermark, even under attack (from 70 s), g(t) is always smaller than the thresholds and thus the attack cannot be detected. As illustrated in Fig. 4, with the chaotic watermark, g(t)
+
+with both the optimized parameters and the original pa-rameters exceed their respective thresholds, demonstrating an improvement in detection performance. Furthermore, 
+
+g(t) with the optimized parameters is significantly greater than that with the original parameters, while the perfor-mance of the control system using both sets of parameters is similar (see Fig. 5). This verifies the effectiveness of Algorithm 2. Similar results can be obtained by analyzing the de-tection results with a Bernoulli watermark, as shown in Figs. 6-7, where δt = 0 .1s. Besides, we ran both the chaotic watermark and Bernoulli watermark simulations 1000 times to get their statistical detection results, i.e., the detection rate, average detection delay (average d.d) and maximal detection delay (maximal d.d.), which are summarized in Tables I and II. In these simulations we can see that the proposed co-design methodology improves the detection rate and reduces the detection delay of the replay 12 I0 20 40 60 80 100 
+
+0123
+
+Fig. 6. The detection performance with Bernoulli watermark. 0 50 100 
+
+> -5 05
+
+(a) 0 50 100  
+
+> -5 05
+
+(b) Fig. 7. The states of the plant with Bernoulli watermark. (a) With 
+
+K0, L 0 and G0. (b) With Kopt , L opt and Gopt .
+
+attack, without compromising the control performance bound established by α. Furthermore, we can see that if we allow some additional performance loss (by increasing 
+
+α) we can additionally improve the detection indicators of the system. 
+
+TABLE I 
+
+STATISTIC RESULTS FOR CHAOTIC WATERMARK                         
+
+> Detection rate Average d.d. Maximal d.d
+> α= 4 K0,L0,G0100% 3.79 s 15.50 s
+> Kopt , L opt ,Gopt 100% 1.92s 10.61s
+> α= 1 K0,L0,G087.4% 10.28 s 29.78 s
+> Kopt , L opt ,Gopt 97.3% 8.34 s 29.74 s
+
+TABLE II 
+
+STATISTIC RESULTS FOR BERNOULLI WATERMARK                         
+
+> Detection rate Average d.d. Maximal d.d.
+> α= 4 K0,L0,G0100% 1.22 s 4.37 s
+> Kopt , L opt ,Gopt 100% 0.66 s 1.64 s
+> α= 1 K0,L0,G069.5 % 13.15 s 29.87 s
+> Kopt , L opt ,Gopt 99.60% 6.01 s 29.66 s
+
+In addition, to further show the improvement of detec-tion performance in different noise levels, the following index is used, i.e., 
+
+D := max t∈[70 ,100] g(t)max t∈[20 ,69] g(t)
+
+which is the ratio of detector’s maximal output after and before the replay attack. A larger D implies a smaller 
+
+g(t) in the absence of the attack, and a larger g(t) when the attack occurs, thereby indicating a better detection performance. 0 2 4 6 8 10 
+
+050 100 150 200 250     
+
+> 678910
+> 123
+
+Fig. 8. The D with initial and optimized K, L and G with different noise level. 
+
+The D obtained by the simulation in different noise levels is given in Fig. 8 (with chaotic watermark). It is clear that D with optimized parameters is always greater than that with initial parameters, indicating that the detection performance is improved in all noise levels. 
+
+IX. C ONCLUSION 
+
+This paper presented a novel watermark design frame-work for detecting replay attacks in nonlinear plants. First, we showed that the innovation-based detector may fail to detect replay attacks and thus a watermark-based detection was motivated. Then, to evaluate the detection performance and the control system performance loss induced by the watermark, an incremental gain framework were introduced. Using the incremental gains, we effec-tively evaluated both detection performance and control system performance loss. To balance these two factors, an optimization problem was formulated, which was then solved by establishing sufficient conditions for specific detection and performance loss objectives. Additionally, we extended the framework to co-design the watermark, controller, and observer. Finally, the proposed framework was validated by simulations. 
+
+REFERENCES 
+
+[1] S. Kim, K. Park, and C. Lu, “A survey on network security for cyber–physical systems: From threats to resilient design,” IEEE Communications Surveys & Tutorials, vol. 24, no. 3, pp. 1534– 1573, 2022. [2] A. A. Habib, M. K. Hasan, A. Alkhayyat, S. Islam, R. Sharma, and L. M. Alkwai, “False data injection attack in smart grid cyber physical system: Issues, challenges, and future direction,” Computers and Electrical Engineering, vol. 107, p. 108638, 2023. [3] T. Zhang and D. Ye, “False data injection attacks with com-plete stealthiness in cyber–physical systems: A self-generated approach,” Automatica, vol. 120, p. 109117, 2020. [4] Y. Mo and B. Sinopoli, “Secure control against replay attacks,” in 2009 47th annual Allerton conference on communication, control, and computing (Allerton), pp. 911–918, IEEE, 2009. [5] R. Langner, “Stuxnet: Dissecting a cyberwarfare weapon,” IEEE security & privacy, vol. 9, no. 3, pp. 49–51, 2011. [6] A. Lu and G. Yang, “Input-to-state stabilizing control for cyber-physical systems with multiple transmission channels under denial of service,” IEEE Transactions on Automatic Control, vol. 63, no. 6, pp. 1813–1820, 2017. [7] T. Li, B. Chen, L. Yu, and W.-A. Zhang, “Active security control approach against dos attacks in cyber-physical systems,” IEEE Transactions on Automatic Control, vol. 66, no. 9, pp. 4303– 4310, 2020. A NONLINEAR INCREMENTAL APPROACH FOR REPLAY ATTACK DETECTION 13 
+
+[8] K. Wang, L. Yuan, T. Miyazaki, Y. Chen, and Y. Zhang, “Jamming and eavesdropping defense in green cyber–physical transportation systems using a stackelberg game,” IEEE Trans-actions on Industrial Informatics, vol. 14, no. 9, pp. 4232–4242, 2018. [9] R. Mehra and J. Peschon, “An innovations approach to fault detection and diagnosis in dynamic systems,” Automatica, vol. 7, no. 5, pp. 637–640, 1971. [10] J. Antoch, “A guide to chi-squared testing,” Computational Statistics & Data Analysis, vol. 23, no. 4, pp. 565–566, 1997. [11] Y. Mo, R. Chabukswar, and B. Sinopoli, “Detecting integrity attacks on SCADA systems,” IEEE Transactions on Control Systems Technology, vol. 22, no. 4, pp. 1396–1407, 2013. [12] D. Du, C. Zhang, X. Li, M. Fei, and H. Zhou, “Attack detection for networked control systems using event-triggered dynamic watermarking,” IEEE transactions on industrial informatics, vol. 19, no. 1, pp. 351–361, 2022. [13] T. Li, Z. Wang, L. Zou, B. Chen, and L. Yu, “A dynamic encryption–decryption scheme for replay attack detection in cyber–physical systems,” Automatica, vol. 151, p. 110926, 2023. [14] Y. Joo, Z. Qu, and T. Namerikawa, “Resilient control of cyber-physical system using nonlinear encoding signal against system integrity attacks,” IEEE Transactions on Automatic Control, vol. 66, no. 9, pp. 4334–4341, 2020. [15] R. M. Ferrari and A. M. Teixeira, “A switching multiplicative watermarking scheme for detection of stealthy cyber-attacks,” IEEE Transactions on Automatic Control, vol. 66, no. 6, pp. 2558–2573, 2020. [16] C. Fang, Y. Qi, P. Cheng, and W. X. Zheng, “Optimal periodic watermarking schedule for replay attack detection in cyber– physical systems,” Automatica, vol. 112, p. 108698, 2020. [17] A. Naha, A. M. Teixeira, A. Ahlén, and S. Dey, “Quickest detection of deception attacks on cyber–physical systems with a parsimonious watermarking policy,” Automatica, vol. 155, p. 111147, 2023. [18] X. Zhao, L. Liu, W. Xing, and N. Xu, “Stochastic event-based physical watermarks against replay attacks in cyber physical systems,” IEEE Transactions on Control of Network Systems, 2023. [19] T. Chen, L. Wang, X. Ren, Z. Liu, and H. Su, “Replay attack detection for cyber-physical systems with sensitive states,” in 2023 62nd IEEE Conference on Decision and Control (CDC), pp. 2821–2826, IEEE, 2023. [20] L. Zhai, K. G. Vamvoudakis, and J. Hugues, “Switching watermarking-based detection scheme against replay attacks,” in 2021 60th IEEE Conference on Decision and Control (CDC), pp. 4200–4205, IEEE, 2021. [21] C. Yang, Z. Chu, L. Ma, G. Wang, and W. Dai, “Joint watermarking-based replay attack detection for industrial pro-cess operation optimization cyber-physical systems,” IEEE Transactions on Industrial Informatics, vol. 19, no. 8, pp. 8910– 8922, 2022. [22] Y. Yu, W. Yang, W. Ding, and J. Zhou, “Reinforcement learning solution for cyber-physical systems security against replay attacks,” IEEE Transactions on Information Forensics and Security, vol. 18, pp. 2583–2595, 2023. [23] E. D. Sontag et al., “Smooth stabilization implies coprime fac-torization,” IEEE Transactions on Automatic Control, vol. 34, no. 4, pp. 435–443, 1989. [24] D. Angeli, “A Lyapunov approach to incremental stability properties,” IEEE Transactions on Automatic Control, vol. 47, no. 3, pp. 410–421, 2002. [25] A. Van der Schaft, L2-gain and passivity techniques in nonlinear control. Springer, 2000. [26] C. Verhoek, P. J. Koelewijn, S. Haesaert, and R. Tóth, “Convex incremental dissipativity analysis of nonlinear systems,” Auto-matica, vol. 150, p. 110859, 2023. [27] J. Liu, J. L. Wang, and G. Yang, “An LMI approach to min-imum sensitivity analysis with application to fault detection,” Automatica, vol. 41, no. 11, pp. 1995–2004, 2005. [28] B. Romanchuk and M. James, “Characterization of the Lp
+
+incremental gain for nonlinear systems,” in Proceedings of 35th IEEE Conference on Decision and Control, vol. 3, pp. 3270– 3275, IEEE, 1996. [29] S. Mohan, J. Liu, and R. Vasudevan, “Synthesizing the optimal luenberger-type observer for nonlinear systems,” in 2017 IEEE 56th Annual Conference on Decision and Control (CDC), pp. 3658–3663, IEEE, 2017. [30] J. Le Ny, “Privacy-preserving nonlinear observer design using contraction analysis,” in 2015 54th IEEE Conference on Deci-sion and Control (CDC), pp. 4499–4504, IEEE, 2015. [31] E. D. Sontag and Y. Wang, “Output-to-state stability and detectability of nonlinear systems,” Systems & Control Letters, vol. 29, no. 5, pp. 279–290, 1997. [32] M. Giaccagli, V. Andrieu, S. Tarbouriech, and D. Astolfi, “LMI conditions for contraction, integral action, and output feedback stabilization for a class of nonlinear systems,” Automatica, vol. 154, p. 111106, 2023. [33] G. L. Baker and J. P. Gollub, Chaotic dynamics: an introduc-tion. Cambridge university press, 1996. [34] W. Greiner, Classical Mechanics: Systems of Particles and Hamiltonian Dynamics. Springer, 2003. [35] C. Hoffmann and H. Werner, “A survey of linear parameter-varying control applications validated by experiments or high-fidelity simulations,” IEEE Transactions on Control Systems Technology, vol. 23, no. 2, pp. 416–433, 2014. [36] S. Zoboli, A. Cecilia, and S. Tarbouriech, “Dynamic output-feedback design for generalized Lyapunov inequalities,” HAL preprint hal-04738534, 2024. [37] Y. Cao, Y. Sun, and J. Lam, “Simultaneous stabilization via static output feedback and state feedback,” IEEE Transactions on Automatic Control, vol. 44, no. 6, pp. 1277–1282, 1999. [38] A. Isidori, Nonlinear Control Systems: An Introduction. Springer, 1985. [39] J. C. Sprott, Elegant Chaos: Algebraically Simple Chaotic Flows. World Scientific, 2010. [40] H. Khalil, “Nonlinear systems,” 3rd edition, 2002. [41] W. Rudin, “Principles of mathematical analysis,” 3rd ed., 1976. [42] F. Bullo, Contraction Theory for Dynamical Systems. Kindle Direct Publishing, 1.2 ed., 2024. 
+
+APPENDIX 
+
+A. Proof of Proposition 2 The inequality (8) is equivalent to 
+
+˙V −(x1, x 2, t ) ≤ − γ−∥u1 − u2∥2 + ∥y1 − y2∥2 (A.1) Taking integral for both sides of (A.1) from any t0 ≥ 0 to 
+
+t > t 0, we have 
+
+V −(x1, x 2, t ) − V −(x1, x 2, t 0)
+
+≤
+
+∫ tt0
+
+−γ−∥u1(s) − u2(s)∥2 + ∥y1(s) − y2(s)∥2ds. (A.2) Then with (7), V −(x1, x 2, t ) and V −(x1, x 2, t 0) satisfy 
+
+V −(x1, x 2, t ) ≥ α−(∥x1 − x2∥) ≥ 0 and V −(x1, x 2, t 0) ≤
+
+α−(∥x1 − x2∥), respectively, and thus (A.2) is further deduced as 
+
+∫ tt0
+
+∥y1(s) − y2(s)∥2ds ≥
+
+∫ tt0
+
+γ−∥u1(s) − u2(s)∥2ds 
+
+− α−(∥x1 − x2∥), ∀t ≥ t0.
+
+(A.3) The proof is complete by recalling the definition of ∥ · ∥ L2
+
+and incremental L− 
+
+> δ2
+
+gain. B. Proof of Lemma 2 Define ˜x := x1 − x2, ˜u := u1 − u2, ˜y := y1 − y2. Let 
+
+V −(x1, x 2) = −˜xTQ˜x. Since Q is symmetric negative, 
+
+−λmax (Q)∥˜x∥2 ≤ V −(x1, x 2) ≤ − λmin (Q)∥˜x∥2 (B.1) which verifies condition (7) for all x1, x 2 ∈ Rn.14 I
+
+We now proceed to verify condition (8). Taking the time derivative of V −(x1, x 2), we have 
+
+˙V −(x1, x 2) = −2˜ xTQ[f (x1) + Bu 1 − f (x2) − Bu 2].
+
+(B.2) According to the Fundamental Theorem of Calculus [41, Chapter 6], we have 
+
+g(1) − g(0) = 
+
+∫ 10
+
+∂g ∂s (s)ds (B.3) for any g ∈ C 1. Hence, letting g(s) := f (( s − 1)˜ x + x1) and recalling that f ∈ C 1, we have that 
+
+f (x1) − f (x2) = 
+
+(∫ 10
+
+∂f ∂x (η)ds 
+
+)
+
+˜x (B.4) where η := ( s − 1)˜ x + x1. Substituting (B.4) into (B.2), we have 
+
+˙V −(x1, x 2)= −2˜ xTQ
+
+[(∫ 10
+
+∂f ∂x (η)ds 
+
+)
+
+˜x+B ˜u
+
+]
+
+= −
+
+[˜x
+
+˜u
+
+]T ∫ 10
+
+[Q ∂f ∂x (η) + ∂f T 
+
+> ∂x
+
+(η)Q QB 
+
+∗ 0
+
+]
+
+ds 
+
+[˜x
+
+˜u
+
+]
+
+.
+
+(B.5) Notice that the inequality (10) is equivalent to 
+
+[AT 
+
+> x
+
+Q + QA x QB ⋆ 0
+
+]
+
+⪰
+
+[−CTC −CTD⋆ −DTD + γ−I
+
+]
+
+.
+
+(B.6) Combining this bound with (B.5), we obtain 
+
+˙V −≤− 
+
+[˜x
+
+˜u
+
+]T∫ 10
+
+[−CTC −CTD⋆ −DTD + γ−I
+
+]
+
+ds 
+
+[˜x
+
+˜u
+
+]
+
+= −
+
+[˜x
+
+˜u
+
+]T [∗]T
+
+[γ−I 00 −I
+
+] [ 0 IC D
+
+] [ ˜x
+
+˜u
+
+] ∫ 10
+
+ds. 
+
+(B.7) With the fact that y1 − y2 = C ˜x + D˜u, (B.7) is equivalent to 
+
+˙V −(x1, x 2) ≤ − [˜uT ˜yT] [γ−I 00 −I
+
+] [ ˜u
+
+˜y
+
+]
+
+= −γ−∥u1 − u2∥2 + ∥y1 − y2∥2
+
+(B.8) which verifies the condition (8). Now both (7) and (8) have been verified, which, according to Proposition 2, verifies that system (1) has an incremental L− 
+
+> δ2
+
+gain [L−
+
+> δ2
+
+]uy ≥ γ−.C. Proof of Proposition 3 With controller (13), the healthy observer (12) evolves 
+
+˙ˆx = f (ˆ x) + Bκ (ˆ x) − L(C ˆx + Dκ (ˆ x)) + Ly 
+
+ˆy = C ˆx + Dκ (ˆ x), (C.1) whose solution in t ∈ [0 , T ) can be denoted as ̂ X(t −
+
+T, ˆx0, v, y ) with t ∈ [T, 2T ).By comparing (20) and (C.1) and with the δISS property and v = 0 in mind, there exists a KL function ˇβ such that, for t ∈ [T, 2T ),
+
+∥̂ X(t, ˆxT , 0, y a) −̂ X(t − T, ˆx0, 0, y )∥ ≤ ˇβ(∥ˆx(T ) − ˆx(0) ∥, t ).
+
+(C.2) In addition, the innovation difference between (20) and (C.1) satisfies 
+
+∥ ˜Y (t, x0, 0, y a) − ˜Y (t − T, x0, 0, y )∥
+
+= ∥ − ̂ Y (t, ˆxT , 0, y a) + ̂ Y (t − T, ˆx0, 0, y )∥
+
+= ∥ − Ĉ X(t, ˆxT , 0, y a) − Dκ (̂ X(t, ˆxT , 0, y a)) + Ĉ X(t − T, ˆx0, 0, y ) + Dκ (̂ X(t − T, ˆx0, 0, y )) ∥.
+
+(C.3) Recalling the Lipschitz property (14) and combining (C.2) and (C.3), we have 
+
+∥ ˜Y (t, x0, 0, y a) − ˜Y (t − T, x0, 0, y )∥≤ (∥C∥ + ∥D∥lκ) ˇβ(∥ˆx(T ) − ˆx(0) ∥, t ).
+
+(C.4) We first analyze the output of the detector when t ∈
+
+[T + σ, 2T ). In this case, the output difference between the attacked detector and the history healthy one is 
+
+1
+
+σ
+
+∫ tt−σ
+
+∥ ˜Y (s, x0, v, y a)∥2ds − 1
+
+σ
+
+∫ tt−σ
+
+∥ ˜Y (s − T, x0, v, y )∥2ds 
+
+= 1
+
+σ
+
+∫ tt−σ
+
+(∥ ˜Y (s, x0, 0, y a)∥ − ∥ ˜Y (s − T, x0, 0, y )∥)(∥ ˜Y (s, x0, 0, y a)∥ + ∥ ˜Y (s − T, x0, 0, y )∥)ds. 
+
+(C.5) From (C.4), we obtain that ˜Y (s, x0, 0, y a) is bounded, as 
+
+˜Y (t − T, x0, 0, y ) is the healthy output, which is bounded according to Assumption 1. Consequently, there exists a constant M > 0 such that (∥ ˜Y (s, x0, 0, y a)∥ + ∥ ˜Y (s −
+
+T, x0, 0, y )∥) ≤ M, ∀s ∈ [T, 2T ). In addition, with the triangle inequality ∥ ˜Y (s, x0, 0, y a)∥ − ∥ ˜Y (s − T, x0, 0, y )∥ ≤ ∥ ˜Y (s, x0, 0, y a)− ˜Y (s−T, x0, 0, y )∥ and (C.4) in mind, (C.5) can be further deduced as 
+
+1
+
+σ
+
+∫ tt−σ
+
+∥ ˜Y (s, x0, v, y a)∥2ds − 1
+
+σ
+
+∫ tt−σ
+
+∥ ˜Y (s − T, x0, v, y )∥2ds 
+
+≤ M 1
+
+σ
+
+∫ ts−σ
+
+∥ ˜Y (s, x0, 0, y a) − ˜Y (s − T, x0, 0, y a)∥ds 
+
+≤ M 1
+
+σ
+
+∫ tt−σ
+
+(∥C∥ + ∥D∥lκ) ˇβ(∥ˆx(T ) − ˆx(0) ∥, s )ds 
+
+≤ M (∥C∥ + ∥D∥lκ) ˇβ(∥ˆx(T ) − ˆx(0) ∥, t − σ)
+
+(C.6) which implies 
+
+g(t) ≤ 1
+
+σ
+
+∫ tt−σ
+
+∥ ˜Y (s − T, x0, v, y )∥2ds + ∆ 1 (C.7) where ∆1 := M (∥C∥ + ∥D∥lκ) ˇβ(∥ˆx(T ) − ˆx(0) ∥, t − σ)] .Then, for T ≤ t < T + σ, the monitoring signal is 
+
+g(t) = 1
+
+σ
+
+∫ Tt−σ
+
+∥ ˜Y (s, x0, v, y )∥2ds + 1
+
+σ
+
+∫ tT
+
+∥ ˜Y (s, x0, v, y a)∥2ds 
+
+(C.8) where the term 1/σ ∫ Tt ∥ ˜Y (s, x0, v, y a)∥2ds satisfies the following inequality by the similar deduction from (C.5) A NONLINEAR INCREMENTAL APPROACH FOR REPLAY ATTACK DETECTION 15 
+
+to (C.6), i.e., 
+
+1
+
+σ
+
+∫ tT
+
+∥ ˜Y (s, x0, v, y a)∥2ds − 1
+
+σ
+
+∫ tT
+
+∥ ˜Y (s − T, x0, v, y )∥2ds 
+
+≤ M (∥C∥ + ∥D∥lκ) ˇβ(∥ˆx(T ) − ˆx′(T )∥, T ).
+
+(C.9) Combining (C.8) and (C.9), the monitoring signal sat-isfies 
+
+g(t) ≤ 1
+
+σ
+
+∫ Tt−σ
+
+∥ ˜Y (s, x0, v, y )∥2ds 
+
++ 1
+
+σ
+
+∫ tT
+
+∥ ˜Y (s − T, x0, v, y )∥2ds + ∆ 2
+
+(C.10) where ∆2 := M (∥C∥ + ∥D∥lκ) ˇβ(∥ˆx(T ) − ˆx′(T )∥, T ).Finally, combining (C.7) for t ∈ [T + σ, 2T ) and (C.10) for t ∈ [T, T +σ), (21) is obtained with β(·, t ) := M (∥C∥+
+
+∥D∥lκ) ˇβ(·, t − σ).D. Proof of Theorem 1 The proof is divided into two parts that prove (26) and (27), respectively. Proof of (26): According to Assumption 2 and recalling that ∥ω∥∞ ≤
+
+ω and ∥ν∥∞ ≤ ν, we have 
+
+∥ ˜X(t, x0, v, y )∥ ≤ αω (ω) + αν (ν), ∀t ∈ [0 , ∞). (D.1) Then we have 
+
+∥ ˜Y (s, x0, v, y )∥ = ∥CX (t, x 0, u ) + Du + ν
+
+− Ĉ X(t, ˆx0, v, y ) + Du ∥≤ ∥ C∥∥ ˜X(t, x0, v, y )∥ + ν
+
+≤ ∥ C∥(αω (ω) + αν (ν)) + ν. 
+
+(D.2) As a result, 
+
+g(t) = 1
+
+σ
+
+∫ tt−σ
+
+∥ ˜Y (s, x0, v, y )∥2ds 
+
+≤ [∥C∥(αω (ω) + αν (ν)) + ν]2
+
+which proves (26). Proof of (27): With v = Gξ , the healthy observer (12) becomes 
+
+˙ˆx = f (ˆ x) + B(κ(ˆ x) + Gξ ) − L(C ˆx + D(κ(ˆ x) + Gξ ) + Ly 
+
+ˆy = C ˆx + D(κ(ˆ x) + Gξ ),
+
+(D.3) whose solution in t ∈ [0 , T ) can be denoted as ̂ X(t −
+
+T, ˆx0, v, y ) with t ∈ [T, 2T ).Comparing (25) and (D.3), we have 
+
+˜Y (t, xt0 , v, y a) − ˜Y (t − T, xt0 , v, y )= −̂ Y (t, ˆxt0+T , v, y a) + ̂ Y (t − T, ˆxt0 , v, y ).
+
+Then, since the system (25) has an [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+gain, for 
+
+0 ≤ t0 ≤ T ,
+
+∥( ˜Y (t, xt0 , v, y a) − ˜Y (t − T, xt0 , v, y )) τ ∥L2
+
+= ∥(̂ Y (t, ˆxt0+T , v, y a) −̂ Y (t − T, ˆxt0 , v, y )) τ ∥L2
+
+≥ ([ L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+− ε)∥(ξ(t) − ξ(t − T )) τ ∥L2
+
+− α− 
+
+> a
+
+(∥ˆx(t0 + T ) − ˆx(t0)∥),
+
+(D.4) for all initial states x t0 , xt0 and inputs ξ(t), ξ (t − T ).We first consider the case t ∈ [T + σ, 2T ). In this case, let t0 and τ in (D.4) be t0 = t − T − σ and τ = σ. Then we have 
+
+∫ tt−σ
+
+∥ ˜Y (t, xt0 ,v, y a)∥2ds ≥− 
+
+∫ tt−σ
+
+∥ ˜Y (t−T, xt0 ,v, y )∥2ds 
+
++ ([ L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+− ε)
+
+∫ tt−σ
+
+∥ξ(s) − ξ(s−T )∥2ds 
+
+− α− 
+
+> a
+
+(∥ˆx(t − σ) − ˆx(t − σ − T )∥),
+
+(D.5) where the inequality ∫ tt−σ ∥ ˜Y (t, xt0 , v, y a)∥2ds +
+
+∫ tt−σ ∥ ˜Y (t − T, xt0 , v, y )∥2ds ≥ ∫ tt−σ ∥ ˜Y (t, xt0 , v, y a) −
+
+˜Y (t − T, xt0 , v, y )∥2ds is used. Then combining (D.5) and (26), i.e., 1/σ ∫ T +σT ∥ ˜Y (t − T, x0, v, y )∥2ds ≤ gn,and with the fact ∫ tt−σ ∥ ˜Y (t, xt0 , v, y a)∥2ds =
+
+∫ tt−σ ∥ ˜Y (t, x0, v, y a)∥2ds, ∀t ∈ [T + σ, 2T ) in mind, we have, for t ∈ [T + σ, 2T ),
+
+g(t) ≥ [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+− εσ
+
+∫ tt−σ
+
+∥ξ(s) − ξ(s − T )∥2ds 
+
+− α− 
+
+> a
+
+(∥ˆx(t − σ) − ˆx(t − σ − T )∥)
+
+σ − gn.
+
+(D.6) Now we consider the case t ∈ [T, T + σ). In this case, 
+
+g(t)= 1
+
+σ
+
+∫ Tt−σ
+
+∥ ˜Y (t, x0, v, y )∥2ds + 1
+
+σ
+
+∫ tT
+
+∥ ˜Y (t, x0, v, y a)∥2ds. 
+
+(D.7) Let t0 and τ in (D.4) be t0 = 0 and τ = σ. Similar to (D.5), we have 
+
+∫ tT
+
+∥ ˜Y (t, x0, v, y a)∥2ds ≥ − 
+
+∫ tT
+
+∥ ˜Y (t − T, x0, v, y )∥2ds 
+
++ ([ L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+− ε)
+
+∫ tT
+
+∥ξ(s) − ξ(s−T )∥2ds 
+
+− α− 
+
+> a
+
+(∥ˆx(T ) − ˆx(0) ∥).
+
+(D.8) Substituting (D.8) into (D.7), we have 
+
+g(t) ≥ 1
+
+σ
+
+∫ Tt−σ
+
+∥ ˜Y (t, x0, v, y )∥2ds − 1
+
+σ
+
+∫ tT
+
+∥ ˜Y (t − T, x0, v, y )∥2ds 
+
++ ([ L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+−ε)
+
+σ
+
+∫ tT
+
+∥ξ(s) − ξ(s−T )∥2ds − α− 
+
+> a
+
+(∥ˆx(T ) − ˆx(0) ∥)
+
+σ .
+
+(D.9) By 1
+
+> σ
+
+∫ Tt−σ ∥ ˜Y (t, x0, v, y )∥2ds ≥ 0 and 1
+
+> σ
+
+∫ tT ∥ ˜Y (t −
+
+T, x0, v, y )∥2ds ≤ gn, signal (D.9), for t ∈ [T, T + σ),satisfies 
+
+g(t) ≥ [L−
+
+> δ2
+
+]ξ 
+
+> ˆy
+
+− εσ
+
+∫ tT
+
+∥ξ(s) − ξ(s−T )∥2ds 
+
+− α− 
+
+> a
+
+(∥ˆx(T ) − ˆx(0) ∥)
+
+σ − gn.
+
+(D.10) Finally, (27) is obtained by combining (D.6) and (D.10). 16 I
+
+E. Proof of Proposition 5 By Lemma 1 and the Schur complement, [L+
+
+> δ2
+
+]ξy′ (G) ≤ α
+
+if there exists a symmetric positive definite matrix Ps and matrix G such that, for all x ∈ Rn,
+
+N ′ 
+
+> 11
+
+P BG (C − DK )⊤
+
+⋆ −αI m (DG )⊤
+
+⋆ ⋆ −In
+
+ ⪯ 0 (E.11) where N ′ 
+
+> 11
+
+:= A⊤ 
+
+> x
+
+P + P A x − (BK )⊤P − P BK + ϵP with 
+
+ϵ > 0. Then by pre and post multiplying diag (P −1, I m, I n)
+
+on (E.11) and letting Ps = P −1, we obtain (37). F. Proof of Proposition 6 ((36) ⇒(38)): By the Schur complement lemma, LMI (36) is equivalent to 
+
+Π2 := 
+
+
+
+¯M11 (C − DK )⊤DG −Q⋆ ¯M22 (BG − LDG )⊤
+
+⋆ ⋆ I
+
+ ⪰ 0
+
+where ¯M11 = QQ + QA x + A⊤ 
+
+> x
+
+Q − QBK − (BK )⊤Q −
+
+QLC − (LC )⊤Q + QLDK + ( LDK )⊤Q + ( C − DK )⊤(C −
+
+DK ) and ¯M22 = (BG − LDG )⊤(BG − LDG ) + 
+
+G⊤D⊤DG − βI m.Then, (36) implies (38) if choosing Q0 = Q and G0 = G.((36) ⇐(38)): Inequality (38) can be rewritten as 
+
+Π2 − diag [Λ 1, Λ2, 0] ⪰ 0
+
+where Λ1 := ( Q − Q0)( Q − Q0), Λ2 := ( G − G0)⊤[( B −
+
+LD )⊤(B − LD ) + D⊤D]( G − G0), which implies Π2 ⪰ 0.G. Proof of Lemma 3 Let ˜x := x−ˆx. We first verify that ˜x = 0 is exponentially stable when ω = ν = 0 . Define V := ˜ x⊤R˜x, then 
+
+˙V = 2˜ x⊤R[f (x) + Bu − f (ˆ x) − Bu + L(Cx − C ˆx)] .
+
+In addition, (40a) is equivalent to 
+
+(Ax − LC )⊤R + R(Ax − LC ) ⪯ − ϵ1R, 
+
+which implies [42, Lemma 3.1] 
+
+˜x⊤R[f (x) − f (ˆ x) + L(Cx − C ˆx)] ≤ − ϵ1
+
+2 ˜x⊤R˜x
+
+Exponential stability follows from the fact that 
+
+˙V ≤ − ϵ1V. (G.12) For the case ω̸ = 0 and ν̸ = 0 , the ISS property of the error system (15) follows from [42, Corollary 3.17]. Now we verify that the nonlinear plant (11) is δISS w.r.t. inputs ˜x, v, ω . Let V := ( x1 − x2)⊤S(x1 − x2). Since 
+
+f ∈ C 1, similar to (B.4), we have 
+
+f (x1) + BKx 1 − (f (x2) + BKx 2)=
+
+(∫ 10
+
+∂f ∂x (η)ds 
+
+)
+
+(x1 − x2) − BK (x1 − x2).
+
+With (40b) in mind, the time derivative to V is 
+
+˙V ≤ 2( x1 − x2)⊤S(f (x1) + BKx 1 − (f (x2) + BKx 2)) 
+
+≤ − ϵ2V , 
+
+which proves that x1 exponentially converges to x2 [40, Theorem 4.10]. Finally, we can obtain that the nonlinear plant (11) is δISS w.r.t. inputs ˜x, v, ω from [42, Corollary 3.17]. 
+
+Tao Chen received the B.Eng. degree in au-tomation from Shandong Agricultural Uni-versity, China, in 2018, and M.S. degree in Control Science and Engineering from South China University of Technology, China, in 2021. He is currently pursuing the Ph.D. degree in Control Science and Engineering in Zhejiang University, China. His current research interests include cyber-physical sys-tems, secure estimation, and attack detection. 
+
+Andreu Cecilia received the B.Eng. degree in industrial engineering, the double M.Sc. degree in automatic control/industrial engi-neering and the Ph.D. in automatic control from the Universitat Politècnica de Catalunya, Barcelona, Spain, in 2017, 2020 and 2022, respectively. In 2022-2023, he worked as apost-doctoral researcher at LAGEPP, Lyon, France. He is currently working as a lec-turer at Universitat Politècnica de Catalunya, Barcelona. His research interests include ob-servers, nonlinear system theory and its application to energy systems and cyber-security. 
+
+Lei Wang received the B.Eng. degree in automation from Wuhan University, China, in 2011, and Ph.D. degree in Control Science and Engineering from Zhejiang University, China in 2016. From December 2014 to December 2015, he visited C.A.SY.-DEIS, University of Bologna as a visiting Ph.D. student. Lei held research positions with School of Elec-trical and Electronic Engineering at Nanyang Technological University, Singapore, School of Electrical Engineering and Computing at University of Newcastle, Australia, and Australian Center for Field Robotics, The University of Sydney, Australia. Since November 2021 he has been a Hundred-Talent Researcher at College of Control Science and Engineering, Zhejiang University, China. Lei serves as an AE of Journal of Control and Decision, and a member of IFAC Technical Committee 2.3 Nonlinear Control Systems, and has served as an IPC member of several conferences. His current research interest lies in the development of nonlinear control theory from nonlinear systems to networked systems, with applications to fuel-cell systems and power systems. A NONLINEAR INCREMENTAL APPROACH FOR REPLAY ATTACK DETECTION 17 
+
+Daniele Astolfi received the B.S. and M.S. degrees in automation engineering from the University of Bologna, Italy, in 2009 and 2012, respectively. He obtained a joint Ph.D. degree in Control Theory from the University of Bologna, Italy, and from Mines ParisTech, France, in 2016. In 2016 and 2017, he has been a Research Assistant at the University of Lorraine (CRAN), Nancy, France. Since 2018, he is a CNRS Researcher at LAGEPP, Lyon, France. His research interests include observer design, feedback stabilization and output regulation for nonlinear systems, networked control systems, hybrid systems, and multi-agent systems. He serves as an associate editor of the IFAC journal Automatica. He was a recipient of the 2016 Best Italian Ph.D. Thesis Award in Automatica given by Società Italiana Docenti e Ricercatori in Automatica (SIDRA, Italian Society of Professors and Researchers in Automation Engineering). 
+
+Zhitao Liu received the B.S. degree from Shandong University at Weihai, China, in 2005, and the Ph.D. degree in control sci-ence and engineering from Zhejiang Univer-sity, Hangzhou, China, in 2010. From 2011 to 2014, he was a Research Fellow with TUM CREATE, Singapore. He was an Assistant Professor from 2015 to 2016 and an Associate Professor from 2017 to 2021 in Zhejiang Uni-versity, where he is currently a Professor with the Institute of Cyber-Systems and Control, Zhejiang University. His current research interests include robust adaptive control, wireless transfer systems, and energy management systems.

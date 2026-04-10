@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.12949v1/fig-001.webp",
+      "caption": "Table 9. Illustrative spectral retention ratios ρΩ for watermark-specific residuals under moderate edits. Values are averaged over instructions and images. Lower values indicate stronger suppression of watermark energy in that band.",
+      "page": 11,
+      "index": 1,
+      "width": 1004,
+      "height": 202
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12949v1/fig-002.webp",
+      "caption": "Table 7. Illustrative bit accuracy (%) under resolution choices. “Embed@256→512” embeds at 256×256 then upsamples; “Embed@512” embeds directly. Editing uses instruction following at mild (t⋆ = 0.4) and strong (t⋆ = 0.8) settings.",
+      "page": 10,
+      "index": 2,
+      "width": 1008,
+      "height": 184
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12949v1/fig-003.webp",
+      "caption": "Table 8. Illustrative fidelity metrics for edited images at moderate strength (comparable instruction adherence). Lower LPIPS is better. Although PSNR/SSIM vary modestly across editors, watermark recovery can vary dramatically (see Table 4).",
+      "page": 10,
+      "index": 3,
+      "width": 1006,
+      "height": 202
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12949v1/fig-004.webp",
+      "caption": "Table 1. Taxonomy of diffusion-based editing methods considered in our analysis. “Inversion” indicates whether the method inverts a real image into a diffusion trajectory; “Optimization” indicates per-instance latent optimization; “Region control” includes masks or region supervision; “Backbone” indicates the base diffusion family.",
+      "page": 8,
+      "index": 4,
+      "width": 1008,
+      "height": 197
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12949v1/fig-005.webp",
+      "caption": "Table 4. Illustrative watermark bit accuracy (%) after post-processing and diffusion-based editing. Random guessing yields ≈ 50%. Higher is better. Values are hypothetical but reflect trends consistent with diffusion-based watermark vulnerability studies (Zhao et al., 2024b; Lu et al., 2025c; Ni et al., 2025).",
+      "page": 9,
+      "index": 5,
+      "width": 1008,
+      "height": 243
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12949v1/fig-006.webp",
+      "caption": "Table 5. Illustrative bit accuracy (%) by edit type. “Local” indicates mask- or region-focused edits; “Global” indicates full-image edits.",
+      "page": 9,
+      "index": 6,
+      "width": 1008,
+      "height": 210
+    }
+  ]
+}

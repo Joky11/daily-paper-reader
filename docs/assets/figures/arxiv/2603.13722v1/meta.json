@@ -1,0 +1,94 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.13722v1/fig-001.webp",
+      "caption": "Table 4: Utility in terms of RAQE (with query cardinality scaling for COUNT in the presence of deletion attacks) and MLE Gap under different attacks on Electric. The underlying watermarking scheme is TableMark.",
+      "page": 15,
+      "index": 1,
+      "width": 492,
+      "height": 379
+    },
+    {
+      "url": "assets/figures/arxiv/2603.13722v1/fig-002.webp",
+      "caption": "Table 3: Utility in terms of RAQE (with query cardinality scaling for COUNT in the presence of deletion attacks) and MLE Gap under different attacks on Beijing. The underlying watermarking scheme is TableMark.",
+      "page": 15,
+      "index": 2,
+      "width": 498,
+      "height": 379
+    },
+    {
+      "url": "assets/figures/arxiv/2603.13722v1/fig-003.webp",
+      "caption": "Table 9: Runtime efficiency of TableMark in terms of seconds across different datasets.",
+      "page": 21,
+      "index": 3,
+      "width": 1023,
+      "height": 319
+    },
+    {
+      "url": "assets/figures/arxiv/2603.13722v1/fig-004.webp",
+      "caption": "Fig. 1: Terminologies of TableMark.",
+      "page": 3,
+      "index": 4,
+      "width": 500,
+      "height": 368
+    },
+    {
+      "url": "assets/figures/arxiv/2603.13722v1/fig-005.webp",
+      "caption": "Fig. 8: Comparison of traceability accuracy under Gaussian perturbation, alteration, and adaptive tupledeletion attacks, and RAQE of COUNT queries (with cardinality scaling under adaptive tuple-deletion attacks) at selectivities 1% and 20%, over different δFPR values.",
+      "page": 18,
+      "index": 5,
+      "width": 490,
+      "height": 365
+    },
+    {
+      "url": "assets/figures/arxiv/2603.13722v1/fig-006.webp",
+      "caption": "Fig. 6: Comparison of traceability accuracy under Gaussian perturbation, alteration, and adaptive tupledeletion attacks, and RAQE of COUNT queries (with cardinality scaling under adaptive tuple-deletion attacks) at selectivities 1% and 20%, over different Ialt values.",
+      "page": 18,
+      "index": 6,
+      "width": 490,
+      "height": 365
+    },
+    {
+      "url": "assets/figures/arxiv/2603.13722v1/fig-007.webp",
+      "caption": "Fig. 7: Comparison of traceability accuracy under Gaussian perturbation, alteration, and adaptive tupledeletion attacks, and RAQE of COUNT queries (with cardinality scaling under adaptive tuple-deletion attacks) at selectivities 1% and 20%, over different Idel values.",
+      "page": 18,
+      "index": 7,
+      "width": 490,
+      "height": 367
+    },
+    {
+      "url": "assets/figures/arxiv/2603.13722v1/fig-008.webp",
+      "caption": "Fig. 9: Comparison of traceability accuracy under Gaussian perturbation, alteration, and adaptive tupledeletion attacks, and RAQE of COUNT queries (with cardinality scaling under adaptive tuple-deletion attacks) at selectivities 1% and 20%, over different δFNR values.",
+      "page": 18,
+      "index": 8,
+      "width": 490,
+      "height": 366
+    },
+    {
+      "url": "assets/figures/arxiv/2603.13722v1/fig-009.webp",
+      "caption": "Fig. 2: Architecture of TableMark.",
+      "page": 4,
+      "index": 9,
+      "width": 1031,
+      "height": 492
+    },
+    {
+      "url": "assets/figures/arxiv/2603.13722v1/fig-010.webp",
+      "caption": "Table 8: Privacy risks in terms of the AUROC score and TPR@1%FPR score over different M values (higher AUROC scores above 0.5 and higher TPR@1%FPR scores above 0.01 indicate higher privacy risks).",
+      "page": 20,
+      "index": 10,
+      "width": 500,
+      "height": 250
+    },
+    {
+      "url": "assets/figures/arxiv/2603.13722v1/fig-011.webp",
+      "caption": "Table 6: Utility in terms of RAQE (with query cardinality scaling for COUNT in the presence of deletion attacks) and MLE Gap under different attacks on Shoppers. The underlying watermarking scheme is TableMark.",
+      "page": 16,
+      "index": 11,
+      "width": 498,
+      "height": 379
+    }
+  ]
+}

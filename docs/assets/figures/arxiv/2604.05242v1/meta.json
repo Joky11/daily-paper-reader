@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.05242v1/fig-001.webp",
+      "caption": "Table 7: Performance comparison on text completion tasks with message length b = 16 under different numbers of available tokens T ∈ {150, 200, 250, 300} on the Essays and OpenGen datasets.",
+      "page": 15,
+      "index": 1,
+      "width": 814,
+      "height": 255
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05242v1/fig-002.webp",
+      "caption": "Table 8: Performance comparison on text completion tasks with message length b = 32 under different numbers of available tokens T ∈ {150, 200, 250, 300} on the Essays and OpenGen datasets.",
+      "page": 15,
+      "index": 2,
+      "width": 814,
+      "height": 254
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05242v1/fig-003.webp",
+      "caption": "Table 6: Notation table.",
+      "page": 13,
+      "index": 3,
+      "width": 446,
+      "height": 839
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05242v1/fig-004.webp",
+      "caption": "Table 11: Example of generated texts of XMARK.",
+      "page": 17,
+      "index": 4,
+      "width": 928,
+      "height": 648
+    },
+    {
+      "url": "assets/figures/arxiv/2604.05242v1/fig-005.webp",
+      "caption": "Table 10: Performance comparison of MPAC and XMARK on Qwen2.5-7B and LLaMA-3.1-8B models with message lengths b ∈ {8, 16} and number of available tokens T ∈ {150, 200, 250, 300}.",
+      "page": 16,
+      "index": 5,
+      "width": 879,
+      "height": 265
+    }
+  ]
+}

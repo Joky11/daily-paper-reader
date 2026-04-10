@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.12089v1/fig-001.webp",
+      "caption": "Fig. 1. Illustration of the risk of client model leakage in federated language model training. Since all clients in FL can obtain the same global model, traditional watermarks cannot distinguish the source of the leak. EmbTracker creates a unique watermark for each client through the server, which can accurately track the model leaker.",
+      "page": 1,
+      "index": 1,
+      "width": 522,
+      "height": 374
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12089v1/fig-002.webp",
+      "caption": "TABLE I COMPARISON OF REPRESENTATIVE FL WATERMARKING METHODS. AND # DENOTES BLACK-BOX AND WHITE-BOX VERIFICATION,",
+      "page": 2,
+      "index": 2,
+      "width": 520,
+      "height": 281
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12089v1/fig-003.webp",
+      "caption": "Fig. 4. Illustration of the verification interval (VI). The consistently large VI reflects the effectiveness and reliability of the watermarking scheme in accurately attributing model ownership while minimizing watermark collisions.",
+      "page": 7,
+      "index": 3,
+      "width": 516,
+      "height": 244
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12089v1/fig-004.webp",
+      "caption": "TABLE II EVALUATION OF ALL METHODS IN TERMS OF ACC AND VR UNDER BOTH IID AND NON-IID FEDERATED SETTINGS. ALL RESULTS ARE REPORTED AS PERCENTAGES (%). “–” INDICATES THIS SETTING IS NOT APPLICABLE. FOR VR VALUES, WE USE “✓” TO DENOTE THE METHOD ACHIEVES A SATISFACTORY TRACEABLE VR (EXCEEDS γ = 90%); OTHERWISE, WE USE “✗”. THE BOLD VALUES MEANS THE BEST TRACEABLE VR IN THE ROW.",
+      "page": 7,
+      "index": 4,
+      "width": 1064,
+      "height": 540
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12089v1/fig-005.webp",
+      "caption": "Fig. 9. Robustness of EmbTracker against fine-tuning attacks. The experiments use three client models trained on the main task and four datasets for fine-tuning attacks. Results demonstrate that the embedded watermark retains high traceability while the main task accuracy is largely preserved.",
+      "page": 10,
+      "index": 5,
+      "width": 506,
+      "height": 250
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12089v1/fig-006.webp",
+      "caption": "Fig. 5. Evaluation of the applicability of EmbTracker across different models. The results demonstrate that EmbTracker consistently achieves high watermark VRs and maintains robust performance on the primary ACCs, regardless of the underlying language model.",
+      "page": 8,
+      "index": 6,
+      "width": 519,
+      "height": 246
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12089v1/fig-007.webp",
+      "caption": "Fig. 7. Impact of watermark training set. The left subfigure evaluates the effect of watermark training set source while the main task is FreebaseQA. The right subfigure investigates the influence of watermark training set sizes, when FreebaseQA is the main task and NQ is the watermark training set.",
+      "page": 9,
+      "index": 7,
+      "width": 507,
+      "height": 242
+    },
+    {
+      "url": "assets/figures/arxiv/2603.12089v1/fig-008.webp",
+      "caption": "Fig. 3. The workflow of the proposed watermark injection process. Step 1: The server uses a universal trigger (Tru) to train a universal watermark embedding vector (Ww), updating only the trigger token embeddings. Step 2: The server replaces embedding vector of client-specific triggers with Ww , ensuring each client receives a distinct watermark. Step 3: Clients perform local training on their private data using PEFT methods. Step 4: The server collects the updated PEFT modules from clients, aggregates, performs watermark enhancement training, and distributes the enhanced PEFT modules.",
+      "page": 5,
+      "index": 8,
+      "width": 994,
+      "height": 515
+    }
+  ]
+}

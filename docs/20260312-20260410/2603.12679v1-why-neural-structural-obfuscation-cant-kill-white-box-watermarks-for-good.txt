@@ -1,0 +1,1212 @@
+Title: Why Neural Structural Obfuscation Can't Kill White-Box Watermarks for Good!
+
+URL Source: https://arxiv.org/pdf/2603.12679v1
+
+Published Time: Mon, 16 Mar 2026 00:41:33 GMT
+
+Number of Pages: 23
+
+Markdown Content:
+# Why Neural Structural Obfuscation Can’t Kill White-Box Watermarks for Good! 
+
+Yanna Jiang 1,∗, Guangsheng Yu 1,∗, Qingyuan Yu 4, Yi Chen 3, Qin Wang 1,21University of Technology Sydney | 2CSIRO Data61 | 3Tsinghua University | 4Independent 
+
+Abstract 
+
+Neural Structural Obfuscation (NSO) (USENIX Secu-rity’23) is a family of “zero cost” structure-editing transforms (nso_zero , nso_clique , nso_split ) that inject dummy neurons. By combining neuron permutation and parameter scaling, NSO makes a radical modification to the network structure and parameters while strictly preserving functional equivalence, thereby disrupting white-box watermark verifi-cation. This capability has been a fundamental challenge to the reliability of existing white-box watermarking schemes. We rethink NSO and, for the first time, fully recover from the damage it has caused. We redefine NSO as a graph-consistent threat model within a producer–consumer 
+
+paradigm. This formulation posits that any obfuscation of a producer node necessitates a compatible layout update in all downstream consumers to maintain structural integrity. Building on these consistency constraints on signal propaga-tion, we present C ANON , a recovery framework that probes the attacked model to identify redundancy/dummy channels and then globally canonicalizes the network by rewriting all 
+
+downstream consumers by construction, synchronizing lay-outs across fan-out , add , and cat . Extensive experiments demonstrate that, even under strong composed and extended NSO attacks, C ANON achieves 100% recovery success, restor-ing watermark verifiability while preserving task utility. Our code is available at https://anonymous.4open. science/r/anti-NSO-9874 .
+
+1 Introduction 
+
+In USENIX Security’23. Yan et al. published Rethinking White-Box Watermarks on Deep Learning Models under Neu-ral Structural Obfuscation (NSO) that is a systematic study that claims many white-box watermarks can be “removed at zero cost” by injecting dummy neurons that preserve util-ity while disrupting verification [1]. Their toolkit comprises three strategies: (i) zero injection (i.e., nso_zero ), which 
+
+> ∗Contributed equally.
+
+Figure 1: C ANON can recover a strengthened NSO variant that generalizes the original layer-local edits into graph-aware structural transformations that remain consistent across branches and merges, enabling attacks to be injected globally rather than only in isolated layers. The three NSO attacks cor-respond to different constrained forms of M (zero injection, clique cancellation ∑ w = 0, and split preservation ∑ α = 1). adds channels with all zero incoming or outgoing weights; (ii) clique cancellation (i.e., nso_clique ), which duplicates incoming weights and sets outgoing weights that sum to zero; and (iii) split preservation (i.e., nso_split ), which replaces a channel with d+1 substitutes whose outgoing weights sum to the original. The core observation underlying NSO is that mainstream white-box watermark verifiers implicitly bind to index-ordered parameters : once channel indices are struc-turally perturbed, watermark extraction fails even though the network is functionally equivalent. This poses a fundamental threat to white-box watermark security [2 – 7], requiring a new approach to detect and recovery. 
+
+We rethink NSO [1] and show that it can be fully recov-ered, even under a stronger threat model, making em-bedding watermarks practical again. We recognize that 1
+
+> arXiv:2603.12679v1 [cs.CR] 13 Mar 2026
+
+existing NSO constructions, while effective, are largely con-fined to simple, sequential architectures and do not fully capture how structural obfuscation must behave in mod-ern graph-structured networks. In contemporary models, such as ResNet [8], EfficientNet [9], InceptionV3 [10], and DenseNet [11], structural edits are no longer layer-local. In-stead, injected neurons must propagate their signals con-sistently through residual connections, multi-branch topolo-gies, and shared downstream operators (e.g., add [8, 9] and 
+
+cat [10, 11]) in order to preserve functional equivalence. To make NSO representative of realistic deployment sce-narios, we introduce a producer–consumer perspective, as shown in Fig.1, which explicitly models how injected neuron signals are produced and consumed across the computation graph. Under this view, NSO is not treated as a stronger attack, but as a completed and well-defined threat model that changes channel layout while remaining functionally equivalent and shape compatible in graph-consistent architectures. Building on this threat model, recovery and defense face a fundamentally harder challenge. Once NSO is instantiated beyond simple sequential architectures, the attacker may ar-bitrarily combine multiple NSO primitives, place injections across layers and branches, and exploit residual merges, while the defender has no access to the attacker’s construction de-tails. The central research problem becomes: 
+
+♡ How to distinguish attack-induced dummy neurones from benign structural components in a complex computation graph, when all edits are deliberately designed to remain functionally equivalent and appear structurally normal? 
+
+Our approach: Functional equivalence enforces graph-consistent structure under NSO. Our key insight is that the indistinguishability introduced by NSO is only superficial. To preserve functional equivalence, any NSO obfuscation must 
+
+induce a channel transform that is consistent across all down-stream consumers along every producer →consumer path of the computation graph: injected channels must satisfy the same cancellation/aggregation identities at every downstream consumption site (fan-outs, residual merges, and concatena-tions), otherwise the obfuscated network would no longer be functionally equivalent. These constraints are not incidental artifacts of NSO but necessary conditions for its correctness, which we leverage to generalize NSO into a graph-consistent producer-consumer threat model. We thus design C ANON , a graph-consistent recovery frame-work that identifies NSO redundancy and reverses structural obfuscation. Rather than viewing NSO as an irreversible re-moval of watermarks, C ANON models NSO as a family of 
+
+channel-basis rewrites on the computation graph and recov-ers a canonical parameterization by (i) probing activations to infer redundancy and dummy channels and (ii) applying the induced ChannelTransform rewrites globally to all down-stream linear consumers, including fan-out , residual add ,and channel cat . By synchronizing channel layouts across the graph, C ANON eliminates NSO-induced index scrambling and restores a compact representation on which existing white-box watermark extractors can be directly applied. As a clean reference model is typically available in the white-box setting, we additionally provide a reference-equivalence certificate. 
+
+Why NSO fails under C ANON . NSO primitives preserve net-work functionality by construction: injected channels are ei-ther null, mutually cancel in cliques, or form proportional split duplicates whose aggregate contribution matches the original channel. Under C ANON , these edits manifest as structured redundancy revealed by activation probes through consistent signatures and proportionality relations. Crucially, C ANON 
+
+operates graph-consistently : once a ChannelTransform is in-ferred at a producer edge, it is propagated to all downstream consumers, including residual merges and concatenations. This allows NSO edits to be removed via equivalence pre-serving compaction , while downstream linear consumers are rewritten to the recovered channel basis and layouts are syn-chronized across the graph. The resulting parameters ˆθ (v.s. 
+
+original θ) form a stable, compact representation on which existing white-box verifiers can be directly applied. 
+
+Contributions. We make the following contributions: 
+
+• We generalise the threat model of NSO. We reformulate NSO as a graph-consistent producer–consumer model that captures fan-out, residual addition, and channel concate-nation in modern architectures. This exposes the signal-consistency constraints required for function-equivalent NSO, which are missing in prior layer-local formulations. 
+
+• We show that NSO-style obfuscation is fundamentally recov-erable under graph consistency. Contrary to the prevailing belief that NSO can “remove” white-box watermarks at zero cost, we prove constructively that NSO induces struc-tured, globally constrained redundancy. These constraints make it possible to identify dummy channels and reverse layout obfuscation without access to the attacker’s construc-tion details or the clean reference model. 
+
+• We propose CANON , the first end-to-end canonicalization framework that defeats NSO by construction. CANON re-covers a graph-consistent channel basis using activation probes and enforces global layout synchronization across fan-out, residual merges, and concatenations, without re-quiring the original model. 
+
+• We empirically invalidate the “zero-cost removal” claim of NSO. Under strong, compositional NSO attacks on modern CNNs, C ANON restores watermark verifiability for all eval-uated schemes with no accuracy loss, demonstrating that NSO fails as a permanent watermark removal strategy. 
+
+2 Related Work 2.1 Robustness of White-box Watermarking 
+
+White-box watermarking schemes. White-box watermark-2ing verifies model ownership with access to internal parame-ters and/or intermediate activations [12,13]. Existing schemes broadly include weight-based methods that encode mes-sages into selected weights or subspaces [14–17], activation-based methods that impose constraints on internal represen-tations [18, 19], and passport-based methods that couple ver-ification to secret keys embedded in dedicated modules or layer-wise passports [20, 21]. 
+
+Attacks and defenses in white-box watermarking. Most watermark robustness studies and defenses target value-level modifications that alter parameter values while keep-ing the architecture fixed, such as fine-tuning [14, 22, 23], pruning [17, 24, 25], compression [20], parameter overwrit-ing [15,26], distillation [27,28], and model extraction [29,30]. Correspondingly, many watermark constructions attempt to be robust to these edits by spreading the signal across weights [31,32], using redundancy encodings [33,34], adding regularizers [35], or designing verification rules that toler-ate moderate weight perturbations [36]. Some recent attacks further exploit invariances in verification, such as reparame-terization [37, 38], rescaling [13, 39], or weight shifting style manipulations [1, 13, 40] that preserve the function while dis-rupting the particular coordinates a verifier reads. However, defenses for these invariance-based evasions are still rare, and most existing “robust watermarking” techniques still assume identifiable coordinates, motivating our focus on the recovery under structure/layout obfuscations. 
+
+Why these defenses do not cover NSO. NSO changes the problem at its root: it preserves utility by construc-tion while performing structure edits, e.g., injecting/rearrang-ing channels, that invalidate the index-ordered assumptions many white-box extractors rely on [1]. Under NSO, the wa-termark signal may remain present in a functional sense, yet its presumed host indices/locations are scrambled. This breaks a common implicit premise behind “robust water-marking” against fine-tuning/pruning/overwriting: those de-fenses [14, 15, 17, 23, 24, 26] typically do not provide a post attack recovery mechanism that canonically restores a com-pact and compatible parameterization after channel/layout rewriting. As summarized in Table 1, a robust NSO defense should provide (i) post attack recovery (Post-atk), (ii) attack independent (Atk-ind) without prior knowledge of the obfus-cation, (iii) forward compatibility (Forw.) to support multi-ple watermark families, and (iv) robustness to compositional NSO (anti+), since attackers can mix primitives across layer-s/branches. To our knowledge, prior watermark defenses do not offer a graph-consistent canonicalization procedure that can defeat NSO-style structure obfuscations while preserving functional equivalence across modern CNN graphs. 
+
+2.2 Compared to Original NSO Design 
+
+NSO and the verifier failure mode. Yan et al. [1] intro-Table 1: What a robust NSO defense must provide                              
+
+> Representative line of work Post-atk Atk-ind Forw. anti+
+> Value-robust watermarking [14, 15, 17, 24, 27, 29] ✗✓❍✗
+> Invariant-based evasion [13, 40] ✗✗❍✗
+> NSO preliminary defense (§7.4) [1] ❍❍❍✗
+> CANON (ours) ✓✓✓✓
+> Symbols: ✓= yes; ❍= partial; ✗= no.
+> •Post-atk : Post attack recovery; Atk-ind : Attack independent;
+> •Forw. (forward-compatible): Compatible with various watermarking schemes;
+> •anti+ (anti-compositinal NSO): Robustness to compositional NSO attack.
+
+duce NSO as a function-equivalent obfuscation that injects and rearranges internal neurons/channels while keeping task behavior intact. By exploiting permutation invariances and other camouflaging steps, NSO preserves utility yet disrupts structure indexed assumptions : a watermark signal may still exist in a functional sense, but the verifier’s presumed host locations no longer align, causing white-box extraction to fail. 
+
+Preliminary defense in the original NSO paper. The pre-liminary defense in §7.4 of [1] evaluates defenders under three knowledge levels (limited samples, full data distribu-tion, and additionally the pre-attack reference model). A key point is the gap between eliminating suspicious neurons and 
+
+recovering a parameterization compatible with the extractor :without the prior knowledge and reference model, the elimi-nation procedure can remain non-restorative for watermark verification, while recovery becomes plausible mainly in the fully knowledgeable setting. Yan et al. [1] also identify more effective dummy-neuron elimination and de-obfuscation. 
+
+Stronger attacker protocol and our recovery objective. 
+
+Our evaluation targets a strictly stronger, compositional NSO regime than the single primitive settings used to evaluate §7.4, which reflect graph constraints and maximize hetero-geneity across residual add and channel cat structure. Ac-cordingly, we focus on recovery invoked during verification, without requiring prior knowledge of the attack procedure: CANON leverages signal-consistency constraints that NSO must satisfy along producer →consumer paths and performs 
+
+global consumer rewrites that remain consistent through 
+
+fan-out , residual add , and channel cat . This yields a com-pact, function-equivalent layout on which existing white-box watermark extractors become applicable again, without re-quiring the original model (used only for optional diagnostic-s/certification). We provide additional details on the original defense settings and protocol mismatch in Appendix D. 
+
+3 System Overview and Architecture 3.1 Our Design in Nutshell 
+
+Problem statement. White-box watermark verifiers implic-3itly assume a fixed internal structure : watermarked param-eters reside in specific layers or channels and are accessed via index-ordered extraction. NSO violates this assumption without changing network functionality. By performing struc-tural channel edits (i.e., dummy insertion, channel splitting, and scaling), NSO preserves functional equivalence while 
+
+scrambling the channel layout expected by the verifier. The challenge is that NSO is designed to be both function-equivalent and structurally plausible . Once structural obfus-cation is instantiated beyond simple sequential architectures, dummy channels propagate through fan-out, residual merges, and channel concatenations. As a result, attack redundancy becomes indistinguishable from benign model structure under local or layer-wise reasoning, rendering conventional defenses ineffective. The resulting problem is to recover a compact and compatible parameterization that preserves the original network function, given only white-box access to an NSO-obfuscated model and without relying on the attacker’s con-struction details or the clean reference model. 
+
+Our approach. We address this problem by exploiting a fundamental property of graph structured neural networks: 
+
+producer–consumer consistency . To preserve functional equivalence, any channel layout change introduced at a pro-ducer must be absorbed by all downstream consumers along the producer →consumer paths of the computation graph. This consistency requirement applies uniformly across fan-out, residual addition, and channel concatenation. We present C ANON , a graph-consistent recovery frame-work that models NSO edits as channel-basis transformations 
+
+and reverses structural obfuscation by construction. Rather than relying on local pruning or heuristic detection, C ANON 
+
+explicitly propagates layout corrections to all downstream linear consumers, ensuring global synchronization of channel representations while preserving end-to-end functionality. 
+
+Producer–consumer perspective. We view NSO as an edit on producer edges that changes the channel layout of inter-mediate tensors (e.g., from C channels to C+d channels via dummy injection). Any downstream operator that consumes this tensor is a consumer and must remain compatible with the layout to preserve functional equivalence. This includes 
+
+fan-out consumers, residual merges via elementwise add ,and channel concatenation via cat .Under function-equivalent obfuscation, any producer-side layout change must induce a consistent rewrite across all downstream consumers along every producer →consumer path. This graph-level consistency constraint is the key lever exploited by our recovery. 
+
+3.2 System and Threat Model 
+
+System model. Let fθ be a neural network with parameters θ
+
+and intermediate tensors flowing along a computation graph. The model owner embeds a white-box watermark into θ using a specific embedding algorithm with the given scheme. An ad-versary may apply NSO to produce an obfuscated parameter set θ′ that preserves utility: fθ′ ≈ fθ. A verifier obtains white-box access to θ′ (and the scheme’s verification key/secret where applicable) and aims to verify the watermark originally embedded in θ.Our pipeline takes θ′ as input and outputs recovered pa-rameters ˆθ such that (i) fˆθ ≈ fθ′ ( hence also fˆθ ≈ fθ under NSO’s utility preserving promise), and (ii) watermark extrac-tion on ˆθ yields high similarity according to the scheme’s metric. For evaluation with a clean reference available, we report a reference-equivalence certificate that checks whether watermarked weights match the pre-attack clean model up to permissible channel equivalences (permutation and optional positive per-channel scaling) under a relative tolerance. 
+
+Threat model. We consider a white-box adversary who has full knowledge of the victim model architecture and can mod-ify internal parameters. The adversary performs NSO attacks by injecting dummy channels into Conv/Linear layers and instantiating these edits graph-consistently in modern archi-tectures with structural operators such as residual add and channel cat . The adversary is allowed to apply standard NSO primitives, including zero-effect channels, mutually cancel-ing channel groups, and redundant channel splits, as long as the resulting model remains shape compatible and function-ally equivalent. The adversary’s goal is to preserve model utility ( fθ′ ≈ fθ) while breaking structure-dependent water-mark verification (e.g., index-ordered extraction), rather than destroying the watermark signal itself. 
+
+System assumptions. We assume that the model forward pass is sufficiently static to recover a computation graph (e.g., via 
+
+torch.fx ), allowing us to trace dataflow through structural operators such as residual add and channel cat . Conv/inear layers expose a well-defined channel that can be rewritten, while common nonlinear activations preserve channel count. The defender is assumed to have probe access to the model and can evaluate it on a small set of probe inputs (synthetic or public) to collect activation signatures used for redundancy inference. Channel-layout rewrites are applied only to linear consumers (Conv/Linear); modules that explicitly mix chan-nels (e.g., LayerNorm or attention) are treated as barriers and are not traversed by non-identity channel transformations. When grouped or depthwise convolutions are present, we restrict rewrites to respect group boundaries. Channel trans-formations are constrained to be block-diagonal with blocks aligned to groups (i.e., a direct sum of per-group submatrices with zeros off the diagonal blocks [41], so no mixing across groups is permitted. 
+
+4 Graph-Consistent NSO Attacks 
+
+We first introduce a ChannelTransform abstraction that uni-fies NSO edits and our recovery actions. We then formalize 4Figure 2: Neuron-view global synchronization. An adversary performs channel layout obfuscation by introducing a linear map on activations, writing ybefore = Minj , yafter (with Minj typically sparse/structured and possibly non-square), and injecting redundant dummy channels (gray) via primitives such as nso_split and nso_clique while preserving end-to-end input–output behavior. 
+
+(i) For residual add (ResNet) , From probe activations, we infer a channel transform MA on one branch. Since element-wise add 
+
+requires layout compatibility, we enforce layout synchronization by applying a compatible rewrite on the sibling edge, even if it is attack-free. The unified add-output layout is then propagated by rewriting all downstream linear consumers (fan-out) via W ← W M A, without requiring local rediscovery of redundancy. (ii) For channel concatenation (Inception) , each branch is compacted independently with transforms (MX , MY ). At cat , these compose into a block-diagonal transform blkdiag (MX , MY ),which is propagated to all downstream consumers via W ← W × blkdiag (MX , MY ).a graph-consistent instantiation of NSO on modern architec-tures ( fan-out , residual add , channel cat ). 
+
+4.1 ChannelTransform Abstraction 
+
+“Before-from-after” convention. We represent any channel layout rewrite on a producer edge as a sparse linear transform on the channel axis: 
+
+ybefore = M y after , M ∈ RCbefore ×Cafter . (1) Here, “before/after” is local to a rewrite on a given tensor edge; it does not assume “before” is the clean model glob-ally. For NSO injection, “after” is the expanded (obfuscated) representation; while for the recovery phase, “after” is typi-cally the compacted representation. This convention makes the consumer rewrite rule uniform across attack and recovery. 
+
+Consumer rewrite for dense Conv/Linear. Let a linear con-sumer produce z = W y before from the producer output ybefore .If we rewrite the producer interface using (1) , functional equivalence is preserved by updating the consumer parame-ters as: 
+
+z = W y before = W (My after ) = ( W M ) yafter 
+
+⇒ Wafter = Wbefore M. (2) For Conv2D, the same rule applies by reshaping the convolu-tion kernel as a matrix over the input-channel axis. 
+
+Consumer rewrite for grouped/depthwise Conv. For grouped convolution with G groups, the input-channel axis is partitioned into G disjoint blocks. We restrict Channel-Transform to be block-diagonal [41] with respect to this parti-tion and apply (2) independently within each group, ensuring the rewritten operator remains a valid grouped convolution. Depthwise convolution is the special case G = C. Because depthwise kernels do not linearly mix channels, preserving the depthwise operator class requires a restricted Channel-Transform: on depthwise consumers we allow only diagonal per-channel transforms (positive scaling, and optionally per-channel selection when pruning is enabled). We treat permu-tations as explicit channel reindexing operations that must be propagated across adjacent edges; if a nontrivial permu-tation cannot be propagated safely in a region, we treat the depthwise module as a barrier to that transform. 
+
+Flatten/view boundary. For the common CNN pattern y ∈
+
+RC×H×W flattened to ˜y ∈ RCHW (channel major layout), the lifted transform is: ˜ybefore = ( M ⊗ IHW ) ˜yafter , (3) 5Algorithm 1 Graph-consistent NSO injection                 
+
+> Require: model fθ; injection ratio ρ; split selector p; primitive op ∈{nso_zero ,nso_clique ,nso_split }
+> Ensure: attacked model fθ′with fθ′≈fθand graph-consistent layouts 1: Trace forward graph; collect producer edges
+
+E (Conv/Linear outputs). 2: For each e ∈ E, record downstream consumers: fan-out , add , cat .3: for each e ∈ E with width Ce do                                 
+
+> 4: de← ⌈ ρCe⌉
+> 5: if op =nso_split then
+> 6: ie←min (Ce−1,⌊pC e⌋)
+> 7: end if
+> 8: end for ▷global injection plan (merge-safe) 9: For each residual add merge-group, enforce an identical expansion rule (same deand channel ordering) across all incoming operands. 10: For each cat , record branch ordering for block-diagonal propagation.
+> ▷graph-consistency constraints 11: θ′←θ▷initialize recovery from attacked parameters 12: for each producer edge e∈
+
+E in topological order do                                                       
+
+> 13: (∆θ e,Me)←INJECT (e,de,ie,op )▷yold
+> e=Meynew
+> e(Eq. (1)) 14: Apply ∆θ eto update producer parameters in θ′.15: for each downstream Conv/Linear consumer weight Wthat con-sumes yold
+> edo
+> 16: W←W M e▷consumer-consistent rewrite (Eq. (2)) 17: end for
+> 18: Synchronize across structural nodes: ▷layout consistency 19: if add then
+> 20: enforce layout compatibility at each residual merge (per merge-group). 21: else if cat then
+> 22: Mcat ←blkdiag (M1, . . . , Mk)on the cat output edge. 23: rewrite its consumers as W←W M cat .24: end if
+> 25: end for
+> 26: return fθ′
+
+where IHW is the HW × HW identity matrix and ⊗ denotes the Kronecker product [41]. So (M ⊗ IHW ) applies the same channel transform M independently to each of the HW spatial locations under the channel major flattening. So the corre-sponding linear consumer rewrite uses: 
+
+Wafter = Wbefore (M ⊗ IHW ). (4) 
+
+Permutation/scaling. Per-channel permutation and positive scaling are sparse ChannelTransforms : permutation is a one-hot matrix Π and scaling is a diagonal matrix D with 
+
+Dii > 0 . These correspond to M = Π⊤D−1 as a sparse Chan-nelTransform, such that ybefore = M y after (equivalently, yafter =
+
+DΠ ybefore ). Matching the threat model and our evaluation cer-tificate, our recovery’s proportionality estimates α j explicitly target these scaling relationships, and our BN-aware capture is designed to remain correct when scaling is implemented with batch-normalization consistent compensation. 
+
+4.2 Graph-consistent NSO 
+
+Why “graph-consistent” matters. In sequential CNNs, NSO can be described as a layer-local channel edit plus a lo-cal consumer rewrite. Modern models, however, are graph-structured [42]: a single producer edge may feed multiple consumers (fan-out ), and structural operators impose global layout constraints. Residual add requires its two operands to share an identical channel layout, and channel cat requires consistent segment alignment across branches. Therefore, to preserve functional equivalence, NSO must be instanti-ated as a graph-consistent family of transforms plus consis-tent rewrites across all downstream consumers along every 
+
+producer →consumer path. 
+
+Graph-consistent injection policy (global plan). Following NSO [1], extending obfuscation to graph-structured archi-tectures such as ResNet and Inception requires coordinated injection positions. We therefore adopt a graph-consistent in-jection policy : a global injection plan is first determined over the traced computation graph, ensuring that every residual 
+
+add merge observes compatible expanded layouts and that every cat node receives branches whose expanded layouts align correctly in the concatenated channel bus. For each eligible producer edge e with width Ce, we in-ject de = ⌈ρCe⌉ dummy channels using standard NSO primi-tives: nso_zero or nso_clique , which append de channels, or nso_split , which replaces a baseline channel selected by p with de+1 scaled duplicates. We additionally consider composed primitives ( mix-opseq ) and treat the resulting ob-fuscation as a composition of ChannelTransforms .
+
+Topological execution and immediate consumer rewrites. 
+
+Algorithm 1 executes the global injection plan in topological order over the computation graph. At each injected producer edge e, we construct a transform Me such that ye = Me y′
+
+> e
+
+, and immediately rewrite all downstream linear consumers accord-ing to (2) . This eager rewriting strategy ensures that channel layout changes introduced at the producer are consistently absorbed by every consumer along the producer →consumer paths. For residual merges implemented via add , we verify that both operands satisfy the required layout compatibility at the merge; otherwise, the injection placement is deemed unsup-ported. For channel concatenation via cat , we compose the per-branch transforms into a block-diagonal map and propa-gate the resulting transform to all downstream consumers. 
+
+Instantiating Inject . We instantiate Inject using NSO function-equivalence primitives. nso_zero inserts null-effect channels, nso_split duplicates a baseline channel into re-dundant copies whose aggregate contribution matches the original, and nso_clique introduces mutually canceling channels by ensuring that the corresponding consumers’ weight columns sum to zero after rewriting. Each primitive is expressed as a ChannelTransform paired with the consumer rewrite rule, which together preserve functional equivalence (up to numerical tolerance) by construction. 
+
+5 End-to-End Recovery: C ANON 
+
+We present C ANON , a recovery procedure (Fig.3) that (i) infers channel redundancy from probe activations and (ii) 6Figure 3: Recovery. By clustering activation signatures from probe inputs, we infer a compacting transform Me. Rather than local pruning, our graph-consistent policy propagates 
+
+Me to all downstream linear consumers via Wnew = Wold Me,enforcing consistent channel layouts across residual add and enabling block-diagonal handling of cat . This restores water-mark verification on the recovered parameters ˆ θ.propagates the resulting layout correction to all downstream consumers by construction , restoring a canonical, compact representation suitable for white-box watermark extraction. 
+
+Design principle. CANON follows a ChannelTransform-first 
+
+design principle. Rather than requiring each downstream layer to independently rediscover redundancy, we infer a compact-ing transform at producer edges and rewrite all downstream linear consumers accordingly. This global rewriting strat-egy is essential under fan-out and structural merges, where local-only defences are brittle and inconsistent. Once a Chan-nelTransform is inferred, C ANON enforces a synchronized channel basis across all producer →consumer paths, includ-ing residual add and channel cat . As a result, the recovered model is graph-consistent by construction. We now present the details of our recovery steps. 
+
+5.1 Inferring Channel Redundancy 
+
+5.1.1 Probe Capture Probe set and evaluation mode. We pre-generate a deter-ministic probe set X = {xt }Tt=1 and run the attacked model fθ′
+
+in evaluation mode (no dropout; BN uses running statistics). For each eligible Conv/Linear producer edge e, we record per-channel activation summaries on X .
+
+BN-aware activation capture. To remain correct under BN-consistent scaling, we capture activations at a consistent se-mantic location: if a BatchNorm immediately follows the producer edge before the next linear operator, we record the 
+
+post-BN tensor; otherwise we record the producer output. More generally, we capture post-normalization and before any cross-channel mixing ; if a channelwise nonlinearity fol-lows (e.g., ReLU), we apply the same nonlinearity in the capture pipeline when forming state bits and summaries. 
+
+5.1.2 Scalar Summaries and State Bits. 
+
+For probe t, let the recorded tensor be A(t) 
+
+> e
+
+. For each channel 
+
+i, we compute a real-valued summary ui,t (e.g., spatial mean of ReLU (A(t) 
+
+> e
+
+[i]) ) and an activity bit bi,t = I[ui,t > 0]. This yields a per-channel bitstring bi = ( bi,1, . . . , bi,T ).
+
+Signature hashing (coarse bucketing). We pack bi and hash it into a fixed-length signature: sig (i) = H packbits (bi). (5) Channels with identical signatures form coarse candidate buckets. This is efficient and aligns with the NSO mechanism: injected redundant channels tend to share repeated activation state patterns under diverse probes. 
+
+5.1.3 Proportionality Refinement and Scale Estimation Why refinement is necessary. Signature buckets are coarse, where unrelated channels may collide, and true duplicates may coexist with channels that merely share the same ac-tive/inactive pattern. We therefore refine each bucket using proportionality of real-valued summaries across probes. 
+
+Robust scale estimation. For channels i, j in the same bucket, we estimate a scalar α j←i such that u j,t ≈ α j←iui,t . We com-pute a robust median ratio on probes where |ui,t | > ε (and require at least Tmin valid probes), and accept proportionality only if a symmetric relative error test is below a tolerance 
+
+τ. Inside a bucket, we build a proportionality graph and take connected components as refined subclusters. 
+
+5.2 Fan-out aware Merge/Drop Decisions 
+
+Fan-out aware decision rule. Given a refined redundancy cluster C on a producer edge, we decide whether it is a pure dummy structure ( nso_clique ) or represents a meaningful duplicated signal ( nso_split ). Crucially, because a producer edge may feed multiple consumers, this decision must hold across all downstream linear consumers ( fan-out ). 
+
+Merged outgoing effect. For any consumer with input-channel columns {w j} on that edge, we form the merged representative: 
+
+w′ 
+
+> r
+
+= ∑
+
+> j∈C
+
+α j w j. (6) We drop C as a nso_clique dummy structure only if ∥w′
+
+> r
+
+∥ is near zero for every downstream linear consumer; otherwise, we keep a representative and merge the rest into it. 
+
+5.3 Graph-consistent Rewrites 
+
+Transform synthesis. From the merge/drop decisions, we synthesize a sparse edge transform Me such that ye = Me y′
+
+> e
+
+,where y′ 
+
+> e
+
+is the compacted producer output. This transform encodes kept representatives and merge coefficients. 7Global consumer rewrites (by construction). We then rewrite every downstream linear consumer that consumes 
+
+ye by applying (2) . This is the core ChannelTransform-first 
+
+step: we do not rely on consumers to rediscover redundancy locally. 
+
+Residual add : layout synchronization. For an elementwise merge y = y(1) + y(2), both operands must share an identical recovered layout. We therefore enforce a shared recovered layout across the two branches: if one branch is compacted or reparameterized, the sibling branch is rewritten to a repre-sentation compatible with the recovered layout so the merge remains valid. Equivalently, for each residual add merge group (a set of edges constrained by skip topology to be compatible with the layout), we enforce a single recovered channel basis and propagate it to all downstream consumers. 
+
+Channel concatenation: block-diagonal composition. For 
+
+y = cat (y(1), . . . , y(k)) along the channel axis, we compose per-branch transforms as: 
+
+ybefore = blkdiag (M1, . . . , Mk) yafter . (7) This preserves branch semantics and enables downstream rewrites through the concatenation node. 
+
+5.4 Verification and Evaluation 
+
+Two-tier evaluation protocol. Since we target white-box 
+
+watermarking, a clean pre-attack reference model is typically available to the verifier/defender in practice. Accordingly, CANON adopts a two-tier evaluation protocol that leverages the reference when present for a strong certification, and oth-erwise falls back to a similarity-based check. Concretely: (i) with a clean reference available, we first attempt a strong reference-equivalence certificate on watermarked weights, aligned with the canonicalization goal; and (ii) otherwise, or if the certificate does not pass, we fall back to an explicit attack-aware similarity PASS predicate based on the clean/at-tacked/recovered triplet. 
+
+Tier 1: reference-equivalence certificate. Given a clean pre-attack reference model, we certify that recovered water-marked weights match the reference up to output-channel permutation (and optional positive per-channel scaling) under a relative tolerance. We flatten each output channel’s incom-ing weights into a vector wi (and optionally append bias) and form the pairwise ℓ2 residual matrix Ri, j. We then perform an ℓ2-greedy one-to-one matching [43] by repeatedly select-ing the smallest remaining Ri, j while enforcing uniqueness, until a full matching π is obtained. Passing the certificate im-plies that the recovered watermarked tensors lie in the same symmetry-equivalence class as the reference (permutation and, when enabled, BN-consistent positive scaling). So, in this case, the verifier can treat the recovered parameters as a certified canonical representative that is reference-equivalent 
+
+Algorithm 2 CANON Recovery     
+
+> Require: attacked model fθ′; probe set
+
+X ; thresholds ε, τ; norms γdrop (drop) and γkeep (keep/merge)        
+
+> Ensure: recovered model fˆθ
+> 1: Trace attacked forward graph. 2: For each channelized producer edge e, collect: downstream consumers ( fan-out ) and structural nodes ( add ,cat ). 3: Run probes x∈
+
+X in eval mode. 4: For each eligible edge e, record BN-aware per-channel summaries ui,t                                           
+
+> and activity bits bi,t.5: ˆ θ←θ′.▷initialize recovery from attacked parameters At each edge e, recover via yatk
+> e=Meycmp
+> eand rewrite W←W M e.6: for each eligible producer edge ein topological order do
+> ▷candidate channel groups for equivalence preserving pruning 7: Compute channel signatures: sig (i)←H(packbits (bi)) .▷coarse bucketing 8: Partition channels into buckets by identical sig (·).9: Within each bucket, refine subclusters satisfying:
+> uj,t≈αur,ton probes with |ur,t|>εand relative error ≤τ.10: for each refined cluster
+
+C with representative r and scales {α j } j∈C                       
+
+> do
+> 11: for each downstream linear consumer cdo
+> 12: w(c)
+> ⋆←∑j∈CαjW(c)
+> :,j.13: end for
+> 14: if max c∥w(c)
+> ⋆∥ ≤ γdrop then
+> 15: mark
+
+C as drop .16: else   
+
+> 17: merge
+
+C into r and keep r.18: end if                                                
+
+> 19: end for
+> 20: Construct sparse transform Meencoding keep/merge/drop such that yatk
+> e=Meycmp
+> e.▷synthesize synthesize linear transform 21: Compact producer parameters in ˆ θaccordingly. 22: for each consumer weight Wthat previously consumes yatk
+> edo
+> 23: W←W M e.24: end for ▷propagate recovered layout to all consumers 25: Synchronize across structural nodes: ▷layout consistency 26: if add then
+> 27: enforce a shared recovered layout across both operands within each residual merge group. 28: else if cat then
+> 29: Mcat ←blkdiag (M1, . . . , Mk).30: rewrite consumers as W←W M cat .31: end if
+> 32: end for
+> 33: return fˆθ
+
+on watermarked weights, i.e., verification behaves as if per-formed on the reference modulo the allowed symmetries. Watermark similarity is then reported for completeness. 
+
+Tier 2: attack-aware similarity PASS. If Tier 1 is unavail-able or does not pass, we apply an empirical PASS pred-icate based on each scheme’s native similarity score. Let 
+
+c = Sim (θ), a = Sim (θ′), and r = Sim (ˆθ) denote the simi-larity on the clean, attacked, and recovered models, respec-tively. Define the similarity drop caused by the attack as 
+
+∆ ≜ max {0, c − a}. We declare recovery PASS under Tier 2 if r − a ≥ λ ∆ − δ, where λ ∈ (0, 1] specifies the required fraction of the lost similarity to be recovered, and δ ≥ 0 is a tolerance term that absorbs extractor noise / numerical drift. 
+
+Reporting metrics. We report post-recovery task accuracy and watermark similarity computed by the extractor on ˆ θ.86 Experiments 
+
+We evaluate C ANON for its practicality. We focus on whether CANON recovers watermark similarity across various white-box schemes and whether graph-consistent rewrites remain correct on nontrivial graphs ( fan-out , residual add , channel 
+
+cat ) under strong, compositional NSO obfuscations. For each model/dataset/watermark configuration, we run the full end-to-end pipeline (train+embed → NSO → recover) and report accuracy and watermark similarity on the clean, attacked, and recovered models. We additionally evaluate recovery with our two-tier verifier: first applying the reference-equivalence certificate on watermarked weights, and falling back to the attack-aware similarity PASS criterion when the certificate does not hold. 
+
+6.1 Experimental Settings 
+
+To capture a broad range of practical settings, we evaluate across multiple architectures and datasets. All experiments are run on a dedicated server environment to ensure a consistent and controlled comparison. 
+
+Configurations. Our testbed consists of a dual-socket Intel Xeon Gold 6126 system (12 cores per CPU) with 192 GB of 2666 MHz ECC DDR4 memory (six-channel configuration) and 2 ×1.2 TB 10,000 RPM SAS II drives in RAID 1. We use two NVIDIA Tesla V100 GPUs (5,120 CUDA cores, 640 Tensor cores, 32 GB memory each) on 64-bit Ubuntu 18.04. 
+
+Datasets. As a structure-level defense against NSO, C ANON 
+
+operates on computation graphs and channel-wise activa-tion signatures, and is thus largely agnostic to semantic data distributions. Accordingly, experiments are conducted on MNIST [44] as a controlled testbed to isolate the impact of structural obfuscation and graph-consistent recovery from confounders that dominate larger benchmarks (e.g., heavy augmentation, long training schedules, and dataset-specific inductive biases). This choice enables exhaustive evaluation across all watermark schemes and NSO variants with mul-tiple random seeds under a fixed compute budget, yielding stable conclusions about recovery correctness and verifiabil-ity. MNIST images are adapted by repeating the grayscale channel to three channels and resizing 28 × 28 to 32 × 32. 
+
+Model architectures. We evaluate four canonical CNN back-bones, grouped by dominant graph motif that governs NSO behavior and determines the requirements of graph-consistent 
+
+ChannelTransform inference and consumer rewriting. 
+
+• Residual add dominant. These models enforce strict chan-nel alignment at residual merges, requiring any channel or layout transform to propagate consistently across all branches and downstream consumers. We consider ResNet-18 [8], a minimal and widely adopted residual architecture that provides a clean baseline for testing layout synchroniza-tion under residual addition, and EfficientNet [9], which re-tains residual add while introducing MBConv-style hetero-geneity (e.g., squeeze-and-excitation and compound scal-ing), thereby stressing ChannelTransform inference beyond simple residual blocks. 
+
+• Concat dominant graphs. These models rely heavily on channel concatenation across branches or over depth, re-quiring recovery to preserve branch-structured channel partitions and maintain consistency under extensive fea-ture reuse. We evaluate InceptionV3 [10], which exercises multi-branch modules composed via cat and directly tests block-structured rewrites, and DenseNet [11], which repeat-edly applies cat along depth with heavy fan-out , stress-ing global consistency when a single producer feeds many downstream consumers. 
+
+Watermarking schemes. We implement nine representative white-box watermarking schemes spanning three mainstream design families. (i) weight-based schemes embed ownership evidence directly into model parameters, such as selected weights, subspaces, or weight-derived structures, and verify ownership by extracting a message or checking parameter-level similarity. This category includes uchida17 [12], 
+
+greedy [16], lottery [17], ipr_gan [15], and riga21 [14]. (ii) 
+
+activation-based schemes bind the watermark to internal rep-resentations rather than fixed weight indices, and verify own-ership via activation- or feature-level signals measured on probe inputs. We evaluate two representative methods in this family, ipr_ic [19] and deepsigns [18], which are explicitly designed to be more robust to parameter reindexing and struc-tural perturbations. (iii) passport-based schemes couple wa-termark verification to secret keys and dedicated passport mechanisms embedded in the model, such that correct key-dependent behavior is required for successful verification. We consider deepipr [21] and passport_aware [20], which im-plement passport-aware normalization or explicit passport modules to enforce ownership control. 
+
+Attack settings. Assuming that an attacker has white-box access to the model parameters and can apply NSO-style, function-equivalent channel edits to conv layers. We evaluate three NSO primitives and two compositional variants: 
+
+• nso_zero : injects d = ⌈ρ·C⌉ dummy output channels with zero-initialized weights and biases into each eligible convo-lutional or linear layer, where ρ ∈ [0, 1] is the attack ratio and C is the original channel count. 
+
+• nso_clique : injects d dummy channels whose incoming weights are duplicated from a randomly sampled Gaussian filter wbase ∼ N (μ, σ2), where μ and σ are computed from the original weight distribution, ensuring that the weighted sum of contributions from all clique members equals zero. 
+
+• nso_split : replaces one channel by k = d+1 scaled du-plicates, each weighted by coefficient 1/k such that their sum reconstructs the original channel’s contribution. 
+
+• mix-opseq : applies a sampled global sequence of primi-tives sequentially within each eligible layer.In this mode, 9Table 2: Watermark similarity restoration for ResNet-18 and EfficientNet under NSO add-ops attacks ( 0.2 attack ratio). Tier-1 reference-equivalence verification passes ( ✓) in all runs. We thus use Tier-1 watermark similarity of the recovered models as the primary outcome. Tier-2 similarity is included only as a conservative fallback for completeness rather than an invoked decision.                                                                                                                                                                                   
+
+> Watermark Clean / Functional Drift Tier-1 Pass Attack Sim. →Recovery Tier-1 Sim. (Tier-2 Sim.) Clean Sim.
+> ∆∆∆acc
+> (att.)
+> ∆∆∆acc
+> (rec.) nso_zero nso_clique nso_split mix-opseq mix-opseq (per-merge-group)
+> ResNet-18
+> uchida17 [12] 1.0000 0.0000 0.0000 ✓0.5703 →1.0000 (0.5781) 0.5312 →1.0000 (0.5781) 0.4844 →1.0000 (0.4297) 0.4531 →1.0000 (0.6016) 0.6094 →1.0000 (0.4844) greedy [16] 1.0000 0.0000 0.0000 ✓0.5000 →1.0000 (0.5000) 0.4844 →1.0000 (0.5000) 0.4609 →1.0000 (0.5234) 0.5703 →1.0000 (0.5000) 0.5000 →1.0000 (0.5156) lottery [17] 1.0000 0.0000 0.0000 ✓0.5547 →1.0000 (0.4766) 0.5000 →1.0000 (0.4766) 0.5312 →1.0000 (0.5000) 0.4688 →1.0000 (0.4844) 0.4609 →1.0000 (0.4766) ipr_gan [15] 1.0000 0.0000 0.0000 ✓0.5703 →1.0000 (0.5156) 0.5703 →1.0000 (0.5156) 0.5625 →1.0000 (0.5000) 0.5234 →1.0000 (0.5156) 0.5469 →1.0000 (0.4844) riga21 [14] 0.9766 0.0000 0.0000 ✓0.4531 →0.9766 (0.9766) 0.4531 →0.9766 (0.9766) 0.4531 →0.9766 (0.9922) 0.4531 →0.9766 (0.9922) 0.4531 →0.9766 (0.9922) ipr_ic [19] 1.0000 0.0000 0.0000 ✓0.5156 →1.0000 (0.5312) 0.4766 →1.0000 (0.5312) 0.5156 →1.0000 (0.5078) 0.5234 →1.0000 (0.5312) 0.4141 →1.0000 (0.4609) deepsigns [18] 1.0000 0.0000 0.0000 ✓0.5547 →1.0000 (0.4844) 0.5547 →1.0000 (0.4844) 0.5547 →1.0000 (0.5000) 0.4844 →1.0000 (0.5000) 0.5391 →1.0000 (0.4531) deepipr [21] 1.0000 0.0000 0.0000 ✓0.4062 →1.0000 (0.5312) 0.4062 →1.0000 (0.5312) 0.4062 →1.0000 (0.3594) 0.4062 →1.0000 (0.6094) 0.4062 →1.0000 (0.6094) passport_aware [20] 1.0000 0.0000 0.0000 ✓0.5703 →1.0000 (0.5156) 0.5703 →1.0000 (0.5156) 0.5625 →1.0000 (0.5391) 0.5312 →1.0000 (0.6094) 0.5000 →1.0000 (0.4609) EfficientNet uchida17 [12] 1.0000 0.0000 0.0000 ✓0.5547 →1.0000 (0.4375) 0.4688 →1.0000 (0.4375) 0.4766 →1.0000 (0.4531) 0.4609 →1.0000 (0.5234) 0.4688 →1.0000 (0.4609) greedy [16] 1.0000 0.0000 0.0000 ✓0.4844 →1.0000 (0.4531) 0.4453 →1.0000 (0.4531) 0.4922 →1.0000 (0.5156) 0.5859 →1.0000 (0.5312) 0.5078 →1.0000 (0.5469) lottery [17] 1.0000 0.0000 0.0000 ✓0.5391 →1.0000 (0.4531) 0.4688 →1.0000 (0.4531) 0.4609 →1.0000 (0.4688) 0.5078 →1.0000 (0.4609) 0.5156 →1.0000 (0.4531) ipr_gan [15] 1.0000 0.0000 0.0000 ✓0.4844 →1.0000 (0.5391) 0.5547 →1.0000 (0.5391) 0.4844 →1.0000 (0.5156) 0.4375 →1.0000 (0.5312) 0.5234 →1.0000 (0.5469) riga21 [14] 0.9062 0.0000 0.0000 ✓0.6172 →0.9062 (0.8984) 0.6172 →0.9062 (0.8984) 0.6172 →0.9062 (0.8984) 0.6172 →0.9062 (0.9141) 0.6172 →0.9062 (0.9219) ipr_ic [19] 1.0000 0.0000 0.0000 ✓0.5000 →1.0000 (0.4766) 0.4922 →1.0000 (0.4766) 0.3750 →1.0000 (0.4922) 0.4766 →1.0000 (0.5078) 0.4766 →1.0000 (0.5156) deepsigns [18] 1.0000 0.0000 0.0000 ✓0.4766 →1.0000 (0.5234) 0.5312 →1.0000 (0.5234) 0.4922 →1.0000 (0.5000) 0.4297 →1.0000 (0.5000) 0.5156 →1.0000 (0.5312) deepipr [21] 1.0000 0.0000 0.0000 ✓0.4062 →1.0000 (0.5469) 0.4062 →1.0000 (0.5469) 0.4062 →1.0000 (0.5469 0.4062 →1.0000 (0.4219) 0.4062 →1.0000 (0.5156) passport_aware [20] 1.0000 0.0000 0.0000 ✓0.4922 →1.0000 (0.4922) 0.4844 →1.0000 (0.4922) 0.5625 →1.0000 (0.5469) 0.5391 →1.0000 (0.4531) 0.5312 →1.0000 (0.4766)
+> ∆acc (clean ,att acked )and ∆acc (clean ,rec overed )report the worst-case absolute accuracy gap over the five listed attacks for each watermark.
+> Tier-1 pass indicates that the Tier-1 reference-equivalence certificate over watermarked layers passes for all runs in the suite for that model/watermark. We use ✓to denote a 100% match rate.
+
+the injected channel count is recomputed at each step t as 
+
+d(t) = ⌈ρC(t)⌉ from the current width. 
+
+• mix-opseq (per-merge-group) : samples sequences per residual merge group while allowing independence across channel concatenation branches, reflecting graph-consistency constraints and maximizing heterogeneity. It is an adaptive variant of mix-opseq .The attacker injects a global fraction of dummy chan-nels (default ρ = 0.2 ) into every eligible Conv/Linear out-put using a fixed per-layer placement rule that ensures shape compatibility across residual add and channel cat . We use interior placement rather than tail appends: after applying 
+
+nso_zero /_clique (which create new channels) and _split 
+
+(which selects a baseline channel at relative position p ∈ [0, 1],default p = 1.0 ), we apply a merge-safe permutation so in-jected channels need not be tail-only. This may introduce tiny numerical drift from floating point summation order changes without breaking functionality. We additionally apply ran-dom channel permutation and positive per-channel scaling (uniformly sampled in [0.6, 1.4] with batch-normalization con-sistent compensation) at a selected anchor location to stress test C ANON under the strongest NSO setting. A variant that disables permutation and scaling is reported in Appendix G. 
+
+Evaluation metrics. We report four metrics to character-ize NSO attacks and C ANON recovery: (i) task utility ,measured as the accuracy gaps ∆acc (clean , attacked ) and 
+
+∆acc (clean , recovered ); (ii) watermark evidence , measured by each scheme’s native similarity score Sim under our two-tier protocol, where Tier-1 reports Sim on the recovered model when the reference-equivalence certificate passes, and Tier-2 provides a conservative, attack-aware fallback score when certification is unavailable or fails; (iii) recovery cost , mea-sured as end-to-end wall-clock runtime of C ANON ; and (iv) 
+
+false positives on clean models , quantified by unnecessary structural edits when running C ANON on non-attacked water-marked models (fraction of parameters removed and frac-tion of Conv/Linear layers whose output shapes change). Ideally, C ANON preserves utility and watermark evidence while performing no structural edits on clean models, i.e., 
+
+∆acc (clean , recovered ) = 0, Sim clean = Sim recovered , and both quantities in (iv) are zero. 
+
+6.2 Experimental Results 
+
+We examine whether C ANON can restore white-box water-mark verifiability while preserving task utility (§6.2.1). We then analyze the cost of recovery and scalability under differ-ent attack strengths and probing configurations (§6.2.2). We assess the conservativeness of C ANON by measuring false positives when it is applied to non-attacked models (§6.2.3). 
+
+6.2.1 Recovery Utility and Verification 
+
+We evaluate C ANON ’s end-to-end effectiveness : whether it can neutralize NSO’s structure/layout obfuscations while pre-serving model utility and restoring white-box verifiability across watermark families and graph motifs. We summarize the full attack-and-recovery suite at attack ratio ρ = 0.2 in two tables: Table 2 (add-dominant: ResNet-18 and EfficientNet) and Table 3 (cat-dominant: InceptionV3 and DenseNet). Each row corresponds to a watermarking scheme; the left block reports clean similarity and main task accuracy gap, and the right block reports watermark similarity restoration (attack-time similarity → recovered similarity) together with the outcome of our two-tier verification. 10 Table 3: Watermark similarity restoration for InceptionV3 and DenseNet under NSO cat-ops attacks ( 0.2 attack ratio). Tier-1 verification passes ( ✓) in all runs and is used as the primary outcome, while Tier-2 serves as a conservative fallback.                                                                                                                                                                                  
+
+> Watermark Clean / Functional Drift Tier-1 Pass Attack Sim. →Recovery Tier-1 Sim. (Tier-2 Sim.) Clean Sim.
+> ∆∆∆acc
+> (att.)
+> ∆∆∆acc
+> (rec.) zero clique split mix-opseq mix-opseq (per-merge-group)
+> InceptionV3
+> uchida17 [12] 1.0000 0.0000 0.0000 ✓0.3984 →1.0000 (0.5391) 0.4766 →1.0000 (0.5391) 0.5625 →1.0000 (0.5938) 0.5000 →1.0000 (0.5547) 0.5000 →1.0000 (0.5547) greedy [16] 1.0000 0.0000 0.0000 ✓0.5938 →1.0000 (0.5703) 0.5781 →1.0000 (0.5703) 0.5156 →1.0000 (0.5156) 0.5078 →1.0000 (0.5234) 0.4609 →1.0000 (0.4453) lottery [17] 1.0000 0.0000 0.0000 ✓0.4844 →1.0000 (0.4766) 0.4766 →1.0000 (0.4766) 0.4688 →1.0000 (0.4609) 0.4688 →1.0000 (0.4844) 0.3906 →1.0000 (0.4531) ipr_gan [15] 1.0000 0.0000 0.0000 ✓0.5078 →1.0000 (0.5000) 0.5469 →1.0000 (0.5000) 0.5156 →1.0000 (0.5234) 0.5000 →1.0000 (0.5391) 0.5000 →1.0000 (0.5391) riga21 [14] 0.9688 0.0000 0.0000 ✓0.4453 →0.9688 (0.9688) 0.4453 →0.9688 (0.9688) 0.4453 →0.9688 (0.9766) 0.4453 →0.9688 (0.9766) 0.4453 →0.9688 (0.9766) ipr_ic [19] 1.0000 0.0000 0.0000 ✓0.5547 →1.0000 (0.5156) 0.5391 →1.0000 (0.5156) 0.4766 →1.0000 (0.4531) 0.5938 →1.0000 (0.4453) 0.5938 →1.0000 (0.4453) deepsigns [18] 1.0000 0.0000 0.0000 ✓0.5781 →1.0000 (0.4531) 0.6094 →1.0000 (0.4531) 0.5547 →1.0000 (0.4688) 0.5391 →1.0000 (0.4844) 0.5391 →1.0000 (0.4844) deepipr [21] 1.0000 0.0000 0.0000 ✓0.4062 →1.0000 (0.4688) 0.4062 →1.0000 (0.4688) 0.4062 →1.0000 (0.4219) 0.4062 →1.0000 (0.3281) 0.4062 →1.0000 (0.3281) passport_aware [20] 1.0000 0.0000 0.0000 ✓0.4844 →1.0000 (0.4922) 0.4766 →1.0000 (0.4922) 0.5391 →1.0000 (0.4453) 0.4453 →1.0000 (0.5000) 0.4453 →1.0000 (0.5000) DenseNet uchida17 [12] 1.0000 0.0000 0.0000 ✓0.5078 →1.0000 (0.4844) 0.4531 →1.0000 (0.4844) 0.5000 →1.0000 (0.5703) 0.4453 →1.0000 (0.5859) 0.4453 →1.0000 (0.4375) greedy [16] 1.0000 0.0000 0.0000 ✓0.4531 →1.0000 (0.4609) 0.5000 →1.0000 (0.4609) 0.4766 →1.0000 (0.5391) 0.4531 →1.0000 (0.3984) 0.6328 →1.0000 (0.4922) lottery [17] 1.0000 0.0000 0.0000 ✓0.5078 →1.0000 (0.5078) 0.5156 →1.0000 (0.5078) 0.5000 →1.0000 (0.5078) 0.4922 →1.0000 (0.5000) 0.5469 →1.0000 (0.5000) ipr_gan [15] 1.0000 0.0000 0.0000 ✓0.4922 →1.0000 (0.4922) 0.5000 →1.0000 (0.4922) 0.4922 →1.0000 (0.5000) 0.4766 →1.0000 (0.4688) 0.5000 →1.0000 (0.5312) riga21 [14] 1.0000 0.0000 0.0000 ✓0.4922 →1.0000 (0.9531) 0.4922 →1.0000 (0.9531) 0.4922 →1.0000 (0.9531) 0.4922 →1.0000 (0.9531) 0.4922 →1.0000 (0.9531) ipr_ic [19] 0.9922 0.0000 0.0000 ✓0.4531 →0.9922 (0.5625) 0.5469 →0.9922 (0.5625) 0.5391 →0.9922 (0.5000) 0.4844 →0.9922 (0.3906) 0.5312 →0.9922 (0.4922) deepsigns [18] 1.0000 0.0000 0.0000 ✓0.4844 →1.0000 (0.5078) 0.4922 →1.0000 (0.5078) 0.4922 →1.0000 (0.5312) 0.5078 →1.0000 (0.4844) 0.5078 →1.0000 (0.5625) deepipr [21] 1.0000 0.0000 0.0000 ✓0.4062 →1.0000 (0.4688) 0.4062 →1.0000 (0.4688) 0.4062 →1.0000 (0.5625) 0.4062 →1.0000 (0.5469) 0.4062 →1.0000 (0.5312) passport_aware [20] 1.0000 0.0000 0.0000 ✓0.4844 →1.0000 (0.3984) 0.4453 →1.0000 (0.3984) 0.5156 →1.0000 (0.4297) 0.4922 →1.0000 (0.4844) 0.5469 →1.0000 (0.5156)
+> ∆acc (clean ,att acked )and ∆acc (clean ,rec overed )report the worst-case absolute accuracy gap over the five listed attacks for each watermark.
+> Tier-1 pass indicates that the Tier-1 reference-equivalence certificate over watermarked layers passes for all runs in the suite for that model/watermark ( ✓means 100% match rate).
+
+Experimental results support the central claim of this work: NSO-style channel/layout obfuscations can preserve the model function while breaking structure-indexed white-box verification, and C ANON can fully restore a compact, graph-consistent parameterization that re-enables verifica-tion. Across all four model architectures and nine water-marking schemes, we observe zero accuracy drift under at-tack and after recovery (i.e., ∆acc (clean , attacked ) = 0 and 
+
+∆acc (clean , recovered ) = 0 in the reported suites). This con-firms that the attacks operate in the intended regime of struc-tural obfuscation without utility loss , and that any degradation in watermark similarity is isolated to the verification interface 
+
+(index/layout dependence), rather than to changes in learnt functionality. The fact that C ANON succeeds across both mo-tifs in these two tables indicates that it is enforcing the global constraints induced by fan-out , residual add , and channel 
+
+cat , highlighting why defending against NSO requires graph-consistent recovery rather than layer-local heuristics. Importantly, our reported recovery uses the two-tier veri-fier described earlier. Across this experimental suite, recovery succeeds at Tier-1 (reference-equivalence certification) for 
+
+all model–watermark pairs, demonstrating that the recovered watermarked weights match the pre-attack reference up to allowed channel symmetries (permutation and BN-consistent positive scaling). This certificate provides scheme-agnostic evidence that recovery reconstructs a compact, reference-equivalence parameterization on the attacked regions, rather than merely increasing a heuristic similarity score. Thus, wa-termark verifiability is fully recovered across diverse water-mark families while maintaining functional equivalence. For completeness, we also report the Tier-2 similarity scores produced by our two-tier verifier as a fallback refer-ence . Although this fallback is not exercised in our reported runs as all configurations pass at Tier-1 , it provides a conser-vative view of what verification would look like in the worst case where certification fails. In this hypothetical setting, the recovered similarity typically improves over the attacked sim-ilarity across schemes, indicating that canonicalization still makes the extractor’s coordinates substantially more compati-ble. Notably, for riga21 , the similarity can rise dramatically, e.g., from 45 .31% to 99 .22% , suggesting that even when ex-act reference-equivalence cannot be established, C ANON can still restore a highly usable level of ownership evidence. We emphasize that these Tier-2 numbers are provided only as con-textual evidence of robustness; the main conclusion remains that Tier-1 certification succeeds throughout. 
+
+Results at larger attack ratio. We defer the corresponding tables for attack ratio ρ = 0.5 to Appendix E, to reduce re-dundancy while showing that the above conclusions remain stable under heavier structural obfuscation. 
+
+Takeaway (full recovery under function-equivalent NSO). NSO preserves accuracy yet breaks structure-indexed verification, whereas C ANON fully restores a compact, graph-consistent layout and achieves com-plete verification recovery with Tier-1 reference-equivalence certification passing throughout. 
+
+6.2.2 Recovery Runtime and Scalability 
+
+We characterize the practical cost of recovery and how it scales with attack complexity and probing configuration. We first present Fig.5, which aggregates C ANON recovery time across all nine watermarking schemes for four architec-tures and two injection ratios under the five NSO variants. We then zoom in on ResNet-18 in Fig.4 to isolate how runtime scales with the number of probe inputs and probe batch size, 11 (a)                    
+
+> probe batch =32, attack ratio =0.2(b)
+> probe batch =32, attack ratio =0.5(c)
+> probe batch =64, attack ratio =0.2(d)
+> probe batch =64, attack ratio =0.5
+
+Figure 4: C ANON recovery time on ResNet-18 versus the number of probe inputs under different probe batch sizes and attack ratios. Each plot includes the clean baseline and the attacked cases ( nso_zero , nso_split , nso_clique , mix-opseq , mix-opseq (per-merge-group) ). Increasing the probe number generally increases runtime due to additional activation collection and clustering, while higher injection ratios amplify the cost of redundancy detection and graph-consistent consumer rewrites. The legend is shown only in the first subgraph, as it applies to all subgraphs.                       
+
+> (a)
+> ResNet-18, attack ratio =0.2(b)
+> EfficientNet, attack ratio =0.2(c)
+> InceptionV3, attack ratio =0.2(d)
+> DenseNet, attack ratio =0.2
+> (e)
+> ResNet-18, attack ratio =0.5(f)
+> EfficientNet, attack ratio =0.5(g)
+> InceptionV3, attack ratio =0.5(h)
+> DenseNet, attack ratio =0.5
+
+Figure 5: C ANON recovery time under five NSO attack variants for ResNet-18 and DenseNet across multiple white-box watermarking schemes. Overall, recovery cost is attack-dependent and consistently highest for the composed mix-opseq setting, with a pronounced increase at ρ = 0.5 , while simpler attacks ( nso_zero / nso_split / nso_clique ) remain comparatively inexpensive and stable across watermark methods. and to attribute costs to the activation collection and clustering procedures that underpin ChannelTransform inference. Fig.5 shows that runtime is primarily attack-dependent ,while variation across watermarking schemes is compara-tively minor. This is expected because C ANON operates on the attacked computation graph and channel signatures, and its dominant costs arise from redundancy detection/clustering and graph-consistent consumer rewrites, both of which are determined mainly by the structural complexity introduced by NSO, rather than by the downstream watermark extractor. Across backbones, single primitive attacks (e.g., nso_zero ,
+
+nso_split ) remain inexpensive and stable, whereas the com-positional setting mix-opseq is consistently the most costly. This gap is more pronounced at higher injection ratios, reflect-ing the intended hardness of compositional NSO: sequentially applying multiple primitives entangles redundancy patterns and enlarges the scope of downstream rewrites required to maintain global consistency. Fig.5 highlights a key practical 12 Table 4: False positive evaluation. ResNet-18 recovery on clean (non-attacked) watermarked models. All test cases show zero structural false positives (no parameter pruning, no layer shape changes), perfect accuracy preservation ( ∆acc = 0), and 100% Tier-1 reference-equivalence certificate pass rate. Wa-termark similarity gaps are minimal (within noise tolerance), with one case showing slight improvement.                                                               
+
+> Watermark P-FPR L-FP ∆sim ∆acc
+> Tier-1 Pass
+> uchida17 0.0000 0/21 0.0000 0.0000 ✓(2 /2) greedy 0.0000 0/21 0.0000 0.0000 ✓(4 /4) lottery 0.0000 0/21 0.0000 0.0000 ✓(18 /18) ipr_gan 0.0000 0/21 0.0000 0.0000 ✓(2 /2) riga21 0.0000 0/21 0.0000 0.0078 ✓(2 /2) ipr_ic 0.0000 0/21 0.0000 0.0000 ✓(1 /1) deepsigns 0.0000 0/21 0.0000 0.0000 ✓(2 /2) deepipr 0.0000 0/21 0.0000 0.0000 ✓(8 /8) passport_aware 0.0000 0/21 0.0000 0.0000 ✓(21 /21)
+> P-FPR : parameter false positive rate;
+> L-FP : layer false positive, listed in changed / total ;
+> ∆acc for accuracy gap while ∆sim for watermark similarity gap.
+
+point that the recovery cost tracks the attacker’s structural aggressiveness, making the most damaging NSO variants also the most expensive to apply and to undo. Motivated by the weak dependence on watermark type and the consistent trends across architectures in Fig.5, we next focus on ResNet-18 to study probe-driven scaling in greater detail. Fig.4 confirms that runtime increases with the probe number because more probes imply more activation collection and more stable clustering statistics, and that it also increases with the injection ratio because heavier obfuscation amplifies redundancy detection and consumer rewrite cost. Notably, the 
+
+nso_clique family exhibits a more pronounced sensitivity at ρ = 0.5. A plausible explanation is that nso_clique ob-fuscation induces larger and denser equivalence structures at higher injection ratios, which increases clustering complex-ity and expands the set of consumers that must be rewritten consistently to preserve cancellation constraints. In contrast, 
+
+nso_zero and nso_split exhibit smoother scaling because their redundancy signatures are typically easier to separate and their downstream rewrites are less entangled. These results suggest that C ANON offers a tunable cost 
+
+profile: probe budgets can be adjusted to trade runtime for robustness margin, while the dominant driver remains the un-derlying NSO complexity. Crucially, even under strong graph-consistent NSO stressors, C ANON typically runs at the 10-second scale and in most cases stays well below one minute .Given that NSO can silently invalidate white-box watermark verification without harming model utility, this one-time over-head during verification is practically acceptable , because recovery is invoked only when a model is challenged for own-ership, and it is usually performed only once per disputed artifact. In this sense, C ANON introduces a modest, control-lable verification cost in exchange for restoring verifiability against a highly destructive class of structure obfuscations. 
+
+Takeaway (acceptable one-time verification cost). 
+
+CANON runtime is dominated by NSO complexity: sin-gle primitive attacks are inexpensive, while composi-tional mix-opseq is the most costly. This overhead is incurred only at verification time once and remains prac-tically acceptable, while probe budgets provide a direct knob to trade runtime for robustness margin. 
+
+6.2.3 False Positives on Clean Models 
+
+We evaluate C ANON ’s conservativeness when no NSO is present, i.e., whether the recovery pipeline introduces func-tional artifacts on clean watermarked models. Table 4 mea-sures structural changes (parameter pruning and layer shape changes), utility drift, and watermark similarity drift when CANON is applied directly to clean (non-attacked) models. Therefore, this table tests a “do no harm” requirement for our defenses so that meaningful rewrites should be triggered only when structural obfuscation is detected. Table 4 confirms zero false positives. All cases show zero structural changes (no parameter pruning or Conv/Linear out-put shape changes) and perfect accuracy preservation (i.e., 
+
+∆acc (clean , recovered ) = 0). Watermark similarity gaps on clean models are also zero. We observe one minor special case for riga21 , where recov-ery yields a slightly higher similarity than the clean baseline (i.e., one additional bit matches for a 128-bit message). This behavior is consistent with benign numerical variability. Some extractors depend on thresholding or floating-point-sensitive computations, and equivalence preserving rewrites can shift a borderline decision across a threshold without indicating any functional damage. C ANON is safe to apply as a pre-processing step during verification even when NSO is absent. 
+
+Takeaway (zero false positives, safe for clean model). 
+
+On clean (non-attacked) models, C ANON makes no structural changes, preserves accuracy exactly, and leaves watermark similarity unchanged, indicating a safe defense during verification. 
+
+7 Conclusion 
+
+We demonstrate that NSO’s zero-cost structural obfuscation does NOT always break white-box watermarking. By model-ing NSO as a graph-consistent producer–consumer threat and enforcing global layout consistency, we substantially strengthen the attack model and expose its recoverability. This transformation converts previously unrecoverable structural edits into a canonical, verifiable form. We present C ANON to reliably recover obfuscated models. Across strong composed NSO attacks, C ANON achieves 100% recovery, incurs no util-ity loss, and introduces no false positives. Our recovery fully restores watermark verification without losing task accuracy. 13 References 
+
+[1] Yifan Yan, Xudong Pan, Mi Zhang, and Min Yang. Re-thinking White-Box watermarks on deep learning mod-els under neural structural obfuscation. In USENIX Security Symposium (USENIX Sec) , 2023. [2] Yifan Lu, Wenxuan Li, Mi Zhang, Xudong Pan, and Min Yang. Neural dehydration: Effective erasure of black-box watermarks from dnns with limited data. In ACM SIGSAC Conference on Computer and Communications Security (CCS) , pages 675–689, 2024. [3] Alessandro Pegoraro, Carlotta Segna, Kavita Kumari, and Ahmad-Reza Sadeghi. DeepEclipse: How to break White-Box DNN-Watermarking schemes. In USENIX Security Symposium (USENIX Sec) , 2024. [4] Zheng Zhong, Ruoyu Wu, Junpeng Wan, Muqi Zou, and Dave Tian. Hardening deep neural network binaries against reverse engineering attacks. In ACM SIGSAC Conference on Computer and Communications Security (CCS) , pages 201–215, 2025. [5] Haiyu Deng, Yanna Jiang, Guangsheng Yu, Qin Wang, Xu Wang, Baihe Ma, Wei Ni, and Ren Ping Liu. PoLO: Proof-of-learning and proof-of-ownership at once with chained watermarking. arXiv preprint arXiv:2505.12296 , 2025. [6] Ziqi Yang, Tong Tang, Hung Dang, Zhengyang Wu, and Ee-Chien Chang. Effectiveness of distillation attack and countermeasure on neural network watermarking. 
+
+IEEE Transactions on Dependable and Secure Comput-ing (TDSC) , 2025. [7] Xiaohan Hao, Chao Lin, Xuan He, and Xinyi Huang. Gamc: Generic and anti-mda model certification for intellectual property protection in mlaas. IEEE Trans-actions on Dependable and Secure Computing (TDSC) ,2025. [8] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. Deep residual learning for image recognition. In IEEE Conference on Computer Vision and Pattern Recognition (CVPR) , pages 770–778, 2016. [9] Mingxing Tan and Quoc Le. Efficientnet: Rethinking model scaling for convolutional neural networks. In 
+
+International Conference on Machine Learning (ICML) ,pages 6105–6114, 2019. [10] Christian Szegedy, Vincent Vanhoucke, Sergey Ioffe, Jon Shlens, and Zbigniew Wojna. Rethinking the inception architecture for computer vision. In IEEE Conference on Computer Vision and Pattern Recognition (CVPR) ,pages 2818–2826, 2016. [11] Gao Huang, Zhuang Liu, Laurens Van Der Maaten, and Kilian Q Weinberger. Densely connected convolutional networks. In IEEE Conference on Computer Vision and Pattern Recognition (CVPR) , pages 4700–4708, 2017. [12] Yusuke Uchida, Yuki Nagai, Shigeyuki Sakazawa, and Shin’ichi Satoh. Embedding watermarks into deep neu-ral networks. In ACM on International Conference on Multimedia Retrieval (ICMR) , pages 269–277, 2017. [13] Xudong Pan, Mi Zhang, Yifan Yan, Yining Wang, and Min Yang. Cracking white-box DNN watermarks via invariant neuron transforms. In ACM SIGKDD Con-ference on Knowledge Discovery and Data Mining (SIGKDD) , pages 1783–1794, 2023. [14] Tianhao Wang and Florian Kerschbaum. Riga: Covert and robust white-box watermarking of deep neural net-works. In Proceedings of The Web Conference (WWW) ,pages 993–1004, 2021. [15] Ding Sheng Ong, Chee Seng Chan, Kam Woh Ng, Lixin Fan, and Qiang Yang. Protecting intellectual property of generative adversarial networks from ambiguity attacks. In IEEE/CVF Conference on Computer Vision and Pat-tern Recognition (CVPR) , pages 3630–3639, 2021. [16] Hanwen Liu, Zhenyu Weng, and Yuesheng Zhu. Water-marking deep neural networks with greedy residuals. In 
+
+International Conference on Machine Learning (ICML) ,volume 139, pages 6978–6988, 2021. [17] Xuxi Chen, Tianlong Chen, Zhenyu Zhang, and Zhangyang Wang. You are caught stealing my win-ning lottery ticket! making a lottery ticket claim its own-ership. Advances in Neural Information Processing Systems (NeurIPS) , 34:1780–1791, 2021. [18] Bita Darvish Rouhani, Huili Chen, and Farinaz Koushan-far. Deepsigns: An end-to-end watermarking framework for ownership protection of deep neural networks. In 
+
+International Conference on Architectural Support for Programming Languages and Operating Systems (ASP-LOS) , pages 485–497, 2019. [19] Jian Han Lim, Chee Seng Chan, Kam Woh Ng, Lixin Fan, and Qiang Yang. Protect, show, attend and tell: Empowering image captioning models with ownership protection. Pattern Recognition , 122:108285, 2022. [20] Jie Zhang, Dongdong Chen, Jing Liao, Weiming Zhang, Gang Hua, and Nenghai Yu. Passport-aware normal-ization for deep model protection. Advances in Neural Information Processing Systems (NeurIPS) , 33:22619– 22628, 2020. 14 [21] Lixin Fan, Kam Woh Ng, Chee Seng Chan, and Qiang Yang. Deepipr: Deep neural network ownership verifica-tion with passports. IEEE Transactions on Pattern Anal-ysis and Machine Intelligence (TPAMI) , 44(10):6122– 6139, 2021. [22] Twinkle Tyagi, Kedar Nath Singh, Amit Kumar Singh, and Brij B. Gupta. Deepverifier: Robust watermarking of deep neural networks based on black-box and white-box reasoning. IEEE Transactions on Computational Social Systems (TCSS) , pages 1–10, 2025. [23] Yingqian Cui, Jie Ren, Yuping Lin, Han Xu, Pengfei He, Yue Xing, Lingjuan Lyu, Wenqi Fan, Hui Liu, and Jiliang Tang. Ft-shield: A watermark against unauthorized fine-tuning in text-to-image diffusion models. ACM SIGKDD Explorations Newsletter , 26(2):76–88, 2025. [24] Lixin Fan, Kam Woh Ng, and Chee Seng Chan. Rethink-ing deep neural network ownership verification: Embed-ding passports to defeat ambiguity attacks. Advances in Neural Information Processing Systems (NeurIPS) , 32, 2019. [25] Jialong Zhang, Zhongshu Gu, Jiyong Jang, Hui Wu, Marc Ph Stoecklin, Heqing Huang, and Ian Molloy. Pro-tecting intellectual property of deep neural networks with watermarking. In Asia Conference on Computer and Communications Security (AsiaCCS) , pages 159– 172, 2018. [26] Peng Yang, Yingjie Lao, and Ping Li. Robust watermark-ing for deep neural networks via bi-level optimization. In IEEE/CVF International Conference on Computer Vision (ICCV) , pages 14841–14850, 2021. [27] Ziqi Yang, Tong Tang, Hung Dang, Zhengyang Wu, and Ee-Chien Chang. Effectiveness of distillation attack and countermeasure on neural network watermarking. 
+
+IEEE Transactions on Dependable and Secure Comput-ing (TDSC) , 2025. [28] Chunpeng Wang, Wenlong Ma, Li Zou, Zhiqiu Xia, Qi Li, Bin Ma, and Yunan Liu. Toward robust deepfake detection: A proactive method based on watermarking and knowledge distillation. In ACM International Con-ference on Multimedia (MM) , pages 4798–4807, 2025. [29] Peizhuo Lv, Pan Li, Shengzhi Zhang, Kai Chen, Ruigang Liang, Hualong Ma, Yue Zhao, and Yingjiu Li. Arobustness-assured white-box watermark in neural net-works. IEEE Transactions on Dependable and Secure Computing (TDSC) , 20(6):5214–5229, 2023. [30] Jingxuan Tan, Nan Zhong, Zhenxing Qian, Xinpeng Zhang, and Sheng Li. Deep neural network watermark-ing against model extraction attack. In ACM Interna-tional Conference on Multimedia (MM) , pages 1588– 1597, 2023. [31] Zijin Yang, Kai Zeng, Kejiang Chen, Han Fang, Weim-ing Zhang, and Nenghai Yu. Gaussian shading: Provable performance-lossless image watermarking for diffusion models. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 12162–12171, 2024. [32] Jie Zhang, Dongdong Chen, Jing Liao, Weiming Zhang, Huamin Feng, Gang Hua, and Nenghai Yu. Deep model intellectual property protection via deep watermarking. 
+
+IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI) , 44(8):4005–4020, 2021. [33] Ting Luo, Jun Wu, Zhouyan He, Haiyong Xu, Gangyi Jiang, and Chin-Chen Chang. Wformer: A transformer-based soft fusion model for robust image watermarking. 
+
+IEEE Transactions on Emerging Topics in Computa-tional Intelligence (TETCI) , 8(6):4179–4196, 2024. [34] Zijie Pan, Zuobin Ying, Yajie Wang, Yani Wang, Zijian Zhang, Wanlei Zhou, and Liehuang Zhu. Robust water-marking for federated diffusion models with unlearning-enhanced redundancy. IEEE Transactions on Depend-able and Secure Computing (TDSC) , 2025. [35] Guanhao Gan, Yiming Li, Dongxian Wu, and Shu-Tao Xia. Towards robust model watermark via reducing para-metric vulnerability. In Proceedings of the IEEE/CVF International Conference on Computer Vision (CVPR) ,pages 4751–4761, 2023. [36] Zhiyang Dai, Yansong Gao, Boyu Kuang, Yifeng Zheng, Ajmal Mian, Ruimin Wang, and Anmin Fu. Division and union: Latent model watermarking. IEEE Transactions on Information Forensics and Security (TIFS) , 2025. [37] Ruisi Zhang, Shehzeen Samarah Hussain, Paarth Neekhara, and Farinaz Koushanfar. {REMARK-LLM }:A robust and efficient watermarking framework for gen-erative large language models. In USENIX Security Symposium (USENIX Sec) , pages 1813–1830, 2024. [38] Aiwei Liu, Leyi Pan, Yijian Lu, Jingjing Li, Xuming Hu, Xi Zhang, Lijie Wen, Irwin King, Hui Xiong, and Philip Yu. A survey of text watermarking in the era of large language models. ACM Computing Surveys (CVPR) ,57(2):1–36, 2024. [39] Vitaliy Kinakh, Brian Pulfer, Yury Belousov, Pierre Fer-nandez, Teddy Furon, and Slava Voloshynovskiy. Eval-uation of security of ml-based watermarking: Copy and removal attacks. In IEEE International Workshop on Information Forensics and Security (WIFS) , 2024. 15 [40] Nils Lukas, Edward Jiang, Xinda Li, and Florian Ker-schbaum. Sok: How robust is image classification deep neural network watermarking? In IEEE Symposium on Security and Privacy (SP) , pages 787–804, 2022. [41] Roger A Horn and Charles R Johnson. Matrix analysis .Cambridge university press, 2012. [42] Uzair Aslam Bhatti, Hao Tang, Guilu Wu, Shah Marjan, and Aamir Hussain. Deep learning with graph convo-lutional networks: An overview and latest applications in computational intelligence. International Journal of Intelligent Systems , 2023(1):8342104, 2023. [43] James Munkres. Algorithms for the assignment and transportation problems. Journal of the society for in-dustrial and applied mathematics , 5(1):32–38, 1957. [44] Gregory Cohen, Saeed Afshar, Jonathan Tapson, and Andre Van Schaik. Emnist: Extending mnist to hand-written letters. In International Joint Conference on Neural Networks (IJCNN) , 2017. 
+
+A Notation (Table 5) B Complexity Analysis 
+
+This appendix characterizes the time and memory cost of (i) graph-consistent NSO attacks and (ii) C ANON recovery. We use standard big-O notation and measure costs in terms of (a) forward-pass compute and (b) the number of scalar parameters / activation elements read or written. Constants hidden in O(·) include fixed kernel areas (e.g., k2 for k×k
+
+convolutions) and implementation-level constants. 
+
+1 Complexity of graph-consistent NSO 
+
+Graph extraction and shape bookkeeping. Graph-consistent NSO requires a one-time graph extraction and shape bookkeeping pass. FX tracing is O(|V |+|E|) time and 
+
+O(|V |+|E|) memory. If tensor shapes are inferred via a real 
+
+example forward pass (rather than meta propagation), this adds an additional O(FLOPs (M)) time term. In total, a safe upper bound is 
+
+time fx = O(|V |+|E|+FLOPs (M)) , mem fx = O(|V |+|E|).
+
+Single-step primitives (nso_zero / nso_split /
+
+nso_clique ). For each attacked producer ℓ ∈ Patk , NSO (i) materializes the widened producer weights, and (ii) rewrites every downstream linear consumer c ∈ Cons (ℓ) to preserve functional equivalence. Let M denote the induced channel mapping (a Channel-Transform ) between pre- and post-attack channel coordinates on edge ℓ, so that consumer weights are updated as Wc ←
+
+Table 5: Notations                 
+
+> Symbol Meaning
+> yChannelized activation on a producer edge (Conv output).
+> CChannel width.
+> ybefore ,yafter Activation before/after a local channel rewrite.
+> M∈RCbefore ×Cafter Channel transform with ybefore =M y after .
+> WLinear consumer weights; rewritten as Wafter =Wbefore M.
+
+X = {xt }Tt=1 Probe set used by C ANON .              
+
+> TNumber of probes.
+> ui,tBN-aware scalar summary of channel ion probe t.
+> bi,tActivity bit; bi= ( bi,1, . . . , bi,T).sig (i)Hashed activity signature for coarse bucketing.
+> εMagnitude threshold for stable ratio estimation.
+> Tmin Minimum probes for ratio/scale estimation.
+> τProportionality tolerance.
+
+C Candidate redundancy cluster of channels.                             
+
+> rRepresentative channel index.
+> αjEstimated scale of channel jrelative to r.
+> γdrop ,γkeep Norm thresholds for drop vs. keep/merge (fan-out aware).
+> εcert Tolerance for Tier-1 reference-equivalence certificate.
+> ηStabilizer in certificate denominator.
+> λ,δTier-2 PASS parameters (recovery fraction, noise slack).
+> ρNSO injection ratio, ρ∈[0,1].
+> d=⌈ρC⌉Injected dummy channels (single-step).
+> pSplit-baseline selector in [0,1].
+> SOperation-sequence length for mix-opseq .
+> G= ( V,E)FX-traced forward DAG with shape/dataflow metadata.
+
+P ⊆ E Eligible producer edges (Conv/Linear outputs).                                    
+
+> CℓOutput width of producer edge ℓ.
+> dℓ=⌈ρCℓ⌉Injected channels for ℓ;C′
+> ℓ=Cℓ+dℓ.
+> C(t)
+> ℓWidth of ℓafter tmix-opseq steps.
+> d(t)
+> ℓ=⌈ρC(t)
+> ℓ⌉Per-step injection amount. Cons (ℓ)Downstream linear consumers of ℓ.
+> WcWeight tensor of consumer c.
+> |Wc|Number of parameters in Wc.
+> M,M′Clean and attacked models. FLOPs (M)Forward-pass compute cost of M.
+> the upper part lists notations appearing in the main text (§4); the lower part covers notations used for the complexity analysis (Appendix B).
+
+WcM. In general, a sparse multiply costs O(nnz (M) ·Cout · k2)
+
+for a conv consumer (or O(nnz (M) · Cout ) for linear), be-cause each nonzero corresponds to copying/scaling/adding one input-channel slice across all output channels. For NSO primitives, M is highly structured (permutation/diagonal plus 
+
+O(1)-fan-in injections), so nnz (M) = O(C′
+
+> ℓ
+
+) and the update can be implemented as gather/scale/merge with cost linear in the written tensor size. Thus, per attacked producer ℓ,
+
+time single (ℓ) = O(|W ′ 
+
+> ℓ
+
+|) + ∑
+
+> c∈Cons (ℓ)
+
+O(|W ′ 
+
+> c
+
+|),
+
+where W ′ 
+
+> ℓ
+
+is the widened producer tensor and each W ′ 
+
+> c
+
+is the rewritten consumer tensor whose input width increases from Cℓ to C′
+
+> ℓ
+
+. Any additional constraint enforcement for 
+
+split /clique touches only affected slices and remains linear in the same tensors, so it does not change the asymptotic order. 
+
+Memory footprint. After injection, per-edge widths scale as C′ 
+
+> ℓ
+
+≈ (1+ρ)Cℓ (ignoring rounding). For interior dense re-gions where consecutive layers widen both input and output widths, weight tensors can scale quadratically in the width 16 factor because |W | depends on Cout Cin ; e.g., a conv weight can scale as (1+ρ)2 in a widened block. Peak temporary memory during rewriting is dominated by holding an old and a new tensor simultaneously and is therefore 
+
+peak-mem single = O
+
+
+
+max   
+
+> crewritten
+
+|W ′ 
+
+> c
+
+|
+
+
+
+,
+
+in addition to the resident parameters. 
+
+mix-opseq (length S). If an operation sequence repeat-edly injects d(t) 
+
+> ℓ
+
+= ⌈ρC(t) 
+
+> ℓ
+
+⌉ channels at step t, then 
+
+C(t+1) 
+
+> ℓ
+
+= C(t) 
+
+> ℓ
+
++ d(t) 
+
+> ℓ
+
+≈ (1 + ρ)C(t) 
+
+> ℓ
+
+⇒ C(S) 
+
+> ℓ
+
+≈ (1 + ρ)SCℓ,
+
+up to rounding. Per attacked producer ℓ, the total rewrite work across S steps forms a geometric series and is dominated by the last step: 
+
+time opseq (ℓ) = 
+
+> S−1
+
+# ∑
+
+> t=0
+
+O(|W (t+1) 
+
+> ℓ
+
+|) + ∑
+
+> c∈Cons (ℓ)
+
+O(|W (t+1) 
+
+> c
+
+|)
+
+!
+
+= O(|W (S) 
+
+> ℓ
+
+|) + ∑
+
+> c∈Cons (ℓ)
+
+O(|W (S) 
+
+> c
+
+|).
+
+(8) Consequently, mix-opseq can induce geometric cost in-creases in S through the widened widths; in dense regions, weight sizes may scale as Θ(( 1 + ρ)2S).
+
+mix-opseq (per-merge-group). Per-merge-group sam-pling changes only which edges are attacked together; it does not change the dominant tensor-materialization and rewrite terms above. It adds a near-linear preprocessing step (e.g., union-find over the FX graph) to compute merge groups: 
+
+time group = O(( |V |+|E|) α(|V |+|E|)) , mem group = O(|V |),
+
+where α(·) is the inverse-Ackermann function. Optional interior-placement bookkeeping (when enabled) is linear in the affected widths and does not change the dominant rewrite cost. 
+
+2 Complexity of C ANON recovery 
+
+CANON recovery consists of (i) probe capture, (ii) per-layer re-dundancy discovery (bucketing + proportionality refinement), and (iii) graph-consistent rewrites that propagate a recovered channel layout through fan-out and merge nodes. Let M′ be the attacked model and let P ′ be its eligible producer edges with attacked widths C′
+
+> ℓ
+
+.
+
+(i) Probe forward passes and activation summaries. Run-ning T probes requires T forward passes: 
+
+time probe = O(T · FLOPs (M′)) .
+
+In addition, C ANON computes per-channel summaries/bits from probed tensors. If an edge e has spatial dimensions 
+
+He ×We, computing channel-wise reductions costs 
+
+time summ = O
+
+
+
+T ∑ 
+
+> e∈P′
+
+C′
+
+> e
+
+HeWe
+
+
+
+,
+
+which is typically lower order than the forward pass but is included here for completeness. Because only per-channel scalars/bits are stored (not full activations), memory scales as 
+
+mem probe = O
+
+
+
+T ∑ 
+
+> ℓ∈P′
+
+C′
+
+> ℓ
+
+
+
+,
+
+up to constant factors depending on whether summaries are stored as floats or bit-packed. 
+
+(ii) Signature bucketing and proportionality refinement. 
+
+For a producer edge ℓ, computing / hashing a T -length signa-ture per channel is O(C′
+
+> ℓ
+
+T ). If channels are partitioned into signature buckets Bℓ and a bucket b contains |b| channels, pairwise proportionality checks within b cost O(|b|2T ). Thus, 
+
+time cluster (ℓ) = O(C′
+
+> ℓ
+
+T ) + O
+
+
+
+T ∑
+
+> b∈Bℓ
+
+|b|2
+
+.
+
+The worst case (all channels collide into one bucket) is 
+
+O(( C′
+
+> ℓ
+
+)2T ), while typical NSO-induced redundancy yields smaller buckets and substantially reduces the quadratic term. Auxiliary memory is upper bounded by the largest bucket if an explicit adjacency structure is materialized: 
+
+mem cluster = O
+
+
+
+max  
+
+> ℓ
+
+max 
+
+> b∈Bℓ
+
+|b|2
+
+,
+
+and can be reduced in practice by streaming pairwise checks. 
+
+(iii) Graph-consistent consumer rewrites. Once a channel layout map is inferred for an edge, C ANON rewrites all down-stream linear consumers (fan-out) and synchronizes layouts across merge nodes ( add /cat ) by propagating composed (still sparse/structured) transforms. Each rewrite is implemented as gather/scale/merge over weight slices and is therefore linear in the tensor size being written. Let Wrw denote the multiset of weight tensors rewritten during recovery; then 
+
+time rewrite = O
+
+
+
+# ∑ 
+
+> W∈Wrw
+
+|W |
+
+
+
+,
+
+peak-mem rewrite = O
+
+
+
+max  
+
+> W∈Wrw
+
+|W |
+
+
+
+.
+
+(9) In rare corner cases, an optional second synchronization pass may re-touch some tensors, multiplying the rewrite term by a small constant (e.g., K ∈ { 1, 2}). 17 Overall recovery cost and dependence on ρ. Combining the above terms yields 
+
+time recover =O(T · FLOPs (M′)) + O
+
+
+
+T ∑ 
+
+> e∈P′
+
+C′
+
+> e
+
+HeWe
+
+
+
++ ∑ 
+
+> ℓ∈P′
+
+O
+
+
+
+C′
+
+> ℓ
+
+T + T ∑
+
+> b∈Bℓ
+
+|b|2
+
++ O
+
+
+
+# ∑ 
+
+> W∈Wrw
+
+|W |
+
+
+
+,
+
+(10) and 
+
+mem recover =O
+
+
+
+T ∑ 
+
+> ℓ∈P′
+
+C′
+
+> ℓ
+
+
+
++ O
+
+
+
+max  
+
+> ℓ
+
+max 
+
+> b∈Bℓ
+
+|b|2
+
++ O
+
+
+
+max  
+
+> W∈Wrw
+
+|W |
+
+
+
++ O(|V | + |E|).
+
+(11) Crucially, the injection ratio ρ affects recovery indirectly 
+
+through attacked widths C′
+
+> ℓ
+
+: larger ρ increases FLOPs (M′)
+
+(probe time), stored probe summaries, and the worst-case clustering term. For mix-opseq of length S, widths can scale as C′ 
+
+> ℓ
+
+≈ (1 + ρ)SCℓ, yielding geometric blow-ups in both at-tack and recovery cost when ρ and/or S are large. 
+
+C Why Can Our Recovery Accurately Detect the Presence of NSO Attacks Without Un-necessarily Modifying a Clean Model? 
+
+Clarifying the claim (“recognize NSO”). Our recovery does not attempt to classify a model as attacked vs. clean using a separate detector. Instead, it is evidence-driven and only proposes a non-identity ChannelTransform on an edge when it observes strong, consistent NSO redundancy evidence under probes. On a clean model, those redundancy conditions rarely hold, so the induced transforms are (nearly always) identity, and the model is left unchanged. C ANON thus “recognizes” NSO edits by recognizing redundancy patterns that NSO must introduce to preserve functionality while expanding width. 
+
+Why NSO creates a recognizable signal. NSO primi-tives preserve the network function by introducing channels whose behavior is constrained: nso_zero channels are (near-)inactive, nso_split channels are proportional duplicates whose aggregate equals the original, and nso_clique chan-nels are duplicates whose downstream contributions cancel. These constructions induce repeated activation state patterns across probes and/or exact/proportional structure in weights; CANON targets precisely these invariants. 
+
+Conservative, multi-signal redundancy test (when we al-low pruning/merging). For each eligible producer edge (Con-v/Linear output), recovery forms candidate redundancy clus-ters and then filters them aggressively: 
+
+• Activation signature clustering. We record per-channel bi-nary states and real-valued summaries across a probe set (BN-aware capture when applicable). Only channels with similar state signatures are even considered as candidates, and channels that are almost-always-on/off can be excluded by an active-ratio gate. 
+
+• Proportionality refinement and scale estimation. Within a signature bucket we require channels to be mutually propor-tional under probe summaries, using a robust median-ratio estimate and a relative error tolerance. This rejects acciden-tal signature collisions that can occur in clean models. 
+
+• Weight-level safeguards. In graph-consistent recovery, we additionally require that candidate clusters are consistent with weight proportionality (within a tight tolerance), and we explicitly augment clusters with exact weight duplicates when needed for nso_clique -style recovery. 
+
+• Fan-out aware drop. Dropping a redundant set is only permitted when its merged outgoing effect is (near-)zero 
+
+for all downstream linear consumers (intersection across 
+
+fan-out ). This prevents “local” pruning decisions that would silently change behavior along a different branch. These checks make false positive compaction on clean models unlikely: a clean network needs to exhibit repeated activation signatures and tight proportionality across many probes and 
+
+consistent consumer-side evidence to trigger pruning. 
+
+Graph-consistent application further prevents accidental damage. Even when redundancy is detected, our update rule is function-equivalent by construction : once an edge trans-form M is inferred, we rewrite all downstream linear con-sumers ( fan-out ) with W ← W M (Eq. 2). We also enforce layout compatibility at residual add merges (synchronize both operands to a shared layout) and propagate block-diagonal transforms through channel cat . Finally, we are conservative about operator coverage: e.g., we do not propose output prun-ing/merges for grouped/depthwise convolution producers and treat unsupported channel-mixing modules as barriers. 
+
+Sanity checks (defensive execution). Recovery is run in eval mode with deterministic probes. The implementation includes a sanity_check option: after applying recovery, we execute the model on the probe inputs to ensure the rewritten graph is valid (graph-consistent path) and, in the legacy pipeline, we additionally measure a pre/post output delta on a probe subset and warn if it exceeds a tolerance. These checks are designed to catch unsafe rewrites early (crashes, obvious functional drift) rather than to encourage aggressive compaction. 
+
+Empirical evidence: “no-attack” false positive evaluation. 
+
+We also directly measure false positives by running recov-ery on clean (non-attacked) watermarked models and report-ing structural change, accuracy gap, and certificate outcomes, as shown in Tables 8, 9, and 10. In our current sanity run on MNIST with ResNet-18 across all considered watermark schemes, recovery showed: (i) nso_zero parameter pruning and nso_zero Conv/Linear shape changes in all tested cases, (ii) ∆acc (clean , recovered ) = 0 in all tested cases, and (iii) a 100% pass rate for the reference-equivalence certificate on wa-termarked layers (60/60 verified layers). Minor fluctuations in similarity on some schemes can occur due to extractor 18 Table 6: Watermark similarity restoration for ResNet-18 and EfficientNet under NSO add-ops attacks ( 0.5 attack ratio). Tier-1 verification passes ( ✓) in all runs and is used as the primary outcome, while Tier-2 serves as a conservative fallback.                                                                                                                                                                                  
+
+> Watermark Clean / Functional Drift Tier-1 Pass Attack Sim. →Recovery Tier-1 Sim. (Tier-2 Sim.) Clean Sim.
+> ∆∆∆acc
+> (att.)
+> ∆∆∆acc
+> (rec.) zero clique split mix-opseq mix-opseq (per-merge-group)
+> ResNet-18
+> uchida17 [12] 1.0000 0.0000 0.0000 ✓0.4844 →1.0000 (0.4844) 0.4141 →1.0000 (0.4844) 0.5547 →1.0000 (0.4922) 0.5000 →1.0000 (0.4219) 0.5000 →1.0000 (0.4766) greedy [16] 1.0000 0.0000 0.0000 ✓0.6406 →1.0000 (0.5781) 0.5469 →1.0000 (0.5781) 0.5312 →1.0000 (0.5703) 0.5078 →1.0000 (0.5469) 0.5391 →1.0000 (0.5234) lottery [17] 1.0000 0.0000 0.0000 ✓0.5703 →1.0000 (0.4766) 0.4922 →1.0000 (0.4766) 0.5391 →1.0000 (0.4844) 0.5156 →1.0000 (0.4922) 0.5469 →1.0000 (0.5000) ipr_gan [15] 1.0000 0.0000 0.0000 ✓0.5078 →1.0000 (0.5156) 0.5391 →1.0000 (0.5156) 0.5391 →1.0000 (0.5469) 0.4531 →1.0000 (0.5312) 0.4922 →1.0000 (0.4531) riga21 [14] 0.9766 0.0000 0.0000 ✓0.4531 →0.9766 (0.9922) 0.4531 →0.9766 (0.9922) 0.4531 →0.9766 (0.9844) 0.4531 →0.9766 (0.9922) 0.4531 →0.9766 (1.0000) ipr_ic [19] 1.0000 0.0000 0.0000 ✓0.5000 →1.0000 (0.5156) 0.4609 →1.0000 (0.5156) 0.4375 →1.0000 (0.5156) 0.5312 →1.0000 (0.5078) 0.4375 →1.0000 (0.5000) deepsigns [18] 1.0000 0.0000 0.0000 ✓0.4453 →1.0000 (0.3906) 0.4609 →1.0000 (0.3906) 0.5000 →1.0000 (0.4531) 0.5547 →1.0000 (0.5156) 0.4531 →1.0000 (0.5000) deepipr [21] 1.0000 0.0000 0.0000 ✓0.4062 →1.0000 (0.5156) 0.4062 →1.0000 (0.5156) 0.4062 →1.0000 (0.4688) 0.4062 →1.0000 (0.5312) 0.4062 →1.0000 (0.5938) passport_aware [20] 1.0000 0.0000 0.0000 ✓0.5781 →1.0000 (0.5547) 0.6016 →1.0000 (0.5547) 0.5703 →1.0000 (0.5234) 0.5703 →1.0000 (0.5078) 0.5156 →1.0000 (0.5625) EfficientNet uchida17 [12] 1.0000 0.0000 0.0000 ✓0.5703 →1.0000 (0.5078) 0.4922 →1.0000 (0.5078) 0.5000 →1.0000 (0.4688) 0.4922 →1.0000 (0.5312) 0.5000 →1.0000 (0.5000) greedy [16] 1.0000 0.0000 0.0000 ✓0.5156 →1.0000 (0.5000) 0.5703 →1.0000 (0.5000) 0.4844 →1.0000 (0.4453) 0.5469 →1.0000 (0.5000) 0.4766 →1.0000 (0.4375) lottery [17] 1.0000 0.0000 0.0000 ✓0.5469 →1.0000 (0.4609) 0.4609 →1.0000 (0.4609) 0.4453 →1.0000 (0.4375) 0.4297 →1.0000 (0.4609) 0.5234 →1.0000 (0.4688) ipr_gan [15] 1.0000 0.0000 0.0000 ✓0.5312 →1.0000 (0.5547) 0.4844 →1.0000 (0.5547) 0.5000 →1.0000 (0.5469) 0.5234 →1.0000 (0.5469) 0.5234 →1.0000 (0.5156) riga21 [14] 0.9062 0.0000 0.0000 ✓0.6172 →0.9062 (0.9062) 0.6172 →0.9062 (0.8984) 0.6172 →0.9062 (0.9219) 0.6172 →0.9062 (0.9141) 0.6172 →0.9062 (0.9062) ipr_ic [19] 1.0000 0.0000 0.0000 ✓0.5078 →1.0000 (0.5312) 0.4922 →1.0000 (0.5312) 0.4609 →1.0000 (0.5391) 0.4922 →1.0000 (0.5625) 0.5469 →1.0000 (0.5469) deepsigns [18] 1.0000 0.0000 0.0000 ✓0.5312 →1.0000 (0.5703) 0.5000 →1.0000 (0.5703) 0.4922 →1.0000 (0.5625) 0.5234 →1.0000 (0.5156) 0.5234 →1.0000 (0.5312) deepipr [21] 1.0000 0.0000 0.0000 ✓0.4062 →1.0000 (0.6094) 0.4062 →1.0000 (0.6094) 0.4062 →1.0000 (0.3438) 0.4062 →1.0000 (0.5469) 0.4062 →1.0000 (0.5312) passport_aware [20] 1.0000 0.0000 0.0000 ✓0.5156 →1.0000 (0.4688) 0.5156 →1.0000 (0.4688) 0.4844 →1.0000 (0.5234) 0.5234 →1.0000 (0.5391) 0.4844 →1.0000 (0.5625)
+> ∆acc (clean ,att acked )and ∆acc (clean ,rec overed )report the worst-case absolute accuracy gap over the five listed attacks for each watermark.
+> Tier-1 pass indicates that the Tier-1 reference-equivalence certificate over watermarked layers passes for all runs in the suite for that model/watermark ( ✓means 100% match rate).
+
+noise, but when the certificate passes, reference-equivalence is implied on the watermarked weights (under the allowed symmetries) and similarity is treated as recorded (§3). 
+
+D Additional Discussion on Original NSO’s Defense Settings 
+
+This section expands the comparison with Yan et al. [1] by detailing their preliminary defense settings (§7.4) and clar-ifying why those settings do not directly provide a reliable pathway to restore watermark-verifiable parameterizations under modern, graph-consistent NSO attacks. 
+
+NSO context: function preservation versus structural in-dices. Yan et al. [1] formalize NSO as a function-equivalent 
+
+obfuscation: the attacker injects redundancy (dummy neuron-s/channels) and rewires internal representations while main-taining the input–output function. Their attack design incor-porates camouflaging operations that exploit invariances of common architectures, including (i) permuting channels/neu-ron orderings and (ii) applying compensating per-channel scaling that preserves the composed mapping but blurs statis-tical fingerprints. They also discuss structural edits such as kernel expansion, which can further mask where redundancy is injected. These transformations preserve task utility, yet they break a verifier premise of many white-box watermark schemes: the extractor typically reads a message from a set of indices/locations that are assumed to remain stable across deployment edits. 
+
+Defense settings in §7.4 of [1]. The “preliminary defense” (§7.4 of [1]) is evaluated under three defender knowledge levels: 
+
+• Partially knowledgeable. The defender has limited data samples and attempts to detect and remove suspicious neu-rons. This setting captures practical constraints but offers weak guidance for restoring an aligned layout. 
+
+• Skilled. The defender has access to full training data distri-bution (or equivalent in-distribution samples), improving anomaly signals but lacking a structural reference for map-ping post-attack channels back to the expected indices. 
+
+• Fully knowledgeable. The defender additionally has the original (pre-attack) model, enabling direct alignment and recovery guided by a reference parameterization. A central observation is the gap between “removing suspi-cious units” and “recovering a watermark-verifiable param-eterization”: without a reference model, elimination-based procedures can remain essentially non-recovering for extrac-tion (e.g., extraction error close to chance), while stronger recovery is mainly feasible in the fully knowledgeable set-ting. Yan et al. explicitly leave more effective dummy-neuron elimination and de-obfuscation as future work. 
+
+Single primitive evaluation v.s. compositional NSO. In §7.4 of [1], dummy neurons generated by nso_zero , nso_clique ,and nso_split are injected independently , i.e., defenses are evaluated against individual primitive families in isolation. This is informative but under-approximates a realistic adaptive attacker who composes primitives to maximize ambiguity while remaining function-equivalent. Our efforts include mix-opseq , where a primitive sequence is sampled and applied sequentially within eligible layers, and 
+
+mix-opseq (per-merge-group) , which reflects graph con-straints while maximizing heterogeneity across residual/ cat 
+
+structure. Compositional NSOs cover redundancy patterns (e.g., clique membership and split duplicates) within a layer and across graph boundaries, undermining defenses that im-plicitly assume independently identifiable primitives. 19 Table 7: Watermark similarity restoration for InceptionV3 and DenseNet under NSO cat-ops attacks ( 0.5 attack ratio). Tier-1 verification passes ( ✓) in all runs and is used as the primary outcome, while Tier-2 serves as a conservative fallback. 
+
+Watermark Clean / Functional Drift Tier-1 Pass Attack Sim. → Recovery Tier-1 Sim. (Tier-2 Sim.) Clean Sim. 
+
+∆∆∆acc 
+
+(att.) 
+
+∆∆∆acc 
+
+(rec.) zero clique split mix-opseq mix-opseq (per-merge-group) 
+
+> InceptionV3
+
+uchida17 [12] 1.0000 0.0000 0.0000 ✓ 0.5000 →1.0000 (0.4922) 0.5469 →1.0000 (0.5312) 0.4688 →1.0000 (0.5625) 0.5156 →1.0000 (0.4688) 0.4844 →1.0000 (0.5234) greedy [16] 1.0000 0.0000 0.0000 ✓ 0.4609 →1.0000 (0.4922) 0.4844 →1.0000 (0.4922) 0.5859 →1.0000 (0.5078) 0.4922 →1.0000 (0.5078) 0.5234 →1.0000 (0.4766) lottery [17] 1.0000 0.0000 0.0000 ✓ 0.4453 →1.0000 (0.4922) 0.4531 →1.0000 (0.4922) 0.5000 →1.0000 (0.5000) 0.4688 →1.0000 (0.4766) 0.4688 →1.0000 (0.4922) ipr_gan [15] 1.0000 0.0000 0.0000 ✓ 0.5000 →1.0000 (0.5156) 0.5000 →1.0000 (0.5469) 0.5312 →1.0000 (0.5781) 0.5938 →1.0000 (0.5625) 0.5078 →1.0000 (0.5078) riga21 [14] 0.9688 0.0000 0.0000 ✓ 0.4453 →0.9688(0.9766) 0.4453 →0.9688(0.9766) 0.4453 →0.9688(0.9766) 0.4453 →0.9688(0.9766) 0.4453 →0.9688(0.9688) ipr_ic [19] 1.0000 0.0000 0.0000 ✓ 0.5859 →1.0000 (0.4375) 0.5078 →1.0000 (0.5000) 0.5156 →1.0000 (0.5156) 0.5547 →1.0000 (0.4688) 0.5000 →1.0000 (0.5703) deepsigns [18] 1.0000 0.0000 0.0000 ✓ 0.5000 →1.0000 (0.5078) 0.5391 →1.0000 (0.5078) 0.5156 →1.0000 (0.5156) 0.5781 →1.0000 (0.4688) 0.4531 →1.0000 (0.5703) deepipr [21] 1.0000 0.0000 0.0000 ✓ 0.4062 →1.0000 (0.5156) 0.4062 →1.0000 (0.4844) 0.4062 →1.0000 (0.5000) 0.4062 →1.0000 (0.5469) 0.4062 →1.0000 (0.4219) passport_aware [20] 1.0000 0.0000 0.0000 ✓ 0.4766 →1.0000 (0.4922) 0.5156 →1.0000 (0.5156) 0.4609 →1.0000 (0.4844) 0.4688 →1.0000 (0.4922) 0.5156 →1.0000 (0.5469) DenseNet uchida17 [12] 1.0000 0.0000 0.0000 ✓ 0.5000 →1.0000 (0.5547) 0.4688 →1.0000 (0.5547) 0.4922 →1.0000 (0.4453) 0.5000 →1.0000 (0.5078) 0.5547 →1.0000 (0.5156) greedy [16] 1.0000 0.0000 0.0000 ✓ 0.4609 →1.0000 (0.5234) 0.4531 →1.0000 (0.5234) 0.4375 →1.0000 (0.4531) 0.5234 →1.0000 (0.5625) 0.4844 →1.0000 (0.4531) lottery [17] 1.0000 0.0000 0.0000 ✓ 0.4844 →1.0000 (0.5234) 0.5469 →1.0000 (0.5234) 0.5156 →1.0000 (0.5000) 0.4922 →1.0000 (0.5156) 0.4297 →1.0000 (0.5078) ipr_gan [15] 1.0000 0.0000 0.0000 ✓ 0.4844 →1.0000 (0.4688) 0.4766 →1.0000 (0.4688) 0.4766 →1.0000 (0.4844) 0.5078 →1.0000 (0.5938) 0.4766 →1.0000 (0.4766) riga21 [14] 1.0000 0.0000 0.0000 ✓ 0.4922 →1.0000 (0.9531) 0.4922 →1.0000 (0.9531) 0.4922 →1.0000 (0.9609) 0.4922 →1.0000 (0.9453) 0.4922 →1.0000 (0.9531) ipr_ic [19] 0.9922 0.0000 0.0000 ✓ 0.5469 →0.9922(0.5312) 0.5703 →0.9922(0.5312) 0.5234 →0.9922(0.4609) 0.4688 →0.9922(0.4141) 0.5703 →0.9922(0.4766) deepsigns [18] 1.0000 0.0000 0.0000 ✓ 0.5547 →1.0000 (0.5312) 0.5312 →1.0000 (0.5312) 0.5078 →1.0000 (0.5312) 0.5078 →1.0000 (0.5781) 0.5391 →1.0000 (0.5312) deepipr [21] 1.0000 0.0000 0.0000 ✓ 0.4062 →1.0000 (0.5312) 0.4062 →1.0000 (0.5312) 0.4062 →1.0000 (0.4375) 0.4062 →1.0000 (0.4688) 0.4062 →1.0000 (0.5156) passport_aware [20] 1.0000 0.0000 0.0000 ✓ 0.5234 →1.0000 (0.5469) 0.5000 →1.0000 (0.5469) 0.5000 →1.0000 (0.5000) 0.5078 →1.0000 (0.5391) 0.5391 →1.0000 (0.4844) 
+
+∆acc (clean , att acked ) and ∆acc (clean , rec overed ) report the worst-case absolute accuracy gap over the five listed attacks for each watermark. 
+
+Tier-1 pass indicates that the Tier-1 reference-equivalence certificate over watermarked layers passes for all runs in the suite for that model/watermark ( ✓means 100% match rate). Table 8: False positive evaluation. DenseNet recovery on clean (non-attacked) watermarked models. All test cases show zero structural false positives (no parameter pruning, no layer shape changes), perfect accuracy preservation ( ∆acc = 0), and 100% Tier-1 reference-equivalence certificate pass rate. Wa-termark similarity gaps are minimal (within noise tolerance). 
+
+Watermark P-FPR L-FP ∆sim ∆acc 
+
+Tier-1 Pass 
+
+uchida17 0.0000 0/121 0.0000 0.0000 ✓ (2 /2) greedy 0.0000 0/121 0.0000 0.0000 ✓ (23 /23) lottery 0.0000 0/121 0.0000 0.0000 ✓ (121 /121) ipr_gan 0.0000 0/121 0.0000 0.0000 ✓ (1 /1) riga21 0.0000 0/121 0.0156 0.0000 ✓ (2 /2) ipr_ic 0.0000 0/121 0.0000 0.0000 ✓ (2 /2) deepsigns 0.0000 0/121 0.0000 0.0000 ✓ (8 /8) deepipr 0.0000 0/121 0.0000 0.0000 ✓ (2 /2) passport_aware 0.0000 0/121 0.0156 0.0000 ✓ (121 /121) 
+
+P-FPR : parameter false positive rate; 
+
+L-FP : layer false positive, listed in changed / total ;
+
+∆acc for accuracy gap while ∆sim for watermark similarity gap. 
+
+Why the elimination of [1] is not sufficient for compatible recovery. Eliminating anomalous channels does not by itself restore a canonical layout compatible with extractors, for three reasons. First, permutation/scaling camouflage breaks index semantics: after NSO, the correspondence between post-attack indices and the extractor’s assumed indices may be arbitrary (up to permutation), and values may be rescaled in compensating ways. Second, recovery must be global : any change to a producer’s channel basis must be propagated to all 
+
+downstream consumers; otherwise the defense either fails to remove obfuscation or breaks functional equivalence. Third, modern CNN graphs impose merge constraints: residual add 
+
+requires aligned channel semantics across branches, while channel cat allows independent layouts across branches but Table 9: False positive evaluation. EfficientNet recovery on clean (non-attacked) watermarked models. All test cases show zero structural false positives (no parameter pruning, no layer shape changes), perfect accuracy preservation ( ∆acc =
+
+0), and 100% Tier-1 reference-equivalence certificate pass rate. Watermark similarity gaps are minimal (within noise tolerance). 
+
+Watermark P-FPR L-FP ∆sim ∆acc 
+
+Tier-1 Pass 
+
+uchida17 0.0000 0/82 0.0000 0.0000 ✓ (6 /6) greedy 0.0000 0/82 0.0000 0.0000 ✓ (14 /14) lottery 0.0000 0/82 0.0391 0.0000 ✓ (33 /33) ipr_gan 0.0000 0/82 0.0000 0.0000 ✓ (1 /1) riga21 0.0000 0/82 0.0000 0.0000 ✓ (6 /6) ipr_ic 0.0000 0/82 0.0000 0.0000 ✓ (6 /6) deepsigns 0.0000 0/82 0.0000 0.0000 ✓ (8 /8) deepipr 0.0000 0/82 0.0000 0.0000 ✓ (6 /6) passport_aware 0.0000 0/82 0.0000 0.0000 ✓ (82 /82) 
+
+P-FPR : parameter false positive rate; 
+
+L-FP : layer false positive, listed in changed / total ;
+
+∆acc for accuracy gap while ∆sim for watermark similarity gap. 
+
+produces mixed consumers downstream. Therefore, an NSO defense must couple redundancy identification with graph-consistent rewriting. 
+
+E End-to-end Recovery Time under Larger At-tack Ratio (i.e., ρ = 0.5)
+
+To avoid redundancy in the main text, we report the corre-sponding end-to-end results under a larger injection ratio 
+
+ρ = 0.5 in Tables 12 and 7. The results mirror the ρ = 0.2suite: NSO remains function-equivalent, and C ANON contin-ues to restore verifiability across architectures and watermark-20 Table 10: False positive evaluation. Inception recovery on clean (non-attacked) watermarked models. All test cases show zero structural false positives (no parameter pruning, no layer shape changes), perfect accuracy preservation ( ∆acc = 0), and 100% Tier-1 reference-equivalence certificate pass rate. Wa-termark similarity gaps are minimal (within noise tolerance).                                                                
+
+> Watermark P-FPR L-FP ∆sim ∆acc
+> Tier-1 Pass
+> uchida17 0.0000 0/95 0.0000 0.0000 ✓(3 /3) greedy 0.0000 0/95 0.0000 0.0000 ✓(29 /29) lottery 0.0000 0/95 0.0000 0.0000 ✓(95 /95) ipr_gan 0.0000 0/95 0.0000 0.0000 ✓(1 /1) riga21 0.0000 0/95 0.0000 0.0000 ✓(3 /3) ipr_ic 0.0000 0/95 0.0000 0.0000 ✓(3 /3) deepsigns 0.0000 0/95 0.0000 0.0000 ✓(8 /8) deepipr 0.0000 0/95 0.0000 0.0000 ✓(3 /3) passport_aware 0.0000 0/95 0.0000 0.0000 ✓(95 /95)
+> P-FPR : parameter false positive rate;
+> L-FP : layer false positive, listed in changed / total ;
+> ∆acc for accuracy gap while ∆sim for watermark similarity gap.
+> (a)
+
+MNIST (b) CIFAR-100 
+
+Figure 6: CANON recovery time on ResNet-18 un-der MNIST and CIFAR-100 dataset as the NSO injec-tion ratio ρ increases. Curves correspond to five attack variants ( nso_zero , nso_split , nso_clique , mix-opseq ,
+
+mix-opseq (per-merge-group) ). Higher ρ increases the number of injected channels and thus widens the attacked net-work, which raises probe-time activation collection and am-plifies the cost of redundancy clustering and graph-consistent consumer rewrites; the effect is most pronounced for compo-sitional mix-opseq attacks. ing schemes under stronger structural obfuscation. 
+
+F Supplementary Experiments: Cifar100 
+
+To further demonstrate that C ANON is not tied to a partic-ular data distribution, we repeat our end-to-end evaluation on CIFAR-100 using the same ResNet-18 backbone, water-marking suite, and NSO stressors as in the main experiments. The recovery procedure remains unchanged: C ANON operates on the traced computation graph and probe-time activation signatures, and does not assume access to the training data distribution beyond the probes used at verification time. Table 12 summarizes watermark restoration under CIFAR-100 across four injection ratios ( ρ ∈ { 0.2, 0.5, 0.8, 1.0}), five NSO attack variants, and nine white-box watermark-ing schemes. The key observation is that task utility is fully preserved: for every watermark and ratio, both 
+
+∆acc (clean , attacked ) and ∆acc (clean , recovered ) remain 0,confirming that the evaluated NSO settings operate in the intended function-preserving regime and that C ANON does not introduce accuracy regressions while undoing structural obfuscation. More importantly, the primary outcome in our evaluation, Tier-1 reference-equivalence certification, passes ( ✓) for all runs across all ratios and watermarking schemes, indicating that recovered watermark-bearing tensors match the clean reference up to the allowed channel symmetries. We there-fore treat the recovered model as successfully canonicalized back into an extractor-compatible parameterization. Tier-2 similarity is reported only as an auxiliary, conservative refer-ence: it reflects each scheme’s native extractor score on the (potentially re-indexed) recovered weights and is not used for acceptance when Tier-1 passes. Figure 6 reports recovery runtime as the NSO injection ratio increases, for both MNIST and CIFAR-100. The over-all trend is consistent across datasets: higher ρ increases the number of injected channels and widens the attacked network, which raises probe-time activation collection cost and am-plifies redundancy clustering and graph-consistent consumer rewrites. This confirms that C ANON ’s runtime scales primar-ily with the structural complexity introduced by NSO rather than dataset-specific factors. The curves also highlight that runtime is strongly attack-dependent . Single-primitive attacks ( nso_zero , nso_split ,
+
+nso_clique ) remain comparatively inexpensive and grow moderately with ρ, whereas compositional attacks are the dominant cost drivers: mix-opseq exhibits the steepest growth as ρ increases, and mix-opseq (per-merge-group) 
+
+sits in between. Taken together with the Tier-1 success in Table 12, these results show that C ANON maintains full recovery while incur-ring a predictable, attack- and ratio-driven verification-time cost profile on CIFAR-100. 
+
+G Supplementary Attack Setting: Disabling Permutation and Scaling 
+
+We provide a complementary NSO stressor that disables “ex-plicit” channel permutation and per-channel scaling to help interpret the Tier-2 similarity behavior. §6 evaluates a stronger attack setting that includes explicitly applied permutation and scaling, i.e., symmetry-breaking operations chosen by the at-tacker that preserve task utility while intentionally scrambling channel identity and thus aggressively disrupting index-bound extractors. When these explicit symmetry-breaking knobs are disabled, exact index stability is still not guaranteed. This is 21 Table 11: Watermark similarity restoration for ResNet-18 under NSO add-ops attacks ( 0.2 attack ratio) without permutation or scaling. Tier-1 reference-equivalence verification passes ( ✓) in all runs. Tier-1 watermark similarity of the recovered models is the primary outcome, while Tier-2 similarity is the conservative fallback under the assumption that Tier-1 failed.                                                                        
+
+> Watermark Clean Sim. Tier-1 Pass Attack Sim. →Recovery Tier-1 Sim. (Tier-2 Sim.)
+> nso_zero nso_clique nso_split mix-opseq mix-opseq (per-merge-group)
+> ResNet-18
+> uchida17 [12] 1.0000 ✓0.5703 →1.0000 (1.0000) 0.5312 →1.0000 (1.0000) 0.4844 →1.0000 (0.5781) 0.4531 →1.0000 (0.6859) 0.6094 →1.0000 (1.0000) greedy [16] 1.0000 ✓0.5000 →1.0000 (0.5078) 0.4844 →1.0000 (0.5078) 0.4609 →1.0000 (0.5453) 0.5703 →1.0000 (0.5688) 0.5000 →1.0000 (0.6078) lottery [17] 1.0000 ✓0.5547 →1.0000 (0.5708) 0.5000 →1.0000 (0.5078) 0.5312 →1.0000 (0.5516) 0.4688 →1.0000 (0.5078) 0.4609 →1.0000 (0.4844) ipr_gan [15] 1.0000 ✓0.5703 →1.0000 (1.0000) 0.5703 →1.0000 (1.0000) 0.5625 →1.0000 (0.6250) 0.5234 →1.0000 (0.7031) 0.5469 →1.0000 (1.0000) riga21 [14] 0.9766 ✓0.4531 →0.9766 (0.9688) 0.4531 →0.9766 (0.9688) 0.4531 →0.9766 (0.9688) 0.4531 →0.9766 (0.9688) 0.4531 →0.9766 (0.9688) ipr_ic [19] 1.0000 ✓0.5156 →1.0000 (0.9297) 0.4766 →1.0000 (0.9297) 0.5156 →1.0000 (0.5547) 0.5234 →1.0000 (0.6484) 0.4141 →1.0000 (0.5547) deepsigns [18] 1.0000 ✓0.5547 →1.0000 (1.0000) 0.5547 →1.0000 (1.0000) 0.5547 →1.0000 (0.5946) 0.4844 →1.0000 (0.6250) 0.5391 →1.0000 (1.0000) deepipr [21] 1.0000 ✓0.4062 →1.0000 (1.0000) 0.4062 →1.0000 (1.0000) 0.4062 →1.0000 (0.5781) 0.4062 →1.0000 (0.6406) 0.4062 →1.0000 (0.7812) passport_aware [20] 1.0000 ✓0.5703 →1.0000 (1.0000) 0.5703 →1.0000 (1.0000) 0.5625 →1.0000 (0.5870) 0.5312 →1.0000 (0.5938) 0.5000 →1.0000 (0.8359)
+> Tier-1 pass indicates that the Tier-1 reference-equivalence certificate over watermarked layers passes for all runs in the suite for that model/watermark. We use ✓to denote a 100% match rate.
+
+because NSO primitives first inject redundancy, and the sub-sequent compaction step (drop/merge) can induce “implicit” channel relabeling, and any producer–consumer alignment procedure may introduce arbitrary tie-breaking among redun-dant channels. Nevertheless, under this milder setting, the same recovery pipeline yields substantially higher Tier-2 wa-termark similarity, while Tier-1 certification still passes across all runs, as shown in Table 11. 
+
+Tier-1 vs. Tier-2 measure different invariants. In our two-tier evaluation, Tier-1 searches for an alignment between re-covered and clean model weights up to the allowed symme-tries (output-channel permutation and, when enabled, BN-consistent positive scaling) under a tolerance. So, it can cer-tify recovery whenever the recovered tensors lie in the same symmetry-equivalence class as the reference, even if their raw indices are not identical. In contrast, Tier-2 reports each scheme’s native extraction similarity by running the extrac-tor directly on the unaligned recovered tensors. Since most white-box extractors are index/position-based and not per-mutation invariant, Tier-2 is not guaranteed to increase even when recovery is correct in the sense of canonicalization. 
+
+Disabling permutation/scaling makes Tier-2 similarity vis-ibly improve. When permutation and scaling are disabled, the stressor is dominated by redundancy injection and graph-consistent rewrites, and the recovered compact layout is much closer to the clean channel basis in a way that index-bound extractors can directly benefit from. Table 11 reflects that the reported Tier-2 similarities rebound toward the clean base-line. For instance, several schemes recover Tier-2 similarity close to 1.0 under nso_zero /nso_clique , and the overall extractor-native evidence is markedly stronger than under the stronger attack configuration in §6. Most importantly, this supplementary setting confirms that the low Tier-2 similarity observed under the strong NSO con-figuration is primarily driven by explicit symmetry-breaking edits (permutation/scaling) that target index-bound extractors, rather than by a failure of C ANON . Even in this attack setting without permutation or scaling, Tier-2 remains a conservative indicator, whereas Tier-1 provides the definitive confirmation of full recovery, as all runs pass Tier-1 reference-equivalence certification. 
+
+H Tight reference-equivalence certificates un-der strong NSO 
+
+Table 13 underscores a central strength of our recovery– verification pipeline: C ANON enables a tight Tier-1 reference-equivalence certificate that is stable across attack variants and tolerance settings. Under NSO add-ops at 0.2 attack ratio 
+
+with deliberate channel permutation and/or positive scaling enabled , every evaluated watermark scheme admits an ex-act one-to-one correspondence between recovered and clean reference output channels in watermark-bearing layers. Concretely, Perm Tol. is an ℓ2-based relative residual tol-erance applied after the best one-to-one channel matching is found. For each recovered output channel i and reference output channel j, incoming weights are flattened into vectors 
+
+w(rec ) 
+
+> i
+
+and w(ref ) 
+
+> j
+
+, and a pairwise residual matrix is formed as 
+
+Ri, j = w(rec ) 
+
+> i
+
+− w(ref ) 
+
+> j2
+
+w(ref )  
+
+> j2
+
++ ε .
+
+An ℓ2-greedy one-to-one matching then repeatedly selects the smallest remaining Ri, j while enforcing uniqueness, yielding a permutation π. The certificate passes at Perm Tol. if the worst matched residual is within tolerance, max  
+
+> i
+
+Ri,π(i) ≤ Perm Tol. .
+
+Across all watermarks and all attacks in the suite, the matched residuals are numerically zero, giving exactly 
+
+max_rel_err = 0.0000 and full coverage match_frac =
+
+1.0000 , consistently from Perm Tol. = 0.001 up to 0.1 . This tolerance-insensitivity indicates that recovery does not merely yield approximate alignment, but returns watermark-bearing 22 Table 12: Watermark similarity restoration for ResNet-18 under CIFAR-100 dataset. Tier-1 verification passes ( ✓) in all runs and is used as the primary outcome, while Tier-2 serves as a conservative fallback. 
+
+Attack Ratio Watermark Clean / Functional Drift Tier-1 Pass Attack Sim. → Recovery Tier-1 Sim. (Tier-2 Sim.) Clean Sim. 
+
+∆∆∆acc 
+
+(att.) 
+
+∆∆∆acc 
+
+(rec.) zero clique split mix-opseq mix-opseq (per-merge-group) 
+
+> ResNet-18 + CIFAR-100
+
+0.2 uchida17 [12] 1.0000 0.0000 0.0000 ✓ 0.4844 →1.0000 (0.5391) 0.4375 →1.0000 (0.5391) 0.4766 →1.0000 (0.4766) 0.4219 →1.0000 (0.5156) 0.4297 →1.0000 (0.5312) greedy [16] 1.0000 0.0000 0.0000 ✓ 0.4453 →1.0000 (0.3828) 0.4219 →1.0000 (0.3828) 0.4688 →1.0000 (0.4297) 0.4297 →1.0000 (0.5400) 0.4375 →1.0000 (0.4844) lottery [17] 1.0000 0.0000 0.0000 ✓ 0.5000 →1.0000 (0.5703) 0.4922 →1.0000 (0.5703) 0.5000 →1.0000 (0.5156) 0.4922 →1.0000 (0.5078) 0.5234 →1.0000 (0.5312) ipr_gan [15] 1.0000 0.0000 0.0000 ✓ 0.4922 →1.0000 (0.5000) 0.5859 →1.0000 (0.5000) 0.5391 →1.0000 (0.4688) 0.5625 →1.0000 (0.5938) 0.4609 →1.0000 (0.5312) riga21 [14] 0.9688 0.0000 0.0000 ✓ 0.5547 →0.9688 (0.9844) 0.5547 →0.9688 (0.9844) 0.5547 →0.9688 (0.9922) 0.5547 →0.9688 (0.9766) 0.5547 →0.9688 (0.9844) ipr_ic [19] 1.0000 0.0000 0.0000 ✓ 0.5234 →1.0000 (0.4844) 0.4531 →1.0000 (0.4844) 0.5078 →1.0000 (0.4688) 0.5156 →1.0000 (0.4609) 0.4766 →1.0000 (0.5078) deepsigns [18] 1.0000 0.0000 0.0000 ✓ 0.4844 →1.0000 (0.4531) 0.4375 →1.0000 (0.4531) 0.3750 →1.0000 (0.4688) 0.4844 →1.0000 (0.5156) 0.4531 →1.0000 (0.4375) deepipr [21] 1.0000 0.0000 0.0000 ✓ 0.4062 →1.0000 (0.5625) 0.4062 →1.0000 (0.5625) 0.4062 →1.0000 (0.6250) 0.4062 →1.0000 (0.5312) 0.4062 →1.0000 (0.5469) passport_aware [20] 1.0000 0.0000 0.0000 ✓ 0.5078 →1.0000 (0.5625) 0.4844 →1.0000 (0.5625) 0.5391 →1.0000 (0.5078) 0.4922 →1.0000 (0.5000) 0.4609 →1.0000 (0.4922) 0.5 uchida17 [12] 1.0000 0.0000 0.0000 ✓ 0.5156 →1.0000 (0.5156) 0.5156 →1.0000 (0.5156) 0.5234 →1.0000 (0.4766) 0.4453 →1.0000 (0.4609) 0.4531 →1.0000 (0.5469) greedy [16] 1.0000 0.0000 0.0000 ✓ 0.5469 →1.0000 (0.4688) 0.5547 →1.0000 (0.4688) 0.5703 →1.0000 (0.5156) 0.5391 →1.0000 (0.5703) 0.5703 →1.0000 (0.4688) lottery [17] 1.0000 0.0000 0.0000 ✓ 0.5469 →1.0000 (0.5078) 0.4766 →1.0000 (0.5078) 0.5156 →1.0000 (0.5156) 0.5547 →1.0000 (0.5547) 0.5547 →1.0000 (0.5078) ipr_gan [15] 1.0000 0.0000 0.0000 ✓ 0.5859 →1.0000 (0.5625) 0.5328 →1.0000 (0.5625) 0.5547 →1.0000 (0.5312) 0.4844 →1.0000 (0.5312) 0.5781 →1.0000 (0.5156) riga21 [14] 0.9688 0.0000 0.0000 ✓ 0.5547 →0.9688 (0.9844) 0.5547 →0.9688 (0.9844) 0.5547 →0.9688 (0.9844) 0.5547 →0.9688 (0.9844) 0.5547 →0.9688 (0.9766) ipr_ic [19] 1.0000 0.0000 0.0000 ✓ 0.4844 →1.0000 (0.4531) 0.4922 →1.0000 (0.4531) 0.4219 →1.0000 (0.5234) 0.5000 →1.0000 (0.5312) 0.4688 →1.0000 (0.5078) deepsigns [18] 1.0000 0.0000 0.0000 ✓ 0.5234 →1.0000 (0.4844) 0.5391 →1.0000 (0.4844) 0.4688 →1.0000 (0.5312) 0.4922 →1.0000 (0.4844) 0.5156 →1.0000 (0.4531) deepipr [21] 1.0000 0.0000 0.0000 ✓ 0.4062 →1.0000 (0.5625) 0.4062 →1.0000 (0.5625) 0.4062 →1.0000 (0.5625) 0.4062 →1.0000 (0.6562) 0.4062 →1.0000 (0.5469) passport_aware [20] 1.0000 0.0000 0.0000 ✓ 0.5781 →1.0000 (0.4844) 0.5859 →1.0000 (0.4844) 0.5156 →1.0000 (0.5078) 0.4922 →1.0000 (0.5000) 0.5547 →1.0000 (0.4766) 0.8 uchida17 [12] 1.0000 0.0000 0.0000 ✓ 0.5625 →1.0000 (0.5391) 0.5078 →1.0000 (0.5391) 0.4922 →1.0000 (0.5156) 0.4375 →1.0000 (0.5469) 0.5625 →1.0000 (0.5312) greedy [16] 1.0000 0.0000 0.0000 ✓ 0.4453 →1.0000 (0.5547) 0.4531 →1.0000 (0.5547) 0.5625 →1.0000 (0.4922) 0.5625 →1.0000 (0.4062) 0.4609 →1.0000 (0.5078) lottery [17] 1.0000 0.0000 0.0000 ✓ 0.4531 →1.0000 (0.5156) 0.5078 →1.0000 (0.5156) 0.5391 →1.0000 (0.5234) 0.5234 →1.0000 (0.4844) 0.5312 →1.0000 (0.4922) ipr_gan [15] 1.0000 0.0000 0.0000 ✓ 0.4609 →1.0000 (0.5312) 0.5859 →1.0000 (0.5312) 0.5625 →1.0000 (0.5938) 0.5312 →1.0000 (0.5781) 0.5547 →1.0000 (0.5156) riga21 [14] 0.9688 0.0000 0.0000 ✓ 0.5547 →0.9688 (0.9766) 0.5547 →0.9688 (0.9766) 0.5547 →0.9688 (0.9688) 0.5547 →0.9688 (0.9844) 0.5547 →0.9688 (0.9844) ipr_ic [19] 1.0000 0.0000 0.0000 ✓ 0.4922 →1.0000 (0.5156) 0.5000 →1.0000 (0.5156) 0.5234 →1.0000 (0.5156) 0.5469 →1.0000 (0.5000) 0.4766 →1.0000 (0.4531) deepsigns [18] 1.0000 0.0000 0.0000 ✓ 0.5625 →1.0000 (0.5312) 0.4688 →1.0000 (0.5312) 0.4531 →1.0000 (0.5469) 0.4922 →1.0000 (0.4844) 0.5625 →1.0000 (0.4531) deepipr [21] 1.0000 0.0000 0.0000 ✓ 0.4062 →1.0000 (0.5312) 0.4062 →1.0000 (0.5312) 0.4062 →1.0000 (0.5469) 0.4062 →1.0000 (0.6250) 0.4062 →1.0000 (0.5781) passport_aware [20] 1.0000 0.0000 0.0000 ✓ 0.5234 →1.0000 (0.5156) 0.5391 →1.0000 (0.5156) 0.5156 →1.0000 (0.4688) 0.5391 →1.0000 (0.4922) 0.5312 →1.0000 (0.5234) 1.0 uchida17 [12] 1.0000 0.0000 0.0000 ✓ 0.5000 →1.0000 (0.4531) 0.5078 →1.0000 (0.4531) 0.5156 →1.0000 (0.4922) 0.4531 →1.0000 (0.5078) 0.4844 →1.0000 (0.5234) greedy [16] 1.0000 0.0000 0.0000 ✓ 0.5547 →1.0000 (0.6016) 0.5391 →1.0000 (0.6016) 0.5859 →1.0000 (0.5547) 0.5574 →1.0000 (0.5469) 0.5391 →1.0000 (0.6328) lottery [17] 1.0000 0.0000 0.0000 ✓ 0.4688 →1.0000 (0.5000) 0.5078 →1.0000 (0.5000) 0.5625 →1.0000 (0.5703) 0.5547 →1.0000 (0.4922) 0.5156 →1.0000 (0.4922) ipr_gan [15] 1.0000 0.0000 0.0000 ✓ 0.5156 →1.0000 (0.5312) 0.6328 →1.0000 (0.5312) 0.5391 →1.0000 (0.4688) 0.4688 →1.0000 (0.4844) 0.5703 →1.0000 (0.5312) riga21 [14] 0.9688 0.0000 0.0000 ✓ 0.5547 →0.9688 (0.9922) 0.5547 →0.9688 (0.4922) 0.5547 →0.9688 (0.9844) 0.5547 →0.9688 (0.9766) 0.5547 →0.9688 (0.9844) ipr_ic [19] 1.0000 0.0000 0.0000 ✓ 0.5703 →1.0000 (0.5078) 0.5938 →1.0000 (0.5078) 0.5000 →1.0000 (0.5078) 0.5078 →1.0000 (0.4688) 0.4688 →1.0000 (0.4922) deepsigns [18] 1.0000 0.0000 0.0000 ✓ 0.5156 →1.0000 (0.5312) 0.5703 →1.0000 (0.5312) 0.3750 →1.0000 (0.5469) 0.4844 →1.0000 (0.5312) 0.4453 →1.0000 (0.5469) deepipr [21] 1.0000 0.0000 0.0000 ✓ 0.4062 →1.0000 (0.5938) 0.4062 →1.0000 (0.5938) 0.4602 →1.0000 (0.5938) 0.4062 →1.0000 (0.5652) 0.4062 →1.0000 (0.6406) passport_aware [20] 1.0000 0.0000 0.0000 ✓ 0.5859 →1.0000 (0.5234) 0.5391 →1.0000 (0.5234) 0.5156 →1.0000 (0.5312) 0.4609 →1.0000 (0.5234) 0.5156 →1.0000 (0.4925) 
+
+∆acc (clean , att acked ) and ∆acc (clean , rec overed ) report the worst-case absolute accuracy gap over the five listed attacks for each watermark. 
+
+Tier-1 pass indicates that the Tier-1 reference-equivalence certificate over watermarked layers passes for all runs in the suite for that model/watermark ( ✓means 100% match rate). Table 13: Tier-1 reference-equivalence sensitivity for ResNet-18 under NSO add-ops attacks ( 0.2 attack ratio) with permutation or scaling. Each cell reports the Tier-1 certificate statistics across permutation tolerance ( Perm Tol. ): maximum relative error (max_rel_err ) and greedy match fraction ( match_frac ). 
+
+Watermark Perm Tol. nso_zero nso_clique nso_split mix-opseq mix-opseq (per-merge-group) max_rel_err match_frac max_rel_err match_frac max_rel_err match_frac max_rel_err match_frac max_rel_err match_frac 
+
+uchida17 [12] greedy [16] lottery [17] ipr_gan [15] riga21 [14] ipr_ic [19] deepsigns [18] deepipr [21] passport_aware [20] 0.001 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.002 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.005 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.010 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.020 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.050 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.100 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 0.0000 1.0000 
+
+Cell format: (max_rel_err , match_frac ) for the Tier-1 certificate at the given Perm Tol. . Here, all entries satisfy max_rel_err = 0.0000 and match_frac = 1.0000. tensors to the same symmetry-equivalence class as the clean reference (up to the explicitly permitted channel permutation and BN-consistent positive scaling). As a result, ownership checks behave as if performed on the clean reference modulo these allowed symmetries, even under NSO-induced struc-tural edits that preserve task utility while severely disrupting index-bound extractors. 23

@@ -1,0 +1,1024 @@
+Title: TableMark: A Multi-bit Watermark for Synthetic Tabular Data
+
+URL Source: https://arxiv.org/pdf/2603.13722v1
+
+Published Time: Tue, 17 Mar 2026 04:32:46 GMT
+
+Number of Pages: 23
+
+Markdown Content:
+Noname manuscript No. 
+
+(will be inserted by the editor) 
+
+# TableMark: A Multi-bit Watermark for Synthetic Tabular Data 
+
+Yuyang Xia · Yaoqiang Xu · Chen Qian · Yang Li · Guoliang Li ·
+
+Jianhua Feng 
+
+> Received: date / Accepted: date
+
+Abstract Watermarking has emerged as an effective solution for copyright protection of synthetic data. How-ever, applying watermarking techniques to synthetic tabular data presents challenges, as tabular data can easily lose their watermarks through shuffling or dele-tion operations. The major challenge is to provide trace-ability for tracking multiple users of the watermarked tabular data while maintaining high data utility and ro-bustness (resistance to attacks). To address this, we de-sign a multi-bit watermarking scheme TableMark that encodes watermarks into synthetic tabular data, ensur-ing superior traceability and robustness while main-taining high utility. We formulate the watermark en-coding process as a constrained optimization problem, allowing the data owner to effectively trade off robust-ness and utility. Additionally, we propose effective opti-mization mechanisms to solve this problem to enhance the data utility. Experimental results on four widely used real-world datasets show that TableMark effec-tively traces a large number of users, is resilient to at-tacks, and preserves high utility. Moreover, TableMark 
+
+significantly outperforms state-of-the-art tabular wa-termarking schemes. 
+
+Keywords Copyright Protection · Watermark ·
+
+Synthetic Tabular Data 
+
+> Yuyang Xia Yaoqiang Xu Chen Qian Yang Li Guoliang Li Jianhua Feng
+
+1 Introduction 
+
+The data market (e.g., Ali Data Market [1] and AWS Data Exchange [2]), where data buyers purchase data products from data owners, significantly enhances the value of big data [52,7,44,31,14].Synthetic tabular data, which are artificially generated tables that closely re-semble distributions of original tables [32], offer sub-stantial utility to data buyers while safeguarding data privacy [34,10,33]. These data products are crucial and widely used in data-driven decision-making and statis-tical analysis [8]. However, synthetic tables can be eas-ily copied at a low cost, making them vulnerable once released. For example, an urgent problem is that data buyers may resell their copies of synthetic tables. There-fore, it is crucial to implement strategies that allow data owners to track and protect their data. This involves identifying and addressing unauthorized use to ensure that the data is shared responsibly and securely. Recently, digital watermarking has emerged as an effective solution for copyright protection of synthetic data, demonstrating success in texts [30] and images [47]. However, applying watermarking techniques to synthetic tabular data poses challenges [50], as these schemes rely on patterns within large sets of tokens or pixels. Tab-ular data, consisting of small, independent tuples, can easily lose their watermarks through shuffling or dele-tion operations. Generally, there are three vital properties of water-marking schemes for tracing synthetic tabular data in the data market. (1) Traceability: The watermarking scheme should have sufficient capacity to encode multi-bit watermarks that allow for tracing multiple data buyers and can be applied to various data types.  
+
+> arXiv:2603.13722v1 [cs.CR] 14 Mar 2026 2Yuyang Xia et al.
+
+(2) Robustness: The watermarking scheme should be resistant to attacks, which means that it should not be easily compromised by perturbations, modifications, deletions, and insertions. (3) Utility: The quality of the watermarked data should remain high, meaning that the watermarked data should closely resemble the original data in terms of dis-tributions [26] and support various tasks such as classi-fication and regression [49], as well as statistical analysis characterized by complex aggregation queries [32]. Existing schemes for watermarking synthetic tabu-lar data can be divided into three categories. (1) Cell-based schemes encode watermarks into specific patterns within cells by first synthesizing non-watermarked ta-bles and then modifying certain cells within these ta-bles to form watermark patterns. (2) Statistic-based schemes encode watermarks into table statistics in a similar way, by modifying non-watermarked synthetic tables. (3) Generative schemes [11] encode watermarks into pseudo-random sequences and synthesize water-marked tables from these sequences. However, exist-ing schemes have some limitations. Firstly, cell-based schemes often have limited utility because modifica-tions to cells, especially categorical ones, can compro-mise tuple integrity. For example, to ensure robustness, TabularMark [50] has to inject large-scale noise into a moderate proportion of cells. Secondly, statistic-based schemes generally provide better utility by imposing constraints on table modifications when encoding wa-termarks. However, they may fall short in traceability and robustness due to inappropriate constraints. For example, FreqyWM [18] imposes restrictive constraints that significantly weaken the encoded watermark pat-terns. Thirdly, generative schemes are weak in trace-ability, because it is hard to accurately recover pseudo-random sequences when decoding watermarks. For ex-ample, TabWak [51] encodes watermarks into Gaussian noise vectors and inputs these vectors into a diffusion model to synthesize watermarked tables, but the pro-cess of recovering these noise vectors from watermarked tables is error-prone. Designing a watermarking scheme for synthetic tab-ular data involves three challenges. The first challenge is determining an appropriate watermark channel and patterns, and designing an effective watermark encod-ing rule to encode the bit string watermark into water-mark patterns within the channel, which ensures multi-bit watermarking to support a large number of data buyers, while preserving high utility. The second chal-lenge is formulating the watermark encoding process as a constrained optimization problem, where utility is the optimization goal to maximize and a certain level of ro-bustness is the constraint to satisfy, or vise versa, so that the data owner can effectively trade off robustness and utility. The third challenge involves designing ef-fective optimization mechanisms to solve this problem to create watermarked tables that satisfy the desired trade-off between robustness and utility. To address the first challenge, we partition the ta-ble and choose the partition histogram as the water-mark channel. Specifically, to support multi-bit water-marking, we design multiple watermark patterns and their corresponding encoding rule based on relation-ships between histogram bin counts. For utility, on the one hand, we preserve tuple integrity by first calculat-ing a histogram from the watermark to be encoded and then synthesizing a watermarked table according to this histogram, which ensures that individual tuples are not manipulated during watermark encoding. On the other hand, we maintain high-quality tuple-frequency distri-butions by minimizing differences between histograms of the watermarked and original tables. To address the second challenge, we allow the data owner to quantita-tively express his/her robustness requirement and pro-vide theoretical guarantees for it, by generating specific constraints on the histogram of the watermarked ta-ble to control the robustness of watermark patterns en-coded in this histogram, and formulating a constrained optimization problem accordingly. To address the third challenge, we propose effective mechanisms to solve this problem to synthesize a high-utility watermarked table that also satisfies the robustness requirement. Putting it together, a novel multi-bit watermarking scheme for synthesizing multiple sets of watermarked tabular data, TableMark , is proposed. Our contribu-tions are summarized as below. (1) We propose a novel multi-bit watermarking scheme 
+
+TableMark designed for synthetic tabular data, which ensures superior traceability and robustness while main-taining high utility. (see Section 3) (2) We establish constraints to provide theoretical guar-antees for the data owner’s robustness requirement and formulate the constrained optimization problem to bal-ance robustness and utility. (see Section 4) (3) We design effective optimization mechanisms to solve the constrained optimization problem. (see Section 5) (4) We extensively evaluate TableMark using four widely used real-world datasets. The evaluation results demon-strate that TableMark significantly outperforms state-of-the-art baselines. (see Section 6) TableMark: A Multi-bit Watermark for Synthetic Tabular Data 3
+
+Table 1: Summary of commonly used notations.               
+
+> Notations Descriptions
+> MNumber of clusters
+> NMaximum number of supported data buyers
+> LLength of bit string watermark
+> Do/D w/D sOriginal/Watermarked/Suspect table
+> h= ( hi)Mi=1 Original histogram of Do
+> x= ( xi)Mi=1 Watermarked histogram to synthesize Dw
+> y= ( yi)Mi=1 Extracted watermarked histogram from Ds
+
+2 Preliminary 
+
+2.1 Problem Definition In this paper, we consider the data market scenario, where the data owner has an original table and sells watermarked synthetic tables to data buyers. Specif-ically, watermarked tables are supposed to have the same cardinality as the original table to ensure high utility for downstream tasks (e.g., counting queries). For each data buyer, the data owner synthesizes a wa-termarked table that contains a watermark uniquely associated with this buyer, and sells the table to this buyer. For future identification of dishonest buyers, the data owner stores the buyer-watermark mapping in a watermark database. When the data owner spots a sus-pect table at a later point, s/he decodes a watermark from this table and matches this watermark against the database to identify potential dishonest data buyers. Note that we consider only the single-table case where the original and watermarked tables are single tables, and leave the multi-table case where the data owner sells watermarked multi-table databases as future work. 2.2 Threat Model We assume that the attacker (1) has access to the wa-termarked table, (2) has no access to the original ta-ble, table synthesis models, the watermark database, or the secret key of the data owner (the secret key is introduced for robustness and will be detailed in Section 3.3), (3) has full knowledge of TableMark and its hyperparameters, and (4) aims to resell the water-marked table and thus does not excessively degrade its utility for various tasks when removing watermarks, to cater to the diverse needs of potential buyers. 
+
+3 Overview of TableMark 
+
+In this section, we provide an overview of TableMark .We first discuss the design principle in Section 3.1 and then introduce the workflow of TableMark in Section 3.2. 
+
+Fig. 1: Terminologies of TableMark .Finally, we discuss important components of TableMark 
+
+in Sections 3.3-3.5. Table 1 presents a summary of com-monly used notations. Figure 1 illustrates terminologies and their relationships in TableMark .3.1 Watermark Overview 
+
+Design Principle. To balance traceability, robustness, and utility, we need to select appropriate watermark channels (i.e., where to encode the watermark) and wa-termark encoding rules (i.e., how to encode the water-mark) in order to encode the watermark (i.e., what the watermark is) into the synthetic table. Specifically, the 
+
+watermark is a fixed-length binary bit string, such as 
+
+0b1010 . The watermark channel refers to the table in-formation that holds the watermark (e.g., individual tuples or table statistics). Given a watermark, the wa-termark encoding rule encodes specific watermark pat-terns (e.g., attribute correlations in individual tuples or relationships between table statistics) with respect to this watermark within the table information in the watermark channel. During watermark decoding, the watermark is decoded based on the patterns extracted from the suspect table Ds and the encoding rule. 
+
+Watermark Channel. Typically, individual tuples can-not serve as an effective watermark channel, because they have low entropy and cannot accommodate a large number of watermark bits. For traceability, we partition the original table Do and use multiple partitions as a foundation to construct the watermark channel. Specif-ically, we use clustering algorithms for table partition-ing. This approach reduces the destructive impact of attacks on the watermark channel, because clustering algorithms tend to form well-separated clusters, so tu-ples are less likely to be perturbed across cluster bound-4 Yuyang Xia et al. 
+
+Fig. 2: Architecture of TableMark .aries. Considering that tuples in each cluster are un-ordered, we choose cluster statistics, specifically, cluster sizes (i.e., cluster histogram ) as the watermark channel 
+
+for robustness, because changes to any single tuple only lead to small fluctuations in the cluster histogram. 
+
+Watermark Template. To encode L-bit watermarks, we construct L cluster pairs from the clusters as the wa-termark template to align with the watermark. For ex-ample, in Figure 1, the watermark has four bits and the cluster pairs are ( C17 ,C 8),(C5,C 14 ),(C30 ,C 25 ),(C15 ,C 3). 
+
+Watermark Pattern. We conduct L partial orders on the L cluster pairs as watermark patterns , where each partial order is an inequality predicate ( ≥ or <) be-tween cluster sizes of a cluster pair, dictating a rela-tive cluster-size relationship within the table to be syn-thesized that will hold the watermark. For example, in Figure 1, there are four partial orders: x17 < x 8, x 5 ≥
+
+x14 , x 30 < x 25 , x 15 ≥ x3, where xj is the size of cluster 
+
+Cj within the watermarked table. Note that partial or-ders among cluster sizes are more robust to cluster-size fluctuations than absolute cluster-size relationships. 
+
+Watermark Encoding Rule. To encode L-bit water-marks into the watermark channel, we design a water-mark encoding rule based on partial-order patterns: We use a single partial order to encode one bit ( ≥ encodes 0 and < encodes 1) and employ multiple partial orders to encode a bit string watermark. Thus, given an L-bit watermark, we generate L partial orders on the L clus-ter pairs as watermark patterns. Secondly, to encode the partial-order patterns into the watermark channel, we generate a cluster histogram (i.e., watermarked his-togram ) that will be used to synthesize the watermarked table Dw to satisfy these partial orders. To achieve high utility, the watermarked histogram should closely re-semble the original histogram of Do. To achieve this goal, we generate the watermarked histogram by min-imizing its difference from the original histogram, sub-ject to the partial-order constraints. 
+
+Watermarked-Table Synthesis. Using the water-marked histogram, we generate a watermarked table 
+
+Dw whose cluster distribution aligns with this histogram. 
+
+Watermark Decoding. Given a suspect table Ds, we predict the clusters for its tuples (called cluster assign-ment), calculate a cluster histogram (i.e., extracted wa-termarked histogram ) from the cluster-assignment out-come, determine partial orders from the histogram and the cluster-pair template, and decode a watermark based on the partial orders and the watermark encoding rule. 3.2 TableMark Workflow 
+
+TableMark involves four stages: watermark-database gen-eration , watermark-channel construction , watermarked-table synthesis , and watermark decoding . Figure 2 shows the architecture of TableMark . Watermark-database generation produces N distinct L-bit watermarks to trace a maximum number of N data buyers. Watermark-channel construction creates clusters for Do, calcu-lates the original cluster histogram, and constructs L
+
+cluster pairs as the watermark template, which is shared among the watermark encoding and decoding processes for all buyers. Watermarked-table synthesis takes TableMark: A Multi-bit Watermark for Synthetic Tabular Data 5
+
+the watermark associated with the current data buyer, the L cluster pairs, the original histogram, and the con-ditional generative model as input. It transforms the watermark into partial-order patterns according to the cluster pairs and the watermark encoding rule, and en-codes these patterns into the watermark channel, by generating a watermarked histogram that resembles the original histogram while satisfying all partial-order con-straints. Finally, it uses the conditional generative model to synthesize Dw according to the watermarked his-togram. Watermark decoding takes Ds, cluster pairs, and the watermark database as input, extracts par-tial orders from Ds, decodes a watermark from the extracted partial orders according to the cluster-pair template and the watermark encoding rule, and identi-fies the potential dishonest data buyer by matching the decoded watermark against the watermark database. 
+
+Watermark-Channel Construction. To support het-erogeneous data types, we embed tuples of Do into uni-fied tuple latents (i.e., compact vector representations of tuples) using a variational autoencoder [23], follow-ing [49]. To form multiple clusters, we perform K-means clustering on the tuple latents. The clustering results include the cluster label for each tuple latent, the orig-inal histogram, and cluster centroids. Then, we train a conditional generative model that is used to gener-ate tuples for Dw based on cluster labels. Specifically, we construct (tuple latent, cluster label) pairs from the clustering results as training data to train a conditional latent diffusion model, because latent diffusion mod-els [35] exhibit superior performance in table synthesis tasks [49,37]. Next, to obtain L cluster pairs where each pair corresponds to a partial order that encodes a bit of the L-bit watermark, a naive method is to randomly select a subset of clusters and pair them into L cluster pairs. However, for better traceability, robustness, and utility, we design an algorithm to construct high-quality cluster pairs, which will be described in Section 3 .3. 
+
+Watermark-Database Generation. To trace a max-imum number of N buyers, we generate N distinct L-bit watermarks and store them in the watermark database. The watermarks can be generated randomly, but we de-sign an effective algorithm for better traceability and utility, which will be introduced in Section 3 .4. 
+
+Watermarked-Table Synthesis. Consider synthesiz-ing Dw for the i-th data buyer. We first assign a wa-termark wi to this buyer, which has not been previ-ously assigned to other buyers, and record the buyer-watermark mapping. We then construct partial-order patterns based on the cluster-pair template, where each bit of wi is transformed into a partial order according to the watermark encoding rule. For example, as shown in Figure 2, L = 4 and the cluster pairs are ( C17 ,C 8), (C5,C 14 ), ( C30 ,C 25 ), ( C15 ,C 3). To synthesize Dw for the first data buyer with the watermark 0b1010 , four partial orders are generated: x17 < x 8, x 5 ≥ x14 , x 30 <x25 , x 15 ≥ x3, where xj is the cluster size of Cj within 
+
+Dw and < (≥) corresponds to the watermark bit 1 (0). To generate the watermarked histogram, a naive method is to solve a constrained optimization prob-lem, where bin counts of the watermarked histogram are decision variables, a distance metric between the watermarked and original histograms (e.g., the mean squared error) is the objective to minimize, and partial orders are constraints. However, this approach has lim-itations in terms of robustness, because cluster sizes be-tween partial orders may be similar in the watermarked histogram, making partial-order patterns sensitive to cluster-size fluctuations within Dw due to attacks. To address this issue, we design effective algorithms for watermarked-histogram generation, which will be de-tailed in Section 3 .5. To synthesize Dw according to the watermarked his-togram, for cluster Cj with size xj in the watermarked histogram, the conditional latent diffusion model takes the label (in the form of one-hot embedding) of cluster 
+
+Cj as input and outputs xj tuple latents that fall in this cluster. These tuple latents are then reconstructed into tuples by the tuple embedding model to produce Dw.Note that the generation process of individual tuples is not manipulated by watermark encoding, which en-sures tuple integrity and contributes to the high utility of watermarked tables. 
+
+Watermark Decoding. To identify the potential dis-honest data buyer from Ds, we first embed tuples of Ds
+
+into latents using the tuple embedding model, and as-sign tuple latents to clusters based on cluster centroids obtained during watermark-channel construction, fol-lowing the K-means clustering paradigm. Secondly, we calculate the extracted watermarked histogram from the cluster-assignment outcome. Thirdly, we compare cluster sizes between the L cluster pairs generated dur-ing watermark-channel construction to extract L par-tial orders. Fourthly, we decode a watermark from the extracted partial orders, where a bit is decoded from each partial order according to the watermark encod-ing rule, and L bits form the decoded watermark ˆ w. For example, as shown in Figure 2, the extracted partial or-ders are y17 < y 8, y 5 ≥ y14 , y 30 < y 25 , y 15 ≥ y3, with yj
+
+denoting the size of cluster Cj in the extracted water-marked histogram. Then ˆ w is 0b1010 . Finally, we match ˆw with watermarks wi (1 ≤ i ≤ N ) in the database. If there exists wi, such that the Hamming distance be-tween ˆ w and wi does not exceed the bit error threshold 
+
+δBE , then Ds is concluded to have been sold to the 6 Yuyang Xia et al. 
+
+i-th data buyer. Otherwise, Ds is concluded to be non-watermarked. Note that δBE is introduced to enhance robustness and is determined based on the false positive rate, which will be detailed in Section 4 .2. 3.3 Cluster-Pair-Based Watermark-Template Constructor Three considerations are important when constructing the cluster-pair template. For traceability, we need to maximize the information per watermark bit to trace a large number of data buyers in a few bits. Hence, we need to maximize the independence between water-mark bits, which means that the decoding correctness of an individual bit is weakly correlated with that of other bits. Therefore, the partial orders used to encode different bits should be supported by distinct clusters, necessitating a total of 2 L clusters to form the L cluster pairs. For robustness, the pairing relationships of the se-lected clusters must be hidden from the attacker so that s/he cannot remove the watermark by manipulating tu-ples of specific cluster pairs. Thus, we need to pair the selected 2 L clusters in a pseudo-random manner using the data owner’s secret key as the seed, which can be implemented by shuffling ordinals of the 2 L clusters and grouping these ordinals into L non-overlapping pairs. For utility, the watermarked and original histograms should be close. However, since the partial orders in 
+
+Dw and Do may differ (called partial-order conflicts), forcing the watermarked histogram to deviate from the original histogram, it is desired that Do has similar numbers of tuples in the left-hand and right-hand clus-ters of the cluster-pair template. These cluster-size sim-ilarities with regard to Do ensure that partial-order con-flicts result in only minor deviations in the watermarked histogram compared to the original histogram. How-ever, due to the pseudo-random pairing strategy, any two clusters from the 2 L clusters may form a cluster pair, so we need to select 2 L clusters with the minimal size variance with respect to Do, formulated as below. arg min  
+
+> 1≤i1<··· <i 2L≤M
+
+Var( hi1 , h i2 , . . . , h i2L ) (1) where hi is the size of cluster Ci within Do.The above problem can be solved using a sliding-window algorithm in O(M log M ) complexity, where we first sort the array h1, . . . , h M and then slide a window of size 2 L over the sorted array. We then compute the cluster-size variance for each window and finally select the clusters in the window with the minimal variance. 3.4 Watermark-Database Generator To generate watermarks for tracing data buyers, two considerations are important. For traceability, any de-coded watermark ˆw should match at most one gener-ated watermark given the bit error threshold δBE to en-sure unambiguous tracing. Thus, the Hamming distance between two watermarks should be at least 2 δBE + 1. For utility, since different watermarks are transformed into different sets of partial orders that correspond to different numbers of partial-order conflicts, the gener-ated watermarks should cause as few partial-order con-flicts as possible. Furthermore, to ensure utility for ev-ery data buyer, the maximum number of partial-order conflicts should be minimized. Note that the number of partial-order conflicts caused by the watermark wi
+
+is exactly the Hamming distance between wi and the optimal bit string watermark w∗ that does not cause partial-order conflicts, where w∗ is calculated from the original histogram of Do and the cluster-pair template. For example, suppose that L = 4, bin counts of the orig-inal histogram are hi (1 ≤ i ≤ 32), and the cluster pairs are ( C17 , C 8), ( C5, C 14 ), ( C30 , C 25 ), ( C15 , C 3), then the four bits of w∗ are the truth values of the four partial orders: h17 < h 8, h 5 < h 14 , h 30 < h 25 , h 15 < h 3, which align with the watermark encoding rule (i.e., ≥ encodes 0 and < encodes 1) and thus do not cause partial-order conflicts. Therefore, the watermark generation problem can be formulated as follows. arg min 
+
+> w1,...,w N
+
+max   
+
+> i∈[1 ,N ]
+
+∥wi ⊕ w∗∥
+
+s.t. ∥wi ⊕wj ∥ ≥ 2δBE +1 (∀ 1 ≤ i < j ≤ N )(2) where ∥wi ⊕ wj ∥ denotes the Hamming distance be-tween wi and wj .Note that the above problem involves w∗, which varies with each dataset (since different datasets corre-spond to different original histograms), making it data dependent. In other words, we need to solve this com-plicated problem separately for every dataset. To ad-dress this issue, we transform it into a data-independent problem to apply its solution to any specific dataset. Let ¯ wi = wi ⊕ w∗ (1 ≤ i ≤ N ). Then, the objective of the problem becomes to minimize max i∈[1 ,N ] ∥ ¯wi∥, and the constraint set of the problem becomes ∥wi ⊕ wj ∥ =
+
+∥(wi ⊕ w∗) ⊕ (wj ⊕ w∗)∥ = ∥ ¯wi ⊕ ¯wj ∥ ≥ 2δBE + 1 ( ∀ 1 ≤
+
+i < j ≤ N ), so we reformulate the problem as follows. arg min  
+
+> ¯w1,..., ¯wN
+
+max   
+
+> i∈[1 ,N ]
+
+∥ ¯wi∥
+
+s.t. ∥ ¯wi ⊕ ¯wj ∥ ≥ 2δBE +1 (∀ 1 ≤ i < j ≤ N )(3) TableMark: A Multi-bit Watermark for Synthetic Tabular Data 7
+
+The above problem does not involve w∗, so we solve it only once regardless of the dataset to obtain ¯ wi (1 ≤
+
+i ≤ N ). To obtain wi (1 ≤ i ≤ N ) for a specific dataset, we first calculate w∗ with respect to this dataset, and then XOR w∗ and ¯ wi.The above problem involves a min-max objective and N (N −1) /2 pairwise Hamming distance constraints, so it is difficult to find the optimal solution. Thus, we design a greedy algorithm, which, to simplify the objec-tive max i∈[1 ,N ] ∥ ¯wi∥, generates ¯ wi in increasing order of the Hamming weight ∥ ¯wi∥, so that max i∈[1 ,N ] ∥ ¯wi∥ =
+
+∥ ¯wN ∥. Then, to minimize ∥ ¯wN ∥, ∥ ¯wi∥ should increase as slowly as possible with the increase of i. Therefore, we gradually increase the Hamming weight from 0, and for each Hamming weight, generate as many ¯ wi as possi-ble. To this end, we design a best-first search algorithm. The algorithm initializes an empty set to store re-sult bit strings and starts its traversal from 0L, which has the smallest Hamming weight. To ensure that bit strings with smaller Hamming weights are added to the result set first, the algorithm keeps a priority queue of bit strings to be traversed, using Hamming weights as priorities. For each traversed bit string ¯ w, the algorithm checks whether all Hamming distances between ¯ w and those in the result set are at least 2 δBE + 1. If so, ¯ w is added to the result set, and if the size of this set reaches 
+
+N , the algorithm stops. Otherwise, the algorithm con-tinues by iterating each bit string ¯w′ different by one bit from ¯w. If ¯w′ has not been traversed before, the algorithm marks ¯ w′ as traversed and pushes ( ∥ ¯w′∥, ¯w′)into the priority queue for subsequent traversals. 3.5 Histogram-Based Watermark-Pattern Encoder To address the robustness issue discussed in Section 3 .2for watermarked-histogram generation, we optimize the partial orders to create new constraints, which align with the partial orders but lead to larger gaps between the left-hand and right-hand cluster sizes in the water-marked histogram, thus making partial-order patterns resilient to fluctuations in cluster sizes. For example, using the partial order x17 < x 8 to constrain the water-marked histogram may result in x17 − x8 = −1, while the new constraints can result in x17 − x8 = −10. A naive method to generate these constraints is to introduce larger gaps into partial orders. For example, using x17 < x 8 − 10 instead of x17 < x 8 as a constraint. However, larger gaps also lead to worse utility, as they impose more restrictive constraints on the watermarked histogram, forcing it to deviate more from the original histogram. Therefore, it calls for a constraint-generation mechanism to enable the data owner to trade off ro-bustness and utility. However, neither the quantitative 
+
+Fig. 3: Overview of constraint generator. relationship between gaps and robustness, nor that be-tween gaps and utility is clear for the data owner to effectively determine the gaps. To address this issue, we provide the data owner with quantitative control over robustness for this trade-off. Specifically, we parame-terize robustness so that the data owner can express his/her robustness requirement by configuring a set of parameters. To meet the robustness requirement, we formulate a constrained optimization problem over the watermarked histogram, whose solution ensures the ro-bustness requirement theoretically. The constraint gen-eration mechanism will be detailed in Section 4. Since the constrained optimization problem is com-plex due to the complexity of meeting the robustness re-quirement, as we will see in Section 4 .4, directly solving the problem could lead to suboptimal watermarked his-tograms. For better utility, we design effective optimiza-tion mechanisms to create high-quality watermarked histograms, which will be described in Section 5. 
+
+4 Constraint Generator for Watermarked Histograms 
+
+To provide the data owner with effective control over ro-bustness for robustness-utility trade-off, we present the constraint generator for watermarked-histogram gen-eration. We first discuss the design principle in Sec-tion 4.1, and then formulate a mathematical model to connect the data owner’s robustness requirement with the watermarked histogram in Sections 4.2 and 4.3. Based on this model, we formulate a constrained opti-mization problem over the watermarked histogram ac-cording to the robustness requirement in Section 4.4. Figure 3 shows an overview of the constraint generator. 4.1 Constraint-Generator Overview 
+
+Design Principle. To provide the data owner with ef-fective control over robustness, we need to introduce a set of robustness parameters to allow the data owner to quantitatively express his/her robustness requirement .8 Yuyang Xia et al. 
+
+In particular, the robustness parameters refer to the threshold δF P R for the false positive rate (i.e., the prob-ability of identifying a non-watermarked Ds as water-marked), the threshold δF N R for the false negative rate (i.e., the probability of failing to identify the correct data buyer from a watermarked Ds), and the thresh-olds for intensities of a wide range of attacks, such as the proportion of deleted tuples in tuple-deletion at-tacks. Given a set of robustness parameters, the ro-bustness requirement is expressed as follows: the false positive rate F P R is below δF P R and the false nega-tive rate F N R is below δF N R , in the context of poten-tial watermark decoding errors (i.e., watermarks may be wrongly decoded even without attacks) and a set of attacks whose intensities do not exceed their corre-sponding thresholds. To meet the robustness require-ment, we formulate a mathematical model to connect 
+
+F P R , F N R , watermark decoding errors, and attack in-tensities with the watermarked histogram x, so that by generating constraints on x based on this model and the robustness parameters, and formulating a constrained optimization problem over x accordingly, we theoreti-cally ensure that the solution watermarked histogram satisfies the robustness requirement. 
+
+Formulating Mathematical Model. We establish the mathematical model step by step. Firstly, we model 
+
+F P R as a function of δBE and determine δBE subject to F P R ≤ δF P R to meet the requirement on F P R .Secondly, we model F N R as a function of δBE and the threshold δBER for the bit error rate BER i (i.e., the probability that the i-th bit is wrongly decoded due to watermark decoding errors and attacks), where 
+
+BER i ≤ δBER (1 ≤ i ≤ L). We determine δBER subject to F N R ≤ δF N R to meet the requirement on F N R .Thirdly, for the i-th bit, we model BER i as a function of x and attack intensity thresholds based on the partial order encoding this bit. Note that we also incorporate watermark decoding errors when modeling BER i.
+
+Formulating Constraint Optimization Problem. 
+
+For the i-th bit, we substitute BER i with its expres-sion in terms of x and attack intensity thresholds in the inequality BER i ≤ δBER to satisfy the requirement on F N R and generate a constraint on x (note that the requirement on F P R is already satisfied by determin-ing an appropriate δBE according to the mathematical model). For example, in Figure 3, we generate four con-straints fi(x1, . . . , x 32 ) ≥ 0 (1 ≤ i ≤ 4) that correspond to four bits encoded by four partial orders. Based on these constraints, we formulate a constrained optimiza-tion problem over x, which will lead to a watermarked histogram that meets the robustness requirement. 4.2 Modeling F P R and F N R 
+
+Modeling F P R . Identifying Ds as watermarked means that if we input Ds into the watermark decoding al-gorithm and obtain a bit string ˆw, then ˆw matches a watermark in the database within δBE (i.e., ∃i ∈
+
+[1 ,N ] s.t. ∥ ˆw ⊕ wi∥ ≤ δBE ). Moreover, under the condi-tion that Ds is not watermarked, Ds could be any table other than the watermarked tables the data owner has sold, so we generally do not have information about ˆ w
+
+in this case. Therefore, according to the maximum en-tropy principle [19], we assume that ˆ w follows the L-bit uniform distribution U [0 , 2L−1], as in previous work [13, 29,48], so we have 
+
+F P R = P
+
+ ∃ i ∈ [1 , N ] s.t. 
+
+∥ ˆw ⊕ wi∥ ≤ δBE 
+
+ˆw is decoded from a non-watermarked Ds
+
+
+
+= P
+
+ ∃ i ∈ [1 , N ] s.t. 
+
+∥ ˆw ⊕ wi∥ ≤ δBE 
+
+ˆw ∼ U [0 , 2L −1] 
+
+
+
+(4) Since our mechanism for watermark-database gen-eration ensures that ∥wi ⊕ wj ∥ ≥ 2δBE + 1 for 1 ≤ i < j ≤ N (see Section 3.4), ∥ ˆw ⊕ wi∥ ≤ δBE (1 ≤ i ≤ N )are disjoint events. In addition, due to the uniform dis-tribution assumption of ˆ w, these events have the same probability PδBE 
+
+> i=0
+
+ Li
+
+/2L, so we have 
+
+F P R =
+
+> N
+
+X
+
+> i=1
+
+P (∥ ˆw ⊕ wi∥ ≤ δBE | ˆw ∼ U [0 , 2L −1]) = N
+
+2LδBE X
+
+> i=0
+
+Li
+
+ (5) Equation 5 shows that F P R increases with δBE , so we set δBE to the maximum subject to F P R ≤ δF P R ,to maximize the bit error tolerance. 
+
+Modeling F N R . Failing to identify the i-th data buyer from a watermarked Ds that has been sold to this buyer means that ˆ w does not match wi (i.e., the watermark associated with the i-th data buyer and encoded in Ds)within δBE (i.e., ∥ ˆw ⊕ wi∥ > δ BE ), so we have 
+
+F N R = P
+
+
+
+∥ ˆw ⊕ wi∥ > δ BE wi is encoded in Ds ,ˆw is decoded from Ds
+
+
+
+(6) As discussed in Section 3.3, TableMark maximizes bit independence, ensuring that the decoding correct-ness of a single bit is weakly correlated with that of other bits, so we assume that bit errors are independent. Since the error rate of each bit may be different, it is difficult to formulate a closed-form expression of F N R ,so we formulate an upper bound on F N R that has a TableMark: A Multi-bit Watermark for Synthetic Tabular Data 9
+
+tractable expression. We observe that if the error rate of every bit is below δBER , then the probability that 
+
+∥ ˆw⊕wi∥ ≤ δBE is above PδBE 
+
+> j=0
+
+ Lj
+
+δjBER (1 − δBER )L−j ,and thus the probability that ∥ ˆw ⊕ wi∥ > δ BE is below 1−PδBE 
+
+> j=0
+
+ Lj
+
+δjBER (1 −δBER )L−j . Therefore, we formu-late this upper bound as below. 
+
+F N R ≤ 1 − PδBE 
+
+> j=0
+
+ Lj
+
+δjBER (1 − δBER )L−j ,
+
+if BER i ≤ δBER (∀1 ≤ i ≤ L)(7) Equation 7 shows that the upper bound on F N R is a monotonically increasing function of δBER . Therefore, we set δBER to the maximum subject to this upper bound below δF N R . Then, by constraining BER i ≤
+
+δBER (∀1 ≤ i ≤ L), we ensure that F N R ≤ δF N R .4.3 Modeling Bit Error Rate Since watermark decoding errors and attacks are po-tential causes of bit errors, we first model watermark decoding errors and attacks and then the bit error rate. 
+
+Modeling Watermark Decoding Errors and At-tacks. In TableMark , watermark decoding errors mean that during watermark decoding, tuples in Ds may be assigned to wrong clusters (called cluster misassign-ments), which arise from limitations of the tuple em-bedding model. Specifically, during watermark encod-ing, the generated tuple latents are reconstructed into tuples to produce Dw, while during watermark decod-ing, tuples in Ds are embedded into latents for cluster assignment (see Section 3.2). However, the latents for the same tuple during watermark encoding and decod-ing are usually different due to the reconstruction error of the tuple embedding model, and thus may fall into different clusters. We explicitly model three typical types of attacks: cell-level perturbation and alteration attacks that mod-ify certain cells, and tuple-level deletion attacks that re-move certain tuples. Each class of attacks is parameter-ized by an intensity, and we denote the intensity thresh-olds for perturbation, alteration, and tuple-deletion at-tacks as Iper , Ialt , and Idel , respectively. In perturba-tion attacks, the attacker injects noise into numerical attributes. Based on the fact that the attacker tends to inject larger noise into cells with larger absolute values and attribute standard deviations, we define the pertur-bation intensity as the ratio of noise standard deviations to the minimum of absolute cell values and attribute standard deviations. Moreover, we use Gaussian distri-butions to model noise following the maximum entropy principle [19], which implies that when there is no infor-mation about the noise distribution from the attacker, we choose the distribution with the maximum entropy to model noise, i.e., Gaussian distribution, given that the noise mean is nearly fixed (it is close to 0; otherwise the utility of the attacked table is seriously degraded), and the noise standard deviation is smaller than a fixed value (it is associated with the cell value and the at-tribute standard deviation that are fixed, and the per-turbation intensity that is assumed below Iper in the robustness requirement). We will show in experiments that TableMark is also resilient to other perturbations, such as uniform and Laplace noise. In alteration at-tacks, the attacker randomly changes a subset of cat-egorical cells to random domain values, so we define the alteration intensity as the proportion of categorical cells the attacker modifies. In tuple-deletion attacks, the attacker deletes a subset of tuples, so we define the intensity of this class of attacks as the proportion of tuples the attacker deletes. Specifically, we consider adaptive tuple-deletion attacks, where the attacker per-forms clustering on the watermarked table, identifies 2 L
+
+clusters that are likely selected to construct the water-mark template as described in Section 3.3, and uni-formly deletes tuples from the 2 L clusters (note that the cluster pairing relationships are hidden from the attacker). Although the attacker can delete tuples in a more structured way (e.g., selecting L clusters from the 2L clusters and only deleting tuples from the L clusters) to remove the watermark more effectively, these more structured attacks also introduce more systematic bias into the cluster distribution of the watermarked table, leading to a more severe utility loss. Therefore, we do not explicitly model these more structured attacks. We will show in experiments that in the context of these at-tacks, TableMark also achieves an effective robustness-utility trade-off. Note that tuple-insertion attacks are similar to tuple-deletion attacks in the sense that the insertion or deletion of a single tuple changes the size of a certain cluster by one, so by incorporating deletion attacks in the attack modeling TableMark also strikes a good balance between robustness and utility under insertion attacks, as we will see in experiments. Watermark decoding errors, perturbation attacks, and alteration attacks result in cluster misassignments during watermark decoding, so we model watermark de-coding errors and these attacks by modeling the cluster assignment process of individual tuples as probabilis-tic transitions between clusters captured by the matrix 
+
+P = ( pij )1≤i,j ≤M , where pij is the probability that a tuple with the ground-truth cluster Ci is assigned to cluster Cj , in the context of watermark decoding errors and these attacks. To estimate P, during watermark-channel construction, after training the conditional la-tent diffusion model, we generate tuples in each clus-10 Yuyang Xia et al. 
+
+ter and simulate watermark decoding errors and at-tacks in the cluster assignment process of the gener-ated tuples. Specifically, we first generate T tuples in each cluster (called ground-truth cluster) as introduced in Section 3.2. Next, we simulate perturbation and al-teration attacks by adding Gaussian noise to numerical cells with noise standard deviations determined by Iper ,as discussed above, and randomly altering categorical cells with probability Ialt . Then, we assign these tu-ples to clusters (called predicted clusters) as described in Section 3.2, which involves watermark decoding er-rors. Finally, we compute a confusion matrix from the ground-truth and predicted clusters, and divide each entry in this matrix by its row sum to produce P. Note that T is a configurable parameter to balance estima-tion efficiency and the estimation error η, defined as the maximum absolute error between entries of the esti-mated and true transition matrices, and T ≥ 12η2 ln 2Mξ
+
+according to the Hoeffding inequality [16], where ξ is the significance level that is typically set to 5%. Usually, P is diagonally dominant, which means that tuples are assigned to their ground-truth clusters with high probabilities. Firstly, an effective tuple embedding model has a small reconstruction error, and the attacker does not excessively modify the watermarked table to avoid serious utility degradation, so the discrepancies between latents of the same tuple during watermark encoding and decoding are often small. Secondly, clus-tering algorithms tend to produce well-separated clus-ters, so these latent discrepancies perturb tuples across cluster boundaries with typically small probabilities. To incorporate adaptive tuple-deletion attacks in the modeling, there are three key considerations. Firstly, deletions of different tuples are independent due to tu-ple independence of relational tables. Secondly, tuples within the 2 L template clusters are often deleted with a higher probability than other tuples, due to the tar-geted nature of this class of attacks. Thirdly, tuples outside template clusters may still be deleted. Because 
+
+M is typically set to a large number, due to cluster-ing randomness, the cluster structure produced by the data owner and that produced by the attacker are likely different. Therefore, we model adaptive tuple-deletion attacks by estimating deletion probabilities for tuples within/outside template clusters (denoted by qin and 
+
+qout , respectively). Specifically, we simulate adaptive tuple-deletion attacks 1000 times. In the i-th simula-tion, we perform clustering on the original table to form M clusters using a unique random seed, identify 2L clusters from the clustering results as described in Section 3.3, randomly delete Idel · PMi=1 hi tuples from the 2 L clusters, and count the number of tuples that fall into template clusters and are deleted, denoted by 
+
+ndel i . Eventually, qin = max 1000     
+
+> i=1 ndel iP
+> i∈{ i|Ciis a template cluster }hi
+
+and 
+
+qout = Idel ·PMi=1 hi−max 1000     
+
+> i=1 ndel iP
+> i∈{ i|Ciis not a template cluster }hi
+
+, where for better ro-bustness, we aggregate the simulation results using max 
+
+to capture the worst case where deletion operations hit the most tuples in template clusters. Putting it together, we model the process where Dw
+
+is transformed into Ds by attacks, and then tuples in 
+
+Ds are assigned to clusters for watermark decoding as follows: (1) Each tuple of cluster Ck within Dw remains in Ds with probability 1 −qk, where qk equals qin or qout 
+
+depending on whether Ck is a template cluster (w.r.t. adaptive tuple-deletion attacks). (2) If this tuple re-mains in Ds, it is probabilistically assigned to a cluster following the transition P (w.r.t. watermark decoding errors, perturbation attacks, and alteration attacks). 
+
+Modeling Bit Error Rate. To model BER i for the 
+
+i-th bit, by symmetry, we consider the bit error case where 0 is decoded as 1, and let the partial order encod-ing this bit be xli ≥ xri . Moreover, we denote the ex-tracted watermarked histogram as y = ( yj )Mj=1 , which is a random vector due to the randomness of watermark decoding errors and attacks, with a distribution param-eterized by the deterministic x. Then, the bit error case means that yli < y ri , so we have 
+
+BER i = P (yli < y ri ) = P (yli − yri < 0) (8) To model the distribution of yli − yri for a closed-form expression of BER i, we introduce the auxiliary random variables ukl i , ukr i , and vk for 1 ≤ k ≤ M ,where ukl i (ukr i ) denotes the number of tuples gener-ated in cluster Ck and assigned to cluster Cli (Cri ), 
+
+vk denotes the number of tuples remaining in cluster 
+
+Ck after adaptive tuple-deletion attacks, and ukl i | vk
+
+(ukr i | vk) denotes the conditional distribution of ukl i
+
+(ukr i ) given the value of vk. Since yli (yri ) is the total number of tuples assigned to cluster Cli (Cri ), we have 
+
+yj = PMk=1 ukj (j ∈ { li, r i}) (9) Based on our modeling of watermark decoding er-rors and attacks (i.e., a tuple of cluster Ck within Dw
+
+remains in Ds with probability 1 − qk, and if so, it is assigned to cluster Cj with probability pkj ), we have 
+
+vk ∼ B(xk, 1 − qk)
+
+ukj | vk ∼ B(vk, p kj ) (j ∈ { li, r i})
+
+ukj ∼ B(xk, (1 − qk)pkj ) (j ∈ { li, r i})(10) We model yli and yri as normally distributed. To understand the reason, consider the distribution of yli .Typically, xk (1 ≤ k ≤ M ) are large (i.e., from tens TableMark: A Multi-bit Watermark for Synthetic Tabular Data 11 
+
+to hundreds), because the synthetic table usually has a large number of tuples to support complex applications (e.g., statistical analysis that involves high-dimensional aggregation queries). Moreover, P is diagonally domi-nant, as discussed before, so xk(1 −qk)plili is often large. In addition, due to watermark decoding errors and at-tacks, 1 − plili (i.e., the cluster misassignment rate) is non-negligible and thus 1 −(1 −qk)plili is non-negligible, so xk(1 − (1 − qk)plili ) is relatively large. Therefore, we approximate the binomial random variable ulili as normally distributed [36]. Furthermore, since diagonal entries of P account for a vast majority of the total probability mass, off-diagonal entries pkl i (k̸ = li) are usually negligible, which means that (1 −qk)pkl i (k̸ = li)are negligible and therefore xk(1 − qk)pkl i (k̸ = li) are small, so we approximate the binomial random vari-ables ukl i (k̸ = li) as Poisson distributed [36]. Since individual tuples undergo watermark decoding errors and attacks independently, ukl i (1 ≤ k ≤ M ) are mu-tually independent. Thus, the sum PMk=1 ,k ̸ =li ukl i com-puted from multiple independent Poisson random vari-ables also follows a Poisson distribution [36] with mean PMk=1 ,k ̸ =li xk(1 − qk)pkl i , which is usually large, so we further approximate this Poisson random variable as normally distributed [9]. Since PMk=1 ,k ̸ =li ukl i and ulili
+
+are independent and have been approximated as nor-mally distributed, we model yli = PMk=1 ,k ̸ =li ukl i +ulili
+
+using a normal distribution. Similarly, we model yri as normally distributed. Thus, zi := yli −yri = PMk=1 (ukl i −ukr i ) follows a nor-mal distribution with the following mean and variance. 
+
+E[zi] = PMk=1 (E[ukl i ] − E[ukr i ]) = PMk=1 xk ·(1 −qk)( pkl i −pkr i )
+
+| {z }
+
+> α(i)
+> k
+
+Var( zi) = PMk=1 (Var( ukl i )+Var( ukr i )−2Cov( ukl i , u kr i )) = PMk=1 xk · (1 − qk)( pkl i (1 − (1 − qk)pkl i )+ 
+
+pkr i (1 − (1 − qk)pkr i )+ 2(1 − qk)pkl i pkr i )
+
+| {z } 
+
+> β(i)
+> k
+
+(11) where E[ukl i ], E[ukr i ], Var( ukl i ), and Var( ukr i ) come from Equation 10, and Cov( ukl i , u kr i ) is calculated by applying the law of total covariance [36] as follows. Cov( ukl i ,u kr i ) = E[Cov( ukl i |vk, u kr i |vk)]+ Cov( E[ukl i |vk], E[ukr i |vk]) = E[−vk ·pkl i pkr i ] + Cov( vk ·pkl i , v k ·pkr i )= −xk ·(1 − qk)2pkl i pkr i (1 ≤ k ≤ M )(12) Therefore, BER i = P (zi < 0) = Φ(−E[zi]/pVar( zi)), where Φ is the cumulative distribution function of the standard normal distribution, when the bit error case means that 0 is decoded as 1 (the case discussed so far) and the partial order encoding this bit is xli ≥ xri .Similarly, when the bit error case means that 1 is de-coded as 0 and the underlying partial order is xli < x ri ,
+
+BER i = Φ(E[zi]/pVar( zi)), so we have 
+
+BER i =
+
+
+
+Φ( −E[zi]
+
+√Var( zi) ), if partial order is xli ≥ xri
+
+Φ( E[zi]
+
+√Var( zi) ), if partial order is xli < x ri
+
+(13) 4.4 Constrained Optimization Problem over x
+
+For the i-th bit, by substituting BER i with its closed-form expression (see Equation 13) in the inequality 
+
+BER i ≤ δBER , and replacing E[zi] and Var( zi) with 
+
+PMk=1 xkα(i) 
+
+> k
+
+and PMk=1 xkβ(i) 
+
+> k
+
+, respectively ( α(i) 
+
+> k
+
+and β(i)
+
+> k
+
+are determined by attack intensity thresholds; see Equa-tion 11), we have the following constraints for this bit. 
+
+xli 
+
+> ≥
+> <
+
+xri =⇒
+
+( PMk=1 xkα(i)  
+
+> k≥
+> <
+
+0(PMk=1 xkα(i) 
+
+> k
+
+)2 −Φ−1(δBER )2 PMk=1 xkβ(i) 
+
+> k
+
+≥ 0(14) where li and ri are cluster ordinals of the partial order that encodes the i-th bit. Based on these constraints, we formulate a constrained optimization problem over 
+
+x as follows. arg min 
+
+> x1,...,x M
+
+1
+
+M
+
+PMi=1 (xi − hi)2
+
+s.t. PMk=1 xkα(i)
+
+> k
+
+≥ 0, if wi = 0 
+
+< 0, if wi = 1 (∀1 ≤ i ≤ L)(PMk=1 xkα(i) 
+
+> k
+
+)2 − Φ−1(δBER )2 PMk=1 xkβ(i) 
+
+> k
+
+≥ 0(∀1 ≤ i ≤ L)
+
+PMi=1 xi = PMi=1 hi (x1, . . . , x M ∈ N+)(15) where w is the L-bit watermark to be encoded, the ob-jective is the mean squared error between the water-marked and original histograms (we use this objective because it imposes heavier penalties on larger devia-tions, leading to better utility), the first and second sets of constraints correspond to the generated constraints, and the third constraint requires that Dw and Do have the same table cardinality, which is crucial for certain downstream tasks of Dw (e.g., counting queries). 12 Yuyang Xia et al. 
+
+This problem is an integer programming problem since x are integers. In addition, this problem is non-convex because the feasible set defined by the second set of constraints is non-convex. Moreover, the terms 
+
+PMk=1 xkα(i) 
+
+> k
+
+and PMk=1 xkβ(i) 
+
+> k
+
+in constraints involve a large number of variables, leading to a highly entan-gled problem structure. Therefore, directly solving this problem usually results in a suboptimal solution, so we subsequently present our optimization mechanisms that lead to a better solution in Section 5. 
+
+5 Optimizer for Watermarked Histograms 
+
+To solve the constrained optimization problem in Sec-tion 4.4, we present the constraint simplification mech-anism in Section 5.1 and the multi-stage optimization mechanism in Section 5.2. 5.1 Constraint Simplification Mechanism The general idea to simplify constraints is to substitute complex terms with simpler upper or lower bounds, so that the simplified constraints align with the original ones but the number of variables in each constraint is reduced, leading to a tractable optimization problem. However, this leads to a challenge: We need to deter-mine suitable bounds that do not excessively tighten the original constraints. Otherwise, the solution space may be significantly reduced, potentially excluding high-quality solutions. To address this challenge, we first de-termine an initial feasible set of x, which is expressed by simple constraints and is close to the original solu-tion space. We then calculate surrogate bounds on com-plex terms from this set by solving simple constrained optimization problems. Finally, the constraints of the simplified problem include (1) constraints that express the initial feasible set of x, (2) constraints whose com-plex terms are substituted with simpler bounds, and (3) other constraints from the original problem. To determine the initial feasible set of x, we observe that a high-quality watermarked histogram should de-viate marginally from the original histogram, so x can be safely bounded in a small interval centered at h.To control the bound tightness, we introduce τ ∈ [0 , 1] and bound xi in [ hi − τ · PMj=1 hj , h i + τ · PMj=1 hj ] for 1 ≤ i ≤ M , where PMj=1 hj is the table cardinality. The configuration of τ will be discussed in Section 5.2. In addition, since the constraints of the original problem align with partial orders, we further restrict the initial feasible set of x by these simple partial orders. More-over, we restrict this set by the simple equal-cardinality constraint from the original problem. To derive surrogate bounds on the complex terms to be substituted, consider the term PMk=1 xkα(i) 
+
+> k
+
+, there are two key considerations. Firstly, the dominant terms of PMk=1 xkα(i) 
+
+> k
+
+are xli α(i) 
+
+> li
+
+and xri α(i) 
+
+> ri
+
+, because the tran-sition matrix P is diagonally dominant (see Section 4 .3), while xli α(i) 
+
+> li
+
+and xri α(i) 
+
+> ri
+
+are the only terms that involve diagonal entries of P (see Equation 11). Thus, the tar-get bound should involve only xli and xri . Secondly, since ( PMk=1 xkα(i) 
+
+> k
+
+)2 needs to be lower bounded (i.e., substitute this term with its lower bound) based on the second set of constraints in Equation 15, when wi = 0 and PMk=1 xkα(i) 
+
+> k
+
+≥ 0 (see Equation 14), PMk=1 xkα(i)
+
+> k
+
+needs to be lower bounded. Similarly, when wi = 1 and PMk=1 xkα(i) 
+
+> k
+
+< 0, PMk=1 xkα(i) 
+
+> k
+
+needs to be upper bounded. Therefore, the target bound can be expressed as xli α(i) 
+
+> li
+
++ xri α(i) 
+
+> ri
+
++ Ei, where Ei is the result of the following linear problem that can be solved efficiently. 
+
+
+
+min 
+
+> x1,...,x M
+
+PMk=1 ,k / ∈{ li,r i} xkα(i) 
+
+> k
+
+, if wi = 0 max 
+
+> x1,...,x M
+
+PMk=1 ,k / ∈{ li,r i} xkα(i) 
+
+> k
+
+, if wi = 1 s.t. |xj − hj | ≤ τ · PMk=1 hk (∀1 ≤ j ≤ M )
+
+xlj − xrj
+
+≥ 0, if wj = 0 
+
+< 0, if wj = 1 (∀1 ≤ j ≤ L)
+
+PMj=1 xj = PMj=1 hj (x1, . . . , x M ∈ N+)(16) where the first set of constraints is the bounds on x,the second set of constraints is partial orders, and the third is the equal-cardinality constraint. Similarly, we can calculate a surrogate bound on PMk=1 xkβ(i) 
+
+> k
+
+.5.2 Multi-Stage Optimization Mechanism In the constraint simplification mechanism, τ deter-mines the bounds on x, and an inappropriate choice of 
+
+τ may significantly shrink the solution space of the sim-plified problem relative to the original problem, poten-tially resulting in a suboptimal solution. If the bounds on x are too loose, the surrogate bounds used to replace complex terms also become loose, since they are ob-tained by solving constrained optimization problems in which the bounds on x are part of the constraints. Con-sequently, the original constraints may become overly restrictive after substitution. Conversely, if the bounds on x are overly tight, the solution space is directly re-duced, as these bounds are explicitly embedded in the constraints of the simplified problem. To address this issue, we adaptively adjust τ based on intermediate values of x, ensuring that the bounds on x always align with the current solution space. Specif-ically, we divide the optimization process into multiple stages, initialize τ at the beginning, and adjust τ to max 1≤i≤M |xi − hi|/ PMj=1 hj at the end of each stage. TableMark: A Multi-bit Watermark for Synthetic Tabular Data 13 
+
+6 Experiments 
+
+In this section, we present an extensive evaluation of 
+
+TableMark to answer the following research questions. 
+
+RQ1) Does TableMark achieve effective traceability for tracing a large number of data buyers, strong robustness against attacks, and high utility in terms of distribution similarity to the original table, and performance of machine learning and statistical analysis? (see Section 6.2) 
+
+RQ2) Does the constraint generation mechanism pro-vide an effective trade-off between robustness and utility? (see Section 6.3) 
+
+RQ3) Does the optimization mechanisms effectively improve utility? (see Section 6.4) 
+
+RQ4) What are the trade-offs among the hyperparam-eters M , N , and L? (see Section 6.5) 
+
+RQ5) What is the runtime performance of TableMark ?(see Section 6.6) 6.1 Experimental Settings 
+
+6.1.1 Environments 
+
+All experiments were conducted on an Ubuntu 24.04.1 LTS server, equipped with a 3.10 GHz Intel Xeon Gold 6242R CPU with 40 physical cores, 256 GB RAM, and an NVIDIA RTX 3090 GPU with 24 GB VRAM. 
+
+6.1.2 Datasets 
+
+We evaluated TableMark on four real-world datasets from the UCI Machine Learning Repository [4]: Bei-jing, Electric, Phishing, and Shoppers, each associated with a classification or regression task. We split these datasets into training, validation, and test sets in an 8:1:1 ratio following [49], using a fixed random seed for reproducibility. Then, the original table used to train the table synthesis models referred to the training and validation sets. Table 2 lists statistics of these datasets. 
+
+6.1.3 Metrics 
+
+We used the following metrics, where traceability ac-curacy measured traceability and robustness, and the other metrics measured utility. For utility evaluation, the marginal distribution gap and correlation gap mea-sured the distribution difference between the synthetic table (either watermarked or non-watermarked) and the original table, the machine learning efficacy gap measured the machine learning performance of the syn-thetic table, and the relative aggregation query error Table 2: Statistics of datasets used for evaluation.                               
+
+> Name # Train # Val # Test # Num # Cat ML Tasks Beijing 33405 4176 4176 75Regression Electric 8000 1000 1000 12 1Classification Phishing 8843 1106 1106 031 Classification Shoppers 9864 1233 1233 10 8Classification
+
+measured the statistical analysis performance of the synthetic table. 
+
+•Traceability Accuracy (Acc.) was calculated by divid-ing the number of trials where the data buyer was cor-rectly identified by the total number of trials. 
+
+•Marginal Distribution Gap (Marg. Gap) was the uni-variate distribution difference between the synthetic and original tables, measured using the Kolmogorov-Smirnov test and the total variation distance for numerical and categorical attributes, respectively. 
+
+•Correlation Gap (Corr. Gap) was the pairwise dis-tribution difference between the synthetic and original tables, measured using the Pearson correlation coeffi-cient and the total variation distance for numerical and categorical attributes, respectively. 
+
+•Machine Learning Efficacy Gap (MLE Gap) measured the degradation in machine learning performance (in terms of AUROC and RMSE, for classification and re-gression tasks, respectively) of the synthetic table rel-ative to the original table. To evaluate MLE Gap, we trained two XGBoost models using the synthetic and original tables, respectively, evaluated their performance using the test set of the dataset, and calculated the per-formance gap between these models. 
+
+•Relative Aggregation Query Error (RAQE) was the relative error between aggregation query results of the synthetic and original tables. Following existing work on density estimation [43,42,46,24], for each dataset, we generated 3000 queries for each aggregation func-tion, including COUNT and AVG . We generated each query in four steps: (1) Randomly selected a numerical col-umn to place the aggregation function. (2) Randomly selected the number of predicates f from [1, #attributes]. (3) Randomly selected f distinct columns to place the predicates. For numerical columns, the predicates were uniformly selected from {≤ , ≥} . For categorical columns, only equality predicates were selected. (4) Randomly selected a tuple from the original table and used its at-tributes as predicate literals. In addition, we randomly selected 10% of the queries with categorical predicates and changed one of the categorical predicates to the 
+
+GROUP BY predicate. To simulate different query pat-terns, we retained queries whose predicate selectivities were concentrated around three representative selectiv-14 Yuyang Xia et al. 
+
+ities: 1% (low), 5% (medium), and 20% (high), and en-sured that each selectivity corresponded to one third of the queries (i.e., 1000 queries per selectivity per aggre-gation function). Note that Phishing did not have nu-merical attributes, so we did not generate AVG queries for this dataset (denoted by N/A in Table 7). 
+
+6.1.4 Baselines 
+
+We compared TableMark with the following baselines. 
+
+•w/o WM was a non-watermarked baseline used for utility comparison. 
+
+•TabularMark [50] was a recent scheme that encoded the watermark by first synthesizing a non-watermarked table, and then injecting large-scale noise of specific patterns into a moderate proportion of cells (called wa-termarked cells) within this table. This design made TabularMark limited in utility, because large-scale noise could compromise tuple integrity, especially when wa-termarks were encoded in categorical attributes, as we will see in our experiments. In contrast, TableMark en-sured tuple integrity by first determining a histogram, and then synthesizing a watermarked table according to this histogram, without manipulating individual tu-ples. For better utility, we implemented TabularMark by encoding watermarks into numerical attributes for all datasets except for Phishing, a categorical dataset. To extend TabularMark to a multi-bit scheme, we en-coded each bit into distinct watermarked cells. 
+
+•FreqyWM [18] was a recent scheme that encoded the watermark by synthesizing a non-watermarked table and forming specific congruence-relation patterns (i.e., equivalences between integers based on whether they were equal modulo some integer) between partition sizes of this table, via duplicating or removing certain tuples. Since congruence relations were sensitive to small fluc-tuations in partition sizes, FreqyWM was limited in ro-bustness. In contrast, TableMark designed partial-order patterns that were more resilient. To extend FreqyWM to a multi-bit scheme, we encoded each bit into a dis-tinct congruence relation. 
+
+•TabWak [51] was a recent scheme tailored for synthetic tabular data. It encoded the watermark into Gaussian noise vectors, synthesized the watermarked table from these vectors using DDIM [41] (an invertible diffusion model), and exploited the invertibility of this diffusion model to recover noise vectors from tuples for water-mark decoding. To support multi-bit watermarks, we vertically partitioned noise vectors into multiple seg-ments and encoded each bit into the same watermark pattern as TabWak within a distinct segment. 
+
+6.1.5 Attacks for Robustness Evaluation 
+
+We considered the following attacks: 
+
+•Perturbation : The attacker added noise to numerical cells. We considered three typical noise distributions: Gaussian (Gau.), uniform (Uni.), and Laplace (Lap.). Since Phishing did not have numerical attributes, we did not launch perturbation attacks on this dataset (de-noted by N/A in Table 7). The standard deviation of the noise added to each numerical cell was equal to the attack intensity multiplied by the minimum of the ab-solute cell value and the attribute standard deviation. 
+
+•Alteration (Alt.) : The attacker randomly modified a proportion of categorical cells within the watermarked table. The intensity of this class of attacks was defined as the proportion of modified categorical cells. 
+
+•Tuple deletion (Del.) : The attacker randomly deleted a subset of tuples from the watermarked table. The in-tensity of tuple-deletion attacks was defined as the pro-portion of tuples the attacker deleted. 
+
+•Tuple insertion (Ins.) : The attacker randomly dupli-cated a subset of existing tuples and inserted them into the watermarked table. Similarly, the intensity of these attacks was defined as the proportion of inserted tuples. 
+
+•Regeneration (Gen.) : The attacker trained a tuple em-bedding model on the watermarked table, mapped tu-ples to latents, added Gaussian noise to tuple latents, and regenerated a table from the noisy tuple latents us-ing the tuple embedding model. The standard deviation of the noise added to each latent element was equal to the attack intensity multiplied by the latent element. 
+
+•Adaptive tuple deletion (Ada.) : The attacker first per-formed clustering on the watermarked table to form M
+
+clusters, and then identified 2 L clusters that were likely selected to construct the watermark template accord-ing to the cluster histogram, as described in Section 3.3. Since the cluster pairing relationships were hidden from the attacker by the pseudo-random pairing strategy, we simulated this class of attacks by randomly selecting L
+
+clusters from the 2 L clusters and uniformly deleting tuples from the L clusters. The intensity of adaptive tuple-deletion attacks was defined as the proportion of tuples the attacker deleted from the watermarked table. 
+
+•Shadow model (Sha.) : The attacker trained a tuple em-bedding model and a conditional latent diffusion model (called shadow models) on the watermarked table to synthesize a new table. We did not expect TableMark 
+
+and all baselines to resist shadow-model attacks (the traceability accuracy of all schemes was 0 under shadow-model attacks; see Table 7), because these attacks would seriously degrade utility as table synthesis inevitably caused utility loss and resynthesizing a synthetic ta-ble magnified utility loss. To validate this claim, we TableMark: A Multi-bit Watermark for Synthetic Tabular Data 15 
+
+Table 3: Utility in terms of RAQE (with query cardinal-ity scaling for COUNT in the presence of deletion attacks) and MLE Gap under different attacks on Beijing. The underlying watermarking scheme is TableMark .                                                                                     
+
+> Attacks COUNT
+> @1%
+> AVG
+> @1%
+> COUNT
+> @5%
+> AVG
+> @5%
+> COUNT
+> @20%
+> AVG
+> @20%
+> MLE Gap w/o Att. 0.232 0.727 0.172 0.342 0.059 0.308 0.108
+> 5% Gau. 0.404 0.767 0.272 0.366 0.097 0.316 0.113
+> 10% Gau. 0.375 0.769 0.259 0.363 0.094 0.316 0.119
+> 5% Alt. 0.222 0.759 0.168 0.401 0.059 0.304 0.124
+> 10% Alt. 0.228 0.836 0.172 0.486 0.061 0.304 0.136
+> 5% Del. 0.234 0.743 0.171 0.344 0.060 0.304 0.111
+> 10% Del. 0.235 0.745 0.172 0.350 0.060 0.309 0.115
+> 5% Gen. 0.208 0.846 0.147 0.365 0.037 0.305 0.118
+> 10% Gen. 0.217 1.021 0.141 0.497 0.039 0.426 0.141
+> 5% Ada. 0.242 0.751 0.180 0.369 0.068 0.372 0.112
+> 10% Ada. 0.274 0.799 0.203 0.440 0.083 0.484 0.120
+> Sha. 0.478 1.235 0.385 0.846 0.180 0.904 0.223
+
+measured the utility in terms of RAQE and MLE Gap of the watermarked table under various attacks (note that in the case of deletion attacks, the COUNT query results were scaled by the cardinality of the attacked table when computing RAQE to prevent overstating the utility loss). The results are shown in Tables 3-6, where shadow-model attacks constantly led to a rela-tive utility degradation exceeding 30% compared to the watermarked table without attacks across all datasets, even 50% on Beijing and Shoppers. We set the intensity to 5% for all attacks, except for shadow-model attacks that were not parameterized by an intensity. 
+
+6.1.6 Implementation 
+
+TableMark was written in Python 3.10. For clustering, we set M = 256, and performed K-means clustering on the principal components of tuple latents that ac-counted for 99% of the total variance. To estimate the transition matrix P, we set T = 25600 to ensure that 
+
+η = 1%. For watermarked-histogram generation, we used Gurobi [3] as optimizer, divided the optimization process into 6 stages, allocated 30 seconds to each stage, and initialized τ = 0 .01. For w/o WM, TabularMark, and FreqyWM, we synthesized the non-watermarked table according to the original histogram. In our de-fault parameter configuration, we set N = 1000, L = 32, 
+
+δF P R = 10 −3 (leading to δBE = 3), δF N R = 10 −3,
+
+Iper = 0 .01 , I alt = 0 .01 , I del = 0 .1 (except for the Phish-ing dataset, where Idel was set to 0 .2). In addition, we averaged the results on 100 trials. Table 4: Utility in terms of RAQE (with query cardinal-ity scaling for COUNT in the presence of deletion attacks) and MLE Gap under different attacks on Electric. The underlying watermarking scheme is TableMark .                                                                         
+
+> Attacks COUNT
+> @1%
+> AVG
+> @1%
+> COUNT
+> @5%
+> AVG
+> @5%
+> COUNT
+> @20%
+> AVG
+> @20%
+> MLE Gap w/o Att. 0.261 0.118 0.118 0.050 0.055 0.023 0 .017
+> 5% Gau. 0.259 0.119 0.116 0.050 0.054 0.023 0 .017
+> 10% Gau. 0.264 0.118 0.112 0.050 0.052 0.023 0 .017
+> 5% Alt. 0.267 0.119 0.121 0.051 0.056 0.024 0 .022
+> 10% Alt. 0.276 0.121 0.129 0.053 0.063 0.027 0 .027
+> 5% Del. 0.264 0.121 0.119 0.051 0.054 0.023 0 .017
+> 10% Del. 0.268 0.123 0.121 0.052 0.055 0.023 0 .016
+> 5% Gen. 0.261 0.119 0.120 0.051 0.056 0.023 0 .017
+> 10% Gen. 0.268 0.119 0.124 0.051 0.060 0.023 0 .018
+> 5% Ada. 0.271 0.122 0.127 0.053 0.059 0.025 0 .017
+> 10% Ada. 0.297 0.129 0.146 0.059 0.071 0.031 0 .018
+> Sha. 0.308 0.135 0.148 0.061 0.069 0.029 0 .024
+
+Table 5: Utility in terms of RAQE (with query cardinal-ity scaling for COUNT in the presence of deletion attacks) and MLE Gap under different attacks on Phishing. The underlying watermarking scheme is TableMark .                                         
+
+> Attacks COUNT
+> @1%
+> COUNT
+> @5%
+> COUNT
+> @20%
+> MLE Gap w/o Att. 0.276 0.120 0.060 0.008
+> 5% Alt. 0.458 0.300 0.189 0.011
+> 10% Alt. 0.669 0.524 0.337 0.013
+> 5% Del. 0.280 0.122 0.060 0.009
+> 10% Del. 0.283 0.124 0.061 0.008
+> 5% Gen. 0.276 0.121 0.060 0.008
+> 10% Gen. 0.276 0.121 0.060 0.008
+> 5% Ada. 0.301 0.141 0.077 0.008
+> 10% Ada. 0.362 0.187 0.112 0.009
+> Sha. 0.353 0.155 0.072 0.012
+
+6.2 Evaluation on Overall Performance To answer RQ1 , we investigated the traceability, ro-bustness, and utility of TableMark and baselines. Fig-ure 4 and Table 7 show the evaluation results. For traceability, we made the following observations. Firstly, TabWak had the lowest accuracy (almost 0), while TabularMark,FreqyWM,and TableMark achieved the highest accuracy (almost 1). The reason TabWak had low traceability was that the process of recover-ing noise vectors during watermark decoding was error-prone, due to limitations of DDIM. As a result, when encoding multiple bits (32 bits), TabWak could not accurately extract the noise pattern of each bit. For 16 Yuyang Xia et al. 
+
+Table 6: Utility in terms of RAQE (with query cardinal-ity scaling for COUNT in the presence of deletion attacks) and MLE Gap under different attacks on Shoppers. The underlying watermarking scheme is TableMark .                                                                                     
+
+> Attacks COUNT
+> @1%
+> AVG
+> @1%
+> COUNT
+> @5%
+> AVG
+> @5%
+> COUNT
+> @20%
+> AVG
+> @20%
+> MLE Gap w/o Att. 0.322 0.908 0.141 0.419 0.062 0.169 0.009
+> 5% Gau. 0.421 0.899 0.211 0.439 0.086 0.174 0.009
+> 10% Gau. 0.416 0.900 0.208 0.440 0.084 0.174 0.010
+> 5% Alt. 0.348 0.973 0.161 0.437 0.082 0.169 0.014
+> 10% Alt. 0.490 1.003 0.237 0.468 0.151 0.172 0.019
+> 5% Del. 0.326 0.918 0.142 0.417 0.062 0.169 0.008
+> 10% Del. 0.329 0.934 0.144 0.423 0.063 0.173 0.010
+> 5% Gen. 0.308 0.934 0.157 0.446 0.075 0.174 0.012
+> 10% Gen. 0.363 1.105 0.206 0.611 0.099 0.286 0.015
+> 5% Ada. 0.332 0.903 0.152 0.436 0.071 0.200 0.010
+> 10% Ada. 0.359 0.924 0.179 0.470 0.090 0.246 0.010
+> Sha. 0.497 1.013 0.235 0.524 0.108 0.249 0.021
+
+TabularMark and FreqyWM, they did not involve wa-termark decoding errors and could achieve perfect ac-curacy without attacks. For TableMark , the constraint generation mechanism calibrated watermark decoding errors (i.e., cluster misassignments caused by the re-construction error of the tuple embedding model, see Section 4.3). Secondly, FreqyWM failed to encode 32-bit watermarks on Phishing (denoted by × in Table 7), while TableMark achieved high accuracy on this dataset. This was because FreqyWM maintained the ranking of partition sizes between the watermarked and non-watermarked synthetic tables for utility, so there was limited room to modify the non-watermarked synthetic table for watermark encoding. Moreover, Phishing was a small dataset with fewer than 10000 tuples in the orig-inal table, further reducing the modification room. In contrast, TableMark did not involve restrictive utility constraints, but instead treated utility as the optimiza-tion goal (i.e., minimizing the difference between the watermarked and original histograms), so TableMark 
+
+could accommodate a large number of bits. For robustness, we made the following observations. Firstly, TabWak and FreqyWM had the lowest trace-ability accuracy (almost 0) in the presence of attacks. For TabWak, it could not effectively recover noise vec-tors during watermark decoding, as discussed above. For FreqyWM, its congruence-relation patterns were sensitive to partition-size fluctuations caused by attacks. Secondly, both TabularMark and TableMark achieved high accuracy (almost 1) under attacks. For Tabular-Mark, it injected large scale noise (uniform noise with standard deviations set to 20% of attributes’ standard 
+
+Fig. 4: Average ranking comparison between TableMark 
+
+and baselines across distribution similarity between the synthetic and original tables, machine learning utility, query utility, traceability, and robustness. Outer regions indicate higher ranks and better performance. deviations for numerical attributes), which overwhelmed the noise introduced by perturbation attacks. In addi-tion, TabularMark injected the noise into a moderate proportion of cells (15% cells within an attribute), while alteration, deletion, and insertion attacks were targeted at a small proportion of cells or tuples (5% cells or tu-ples), so TabularMark could resist these attacks. For 
+
+TableMark , the constraint generation mechanism en-sured enough gaps between cluster sizes of partial or-ders, so these partial orders were more resilient. For utility, we obtained the following observations. Firstly, TabWak had the lowest performance (e.g., a degradation in Marg. Gap by 0.046-0.064 relative to w/o WM). This was because to support multi-bit wa-termarks, TabWak encoded complex patterns into noise vectors that corresponded to individual tuples, result-ing in significant distortions to each tuple. Secondly, TabularMark exhibited lower performance, especially in terms of RAQE on high-dimensional datasets (e.g., an increase of 0.030-0.045 on Phishing and around 0.010 on Shoppers compared to w/o WM). This was because to ensure robustness, TabularMark performed substantial modifications (large-scale noise for numerical attributes and value substitutions for categorical attributes) to a moderate proportion of cells (15% cells within an attribute), which significantly compromised tuple in-tegrity and lowered the accuracy of high-dimensional queries that involved multiple predicates applied to in-dividual tuples. Notably, TabularMark exhibited lower utility when watermarks were encoded into categorical attributes (on Phishing) than into numerical attributes (on other datasets), because categorical attributes had small and discrete domains, so modifications to them of-ten introduced greater distortions. This suggested that TabularMark was less suitable for categorical datasets. Finally, FreqyWM and TableMark achieved the highest utility comparable to w/o WM (with a degradation of less than 0.002 on almost all metrics). For FreqyWM, it imposed the restrictive ranking constraint on partition TableMark: A Multi-bit Watermark for Synthetic Tabular Data 17 
+
+Table 7: Comparison of traceability, robustness, and utility between TableMark and baselines. Since Phishing did not have numerical attributes, we did not launch perturbation attacks or measure RAQE for AVG queries on this dataset (denoted by N/A). Moreover, FreqyWM failed to encode 32-bit watermarks on Phishing (denoted by ×). 
+
+Schemes Datasets Trace-ability (Acc. ↑)Robustness (Acc. ↑) Utility 
+
+5% 
+
+Gau. 
+
+5% 
+
+Uni. 
+
+5% 
+
+Lap. 
+
+5% 
+
+Alt. 
+
+5% 
+
+Del. 
+
+5% 
+
+Ins. 
+
+5% 
+
+Gen. 
+
+5% 
+
+Ada. Sha. Marg. Gap ↓
+
+Corr. Gap ↓
+
+MLE Gap ↓
+
+95-th RAQE at Different Selectivities ↓
+
+1% (Low) 5% (Medium) 20% (High) 
+
+COUNT AVG COUNT AVG COUNT AVG 
+
+w/o WM Beijing N/A N/A N/A N/A N/A N/A N/A N/A N/A N/A 0.022 0 .027 0 .109 0 .231 0 .722 0 .172 0 .341 0 .060 0 .308 
+
+Electric N/A N/A N/A N/A N/A N/A N/A N/A N/A N/A 0.013 0 .007 0 .017 0 .260 0 .119 0 .118 0 .050 0 .054 0 .022 
+
+Phishing N/A N/A N/A N/A N/A N/A N/A N/A N/A N/A 0.005 0 .009 0 .008 0 .269 N/A 0.115 N/A 0.057 N/A Shoppers N/A N/A N/A N/A N/A N/A N/A N/A N/A N/A 0.020 0 .024 0 .008 0 .320 0 .900 0 .140 0 .418 0 .062 0 .170 
+
+Tabular-Mark Beijing 1.00 1.00 1.00 1.00 1.00 1.00 1.00 0.99 1.00 0.00 0.022 0.030 0 .114 0 .234 0.724 0.181 0 .341 0 .069 0 .307 
+
+Electric 1.00 1.00 1.00 1.00 1.00 1.00 1.00 0.95 1.00 0.00 0.013 0.008 0.017 0.261 0.118 0.118 0.050 0.054 0.023 
+
+Phishing 1.00 N/A N/A N/A 0.94 1.00 1.00 1.00 1.00 0.00 0.006 0 .011 0.008 0.299 N/A 0.152 N/A 0.102 N/A Shoppers 1.00 1.00 1.00 1.00 1.00 1.00 1.00 0.97 1.00 0.00 0.022 0.023 0.009 0.327 0 .917 0 .144 0 .433 0 .076 0 .171 
+
+Freqy-WM Beijing 1.00 0.00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0.022 0.027 0.109 0.231 0.728 0 .173 0.339 0.060 0.305 
+
+Electric 1.00 0.00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0.013 0.007 0.017 0.261 0.119 0 .119 0.050 0.055 0.023 
+
+Phishing × N/A N/A N/A × × × × × × × × × × N/A × N/A × N/A Shoppers 1.00 0.00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0.020 0.024 0.009 0.322 0.905 0.139 0.420 0.062 0.175 
+
+TabWak Beijing 0.00 0.00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0.074 0 .112 0 .359 0 .993 1 .573 0 .741 1 .753 0 .305 1 .627 
+
+Electric 0.00 0.00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0.077 0 .042 0 .072 1 .790 0 .250 0 .958 0 .178 0 .410 0 .147 
+
+Phishing 0.00 N/A N/A N/A 0.00 0 .00 0 .00 0 .00 0 .00 0 .00 0.051 0 .081 0 .018 0 .919 N/A 0.706 N/A 0.457 N/A Shoppers 0.00 0.00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0 .00 0.080 0 .098 0 .037 1 .451 7 .070 0 .921 4 .576 0 .424 3 .231 
+
+Table-Mark 
+
+Beijing 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 0.99 0 .00 0.022 0.027 0.108 0.232 0 .727 0.172 0.342 0.059 0.308 
+
+Electric 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 0.99 0 .00 0.013 0.008 0.017 0.261 0.118 0.118 0.050 0.055 0.023 
+
+Phishing 1.00 N/A N/A N/A 1.00 1.00 1.00 1.00 1.00 0.00 0.005 0.009 0.008 0.276 N/A 0.120 N/A 0.060 N/A Shoppers 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 0.00 0.020 0.024 0.009 0.322 0.908 0 .141 0.419 0.062 0.169 
+
+sizes. For TableMark , it ensured tuple integrity, and preserved high-quality tuple-frequency distributions by designing effective optimization mechanisms. In summary, TableMark significantly outperforms the state-of-the-art baselines, demonstrating effective traceability, strong robustness, and high utility across various types of datasets. 6.3 Evaluation on Constraint Generator To answer RQ2 , we investigated the robustness and utility of TableMark over different values of the ro-bustness parameters. For robustness, we measured the traceability accuracy under three typical types of at-tacks: cell-level Gaussian perturbation and alteration attacks that modified certain cells, and tuple-level adap-tive deletion attacks that removed certain tuples. For utility, we measured the RAQE of COUNT queries (with cardinality scaling under deletion attacks) at selectivi-ties 1% and 20%. We conducted the experiments on the Electric dataset and the results are shown in Figure 5 (w.r.t. Iper ), Figure 6 (w.r.t. Ialt ), Figure 7 (w.r.t. Idel ), Figure 8 (w.r.t. δF P R ), and Figure 9 (w.r.t. δF N R ). 
+
+Fig. 5: Comparison of traceability accuracy under Gaussian perturbation, alteration, and adaptive tuple-deletion attacks, and RAQE of COUNT queries (with car-dinality scaling under adaptive tuple-deletion attacks) at selectivities 1% and 20%, over different Iper values. For Iper , Ialt , and Idel , we made the following obser-vations. Firstly, as Iper increased, there was an obvious increase in the traceability accuracy under perturbation 18 Yuyang Xia et al. 
+
+Fig. 6: Comparison of traceability accuracy under Gaussian perturbation, alteration, and adaptive tuple-deletion attacks, and RAQE of COUNT queries (with car-dinality scaling under adaptive tuple-deletion attacks) at selectivities 1% and 20%, over different Ialt values. 
+
+Fig. 7: Comparison of traceability accuracy under Gaussian perturbation, alteration, and adaptive tuple-deletion attacks, and RAQE of COUNT queries (with car-dinality scaling under adaptive tuple-deletion attacks) at selectivities 1% and 20%, over different Idel values. attacks, and a slight increase under alteration and adap-tive tuple-deletion attacks. Similarly, as Ialt increased, the accuracy under alteration attacks exhibited a sig-nificant increase, while the accuracy under perturbation and adaptive tuple-deletion attacks showed a slight in-crease. Moreover, as Idel increased, the accuracy under all three classes of attacks experienced a substantial increase. Secondly, the increase in Iper or Ialt caused a slight utility loss, while the increase in Idel resulted in a more obvious utility loss (in Figures 5 and 6, the 
+
+Fig. 8: Comparison of traceability accuracy under Gaussian perturbation, alteration, and adaptive tuple-deletion attacks, and RAQE of COUNT queries (with car-dinality scaling under adaptive tuple-deletion attacks) at selectivities 1% and 20%, over different δF P R values. 
+
+Fig. 9: Comparison of traceability accuracy under Gaussian perturbation, alteration, and adaptive tuple-deletion attacks, and RAQE of COUNT queries (with car-dinality scaling under adaptive tuple-deletion attacks) at selectivities 1% and 20%, over different δF N R values. curves for different values of Iper or Ialt almost over-lapped in the second and third rows, while in Figure 7, the curves with larger values of Idel lay clearly above those with smaller ones). Thirdly, compared to the util-ity loss caused by increasing Iper , Ialt , or Idel , the utility loss incurred by attacks was substantially more severe, implying that TableMark could significantly enhance robustness at a marginal utility cost. For δF P R and δF N R , we made the following observa-tions. Firstly, traceability accuracy decreased as δF P R TableMark: A Multi-bit Watermark for Synthetic Tabular Data 19 
+
+Fig. 10: RMSE difference between the watermarked and original histograms (lower values indicate higher util-ity) over various τ initializations, across different com-binations of optimization mechanisms: (1) without op-timization mechanisms (Naive), (2) constraint simpli-fication mechanism (CS), (3) constraint simplification and multi-stage optimization mechanisms (CS+MSO). decreased, because a smaller δF P R meant a reduced bit error tolerance (see Equation 5). Secondly, traceability accuracy slightly increased as δF N R decreased, because a smaller δF N R led to a smaller δBER (see Equation 7) and thus larger gaps between cluster sizes of partial orders (see Equation 14), which make partial orders more resilient. Thirdly, changes in δF P R or δF N R each led to minimal utility loss (RAQE values were almost identical over different values of δF P R or δF N R in Fig-ures 8 and 9). Note that different combinations of Iper ,
+
+Ialt , and Idel can already lead to various trade-offs be-tween robustness and utility (discussed above), we rec-ommend that the data owner configure δF P R according to his/her desired level of false positives and set δF N R 
+
+to 0 .001 as in our default configuration. In summary, TableMark allows the data owner to effectively trade off robustness and utility, where the data owner configures δF P R based on his/her expected level of false positives, sets δF N R to 0 .001, sets Iper and 
+
+Ialt to small values to ensure basic robustness against perturbation and alteration attacks, and finally chooses a value for Idel to achieve a desired level of robustness against various attacks at the cost of minimal utility. 6.4 Evaluation on Optimization Mechanisms To answer RQ3 , we investigated the RMSE difference between the watermarked and original histograms un-der different combinations of optimization mechanisms over various initial values of τ . The results are shown in Figure 10. We made the following observations. Firstly, compared to the naive method, the constraint simplifi-cation mechanism significantly reduced RMSE (by al-most two orders of magnitude), because this mecha-nism led to a more tractable optimization problem. Sec-ondly, with the multi-stage optimization mechanism, RMSE dropped further (to about 0.4-0.8x), because τ
+
+Fig. 11: Comparison of traceability accuracy under adaptive tuple-deletion attacks and RAQE of COUNT 
+
+queries (with cardinality scaling) at selectivities 1% and 20%, over different M values. 
+
+Fig. 12: Comparison of traceability accuracy under adaptive tuple-deletion attacks and RAQE of COUNT 
+
+queries (with cardinality scaling) at selectivities 1% and 20%, over different N values. 
+
+Fig. 13: Comparison of traceability accuracy under adaptive tuple-deletion attacks and RAQE of COUNT 
+
+queries (with cardinality scaling) at selectivities 1% and 20%, over different L values. was gradually adjusted to appropriate values as opti-mization progressed. Thirdly, with the multi-stage op-timization mechanism, although τ was initialized to dif-ferent values (0.001, 0.01, and 0.1), the resulting RMSE values were close, because τ was adaptively adjusted during optimization regardless of its initial values. In summary, the constraint simplification and multi-stage optimization mechanisms significantly improve the data utility of the watermarked table and are not sen-sitive to the initial value of τ .6.5 Analysis on M , N , and L
+
+To answer RQ4 , we investigated the robustness and utility of TableMark over different values of M , N , and 
+
+L. For robustness, we measured the traceability accu-racy under adaptive tuple-deletion attacks. For utility, we measured the RAQE of COUNT queries (with cardi-nality scaling) at selectivities 1% and 20%. The exper-20 Yuyang Xia et al. 
+
+Table 8: Privacy risks in terms of the AUROC score and TPR@1%FPR score over different M values (higher AUROC scores above 0.5 and higher TPR@1%FPR scores above 0.01 indicate higher privacy risks).                                             
+
+> Datasets Metrics M= 64 M= 128 M= 256 M= 512
+> Beijing AUROC 0.536 0.547 0.555 0.565 TPR @1% FPR 0.017 0.020 0.022 0.025 Electric AUROC 0.530 0.540 0.549 0.567 TPR @1% FPR 0.013 0.015 0.015 0.020 Phishing AUROC 0.510 0.522 0.538 0.558 TPR @1% FPR 0.000 0.000 0.000 0.000 Shoppers AUROC 0.512 0.515 0.520 0.528 TPR @1% FPR 0.014 0.015 0.016 0.016
+
+iments were conducted on the Electric dataset and the results are shown in Figure 11 (w.r.t. M ), Figure 12 (w.r.t. N ), and Figure 13 (w.r.t. L). 
+
+6.5.1 Analysis on M
+
+We obtained the following observations from Figure 11. Firstly, traceability accuracy increased with M , because a larger M increased the clustering randomness and re-duced the proportion of tuples within the 2 L template clusters, making adaptive deletion operations less likely to hit the template clusters. This observation indicated that a larger M led to better robustness. Secondly, RAQE decreased as M increased, implying that a larger 
+
+M also led to better utility. This was because the orig-inal table was partitioned into finer-grained clusters, making the distribution of each cluster simpler and thus easier for the conditional latent diffusion model to learn. Consequently, the synthetic table better resembled the original table in terms of intra-cluster distributions. Although a larger M resulted in better robustness and utility, we argued that a larger M also led to higher privacy risks. This was because as M increased, the number of tuples within each cluster decreased, so the conditional latent diffusion model was more likely to “memorize” tuples in each cluster rather than learn the intra-cluster distributions. To validate this claim, fol-lowing [45], we measured empirical privacy risks of the synthetic table (specifically, non-watermarked synthetic table because watermarking often did not affect pri-vacy risks) using membership inference attacks, where the attacker was in possession of the synthetic table and tried to infer whether certain tuples (called target tuples) belonged to the original table, by computing the distance between target tuples and tuples from the synthetic table. Specifically, we mixed tuples from the original table and the test set to form target tuples, normalized all attributes, and calculated the Euclidean distance between all target tuples and tuples from the synthetic table. Given a distance threshold, a target tuple was predicted to be in the original table if there existed at least one tuple in the synthetic table with a distance smaller than this threshold. Since the distance threshold could vary, we reported the AUROC score and the TPR@1%FPR score, as shown in Table 8. It could be seen that both scores increased with M , sug-gesting that a larger M resulted in higher privacy risks. In summary, a larger M leads to better robust-ness and utility, but also results in higher privacy risks. Therefore, we recommend that the data owner choose a large number for M as long as the empirical privacy risks are acceptable. 
+
+6.5.2 Analysis on N
+
+We made the following observations from Figure 12. Firstly, traceability accuracy decreased as N increased. This was because the bit error threshold δBE decreased so that the L-bit watermark space could accommodate more data buyers (see Equation 5), resulting in a re-duced bit error tolerance. Secondly, the increase in N
+
+had only a minimal impact on RAQE. Based on these observations, we recommend that the data owner set 
+
+N to a small number as long as N is greater than the number of potential data buyers. 
+
+6.5.3 Analysis on L
+
+We made the following observations from Figure 13. Firstly, traceability accuracy increased slightly with L.This was because δBE increased due to the enlarged watermark space (see Equation 5), leading to an im-proved bit error tolerance. Secondly, changes in L had a minimal impact on RAQE. Note that a 32-bit water-marking scheme can already support a large number of data buyers (when N = 10 5, the traceability accuracy was almost 1 under 5% adaptive tuple-deletion attacks while the utility was close to the non-watermarked syn-thetic table; see Figure 12), we recommend that the data owner set L to 32 as in our default configuration and balance robustness and utility by configuring ro-bustness parameters as discussed in Section 6.3. 6.6 Evaluation on Runtime Efficiency To answer RQ5 , we measured the runtime of each stage in TableMark and the results are shown in Table 9. It can be observed that the online overhead of TableMark 
+
+is modest and practical for real-world deployment. TableMark: A Multi-bit Watermark for Synthetic Tabular Data 21 
+
+Table 9: Runtime efficiency of TableMark in terms of seconds across different datasets.                                          
+
+> Stages Beijing Electric Phishing Shoppers Watermark-channel construction (offline) Tuple embedding model training 2560.28 997.99 2076.62 1366.85 Clustering 302.14 56.73 95.70 55.56 Conditional latent diffusion model training 1408.31 756.17 737.17 762.27 Cluster-pair-based watermark-template construction 0.01 0.01 0.01 0.01 Attack simulation for constraint generation 4813.79 3740.89 5195.99 3807.08 Watermark-database generation (executed once; results reusable across datasets) 51.90 Watermarked-table synthesis (online) Watermarked-histogram generation 156.94 155.47 155.29 156.33 Table synthesis 12.31 4.02 4.28 4.20 Watermark decoding (online) Watermarked-histogram extraction 5.79 2.09 4.45 3.34 Partial-order extraction and data buyer identification 0.01 0.01 0.01 0.01
+
+7 Related Work Cell-Based Watermarking Schemes. Some schemes encoded watermarks into the least significant bits (LSB) of cells [6,5,28,25,20]. However, these schemes were limited in robustness because LSBs were sensitive to small perturbations. Therefore, another line of work [22, 27,50] encoded watermarks into specific noise patterns and injected the noise into certain cells. However, these schemes were limited in utility because injecting noise into cells could compromise tuple integrity. In contrast, 
+
+TableMark preserves tuple integrity and optimizes tuple-frequency distributions, thus having better utility. 
+
+Statistic-Based Watermarking Schemes. They en-coded watermarks into table statistics, such as column densities [40], value frequencies [39,15,17], tuple fre-quencies [18], and values of specific functions [38]. To balance robustness and utility, these schemes imposed constraints on table modifications during watermark encoding. Specifically, some schemes imposed utility con-straints, for example, on attribute means [38], value ranges [17], results of predefined classification tasks [21], and partition histograms [18]. However, constraints im-posed by these schemes [38,17,21] were limited to spe-cific applications, which was insufficient to support di-verse machine learning and statistical analysis tasks for which synthetic tables were used, or were too restrictive (e.g., the ranking constraint in [18]), which weakened traceability and robustness. For example, the traceabil-ity accuracy of FreqyWM [18] was almost zero under attacks. Moreover, some work [15] imposed robustness constraints, but considered a rather limited set of at-tacks (e.g., only deletion and insertion attacks in [15]), which undermined robustness. In contrast, TableMark 
+
+designs partial-order patterns within the histogram chan-nel and proposes the constraint generation mechanism, offering the data owner with an effective robustness-utility trade-off in the context of various attacks. 
+
+Generative Watermarking Schemes. They encoded watermarks into pseudo-random sequences used for ta-ble synthesis. For example, TabWak [51] encoded the watermark into Gaussian noise vectors and input these vectors into DDIM [41] (an invertible diffusion model) to synthesize the watermarked table, while RINTAW [12] and MUSE [11] used a pseudo-random function to as-sociate tuples with scores, encoded the watermark into the sum of tuple scores, and biased the table synthe-sis process toward tuples with specific scores. However, these schemes were limited in traceability. For example, the traceability accuracy of TabWak was nearly zero when encoding 32-bit watermarks to track 1000 data buyers. This was because pseudo-random sequences were difficult to recover accurately to support a large num-ber of watermark bits. Different from these schemes, 
+
+TableMark designs partial-order patterns that can be accurately decoded for multi-bit watermarks. 
+
+8 Conclusion 
+
+We have studied the problem of effectively tracing data buyers for selling synthetic tabular data in the data market. To this end, we have proposed TableMark , a novel watermarking scheme that encodes multi-bit wa-termarks into partial-order patterns within the cluster-histogram channel. To provide the data owner with an effective robustness-utility trade-off, we have proposed the constraint generation mechanism that formulates the watermark encoding process as a constrained opti-mization problem, to provide theoretical guarantees for the data owner’s robustness requirement. We have de-signed effective optimization mechanisms to solve this problem to synthesize high-utility watermarked tables. We have conducted experiments on four widely used 22 Yuyang Xia et al. 
+
+real-world datasets, and the results have shown that 
+
+TableMark significantly outperforms the state-of-the-art baselines. Moreover, we have conducted extensive parameter analysis and derived practical configuration guidelines. Finally, we have evaluated the runtime effi-ciency of TableMark and demonstrated its practicality for real-world deployment. In future work, we aim to extend TableMark to support watermarking for multi-table databases and to address collusion attacks, where coordinated attackers combine their watermarked copies to detect and remove watermark patterns. 
+
+References 
+
+1. Ali data market. https://market.aliyun.com/ (2025) 2. Aws data exchange. https://aws.amazon.com/ data-exchange/ (2025) 3. Gurobi. https://www.gurobi.com/ (2025) 4. Uci machine learning repository. https://archive.ics. uci.edu/datasets (2025) 5. Agrawal, R., Haas, P.J., Kiernan, J.: A system for wa-termarking relational databases. In: SIGMOD, p. 674. ACM (2003). DOI 10.1145/872757.872865. URL https: //doi.org/10.1145/872757.872865 
+
+6. Agrawal, R., Kiernan, J.: Watermarking relational databases. In: VLDB, pp. 155–166. Morgan Kaufmann (2002). DOI 10.1016/B978-155860869-6/50022-6 7. Asudeh, A., Nargesian, F.: Towards distribution-aware query answering in data markets. VLDB 15 (11), 3137– 3144 (2022). DOI 10.14778/3551793.3551858. URL 
+
+https://www.vldb.org/pvldb/vol15/p3137-asudeh.pdf 
+
+8. Du, Y., Li, N.: Systematic assessment of tabular data synthesis algorithms. arXiv preprint arXiv:2402.06806 (2024) 9. Durrett, R.: Probability: theory and examples, vol. 49. Cambridge university press (2019) 10. Fan, J., Liu, T., Li, G., Chen, J., Shen, Y., Du, X.: Re-lational data synthesis using generative adversarial net-works: A design space exploration. VLDB 13 (11), 1962– 1975 (2020). URL http://www.vldb.org/pvldb/vol13/ p1962-fan.pdf 
+
+11. Fang, L., Liu, A., Zou, H.P., Chen, Y., Zhang, H., Deng, Z., Yu, P.S.: Muse: Model-agnostic tabular wa-termarking via multi-sample selection. arXiv preprint arXiv:2505.24267 (2025) 12. Fang, L., Liu, A., Zou, H.P., Zhang, H., Yu, P.S.: Rintaw: A robust invisible watermark for tabular generative mod-els. In: The 1st Workshop on GenAI Watermarking (2025) 13. Fernandez, P., Couairon, G., J´ egou, H., Douze, M., Furon, T.: The stable signature: Rooting watermarks in latent diffusion models. In: ICCV, pp. 22,409–22,420. IEEE (2023). DOI 10.1109/ICCV51070.2023.02053. URL 
+
+https://doi.org/10.1109/ICCV51070.2023.02053 
+
+14. Fernandez, R.C., Subramaniam, P., Franklin, M.J.: Data market platforms: Trading data assets to solve data prob-lems. VLDB 13 (11), 1933–1947 (2020). URL http: //www.vldb.org/pvldb/vol13/p1933-fernandez.pdf 
+
+15. Franco-Contreras, J., Coatrieux, G., Cuppens, F., Cuppens-Boulahia, N., Roux, C.: Robust lossless water-marking of relational databases based on circular his-togram modulation. TIFS 9(3), 397–410 (2014). DOI 10.1109/TIFS.2013.2294240. URL https://doi.org/10. 1109/TIFS.2013.2294240 
+
+16. Hoeffding, W.: Probability inequalities for sums of bounded random variables. Journal of the American sta-tistical association 58 (301), 13–30 (1963) 17. Hu, D., Zhao, D., Zheng, S.: A new robust approach for reversible database watermarking with distortion con-trol. TKDE 31 (6), 1024–1037 (2019). DOI 10.1109/ TKDE.2018.2851517. URL https://doi.org/10.1109/ TKDE.2018.2851517 
+
+18. ˙I¸ sler, D., Cabana, E., Garc´ ıa-Recuero, ´A., Koutrika, G., Laoutaris, N.: Freqywm: Frequency watermarking for the new data economy. In: ICDE, pp. 4993–5007. IEEE (2024). DOI 10.1109/ICDE60146.2024.00379. URL 
+
+https://doi.org/10.1109/ICDE60146.2024.00379 
+
+19. Jaynes, E.T.: Information theory and statistical mechan-ics. Physical review 106 (4), 620 (1957) 20. Ji, T., Ayday, E., Yilmaz, E., Li, M., Li, P.: Privacy-preserving database fingerprinting. In: NDSS. The Internet Society (2023). URL 
+
+https://www.ndss-symposium.org/ndss-paper/ privacy-preserving-database-fingerprinting/ 
+
+21. Kamran, M., Farooq, M.: A formal usability con-straints model for watermarking of outsourced datasets. TIFS 8(6), 1061–1072 (2013). DOI 10.1109/TIFS.2013. 2259234. URL https://doi.org/10.1109/TIFS.2013. 2259234 
+
+22. Kamran, M., Suhail, S., Farooq, M.: A robust, distor-tion minimizing technique for watermarking relational databases using once-for-all usability constraints. TKDE 
+
+25 (12), 2694–2707 (2013). DOI 10.1109/TKDE.2012. 227. URL https://doi.org/10.1109/TKDE.2012.227 
+
+23. Kingma, D.P., Welling, M.: Auto-encoding variational bayes. In: ICLR (2014). URL http://arxiv.org/abs/ 1312.6114 
+
+24. Kipf, A., Kipf, T., Radke, B., Leis, V., Boncz, P.A., Kemper, A.: Learned cardinalities: Estimating correlated joins with deep learning. In: CIDR. www.cidrdb.org (2019). URL http://cidrdb.org/cidr2019/papers/ p101-kipf-cidr19.pdf 
+
+25. Lafaye, J., Gross-Amblard, D., Constantin, C., Guer-rouani, M.: Watermill: An optimized fingerprinting sys-tem for databases under constraints. TKDE 20 (4), 532– 546 (2008). DOI 10.1109/TKDE.2007.190713. URL 
+
+https://doi.org/10.1109/TKDE.2007.190713 
+
+26. Lautrup, A.D., Hyrup, T., Zimek, A., Schneider-Kamp, P.: Systematic review of generative modelling tools and utility metrics for fully synthetic tabular data. ACM Comput. Surv. 57 (4), 90:1–90:38 (2025). DOI 10.1145/ 3704437. URL https://doi.org/10.1145/3704437 
+
+27. Li, W., Li, N., Yan, J., Zhang, Z., Yu, P., Long, G.: Secure and high-quality watermarking algorithms for relational database based on semantic. TKDE 35 (7), 7440–7456 (2023). DOI 10.1109/TKDE.2022.3194191. URL https: //doi.org/10.1109/TKDE.2022.3194191 
+
+28. Li, Y., Swarup, V., Jajodia, S.: Fingerprinting relational databases: Schemes and specialties. TDSC 2(1), 34–45 (2005). DOI 10.1109/TDSC.2005.12. URL https://doi. org/10.1109/TDSC.2005.12 
+
+29. Lin, D., Tondi, B., Li, B., Barni, M.: A cyclegan water-marking method for ownership verification. TDSC 22 (2), 1040–1054 (2025). DOI 10.1109/TDSC.2024.3424900. URL https://doi.org/10.1109/TDSC.2024.3424900 
+
+30. Liu, A., Pan, L., Lu, Y., Li, J., Hu, X., Zhang, X., Wen, L., King, I., Xiong, H., Yu, P.S.: A survey of text wa-termarking in the era of large language models. ACM TableMark: A Multi-bit Watermark for Synthetic Tabular Data 23 Comput. Surv. 57 (2), 47:1–47:36 (2025). DOI 10.1145/ 3691626. URL https://doi.org/10.1145/3691626 
+
+31. Liu, J., Lou, J., Liu, J., Xiong, L., Pei, J., Sun, J.: Dealer: An end-to-end model marketplace with differ-ential privacy. VLDB 14 (6), 957–969 (2021). DOI 10.14778/3447689.3447700. URL http://www.vldb.org/ pvldb/vol14/p957-liu.pdf 
+
+32. Liu, T., Fan, J., Tang, N., Li, G., Du, X.: Controllable tabular data synthesis using diffusion models. SIGMOD 
+
+2(1), 28:1–28:29 (2024). DOI 10.1145/3639283. URL 
+
+https://doi.org/10.1145/3639283 
+
+33. Mannino, M., Abouzied, A.: Synner: Generating realis-tic synthetic data. In: SIGMOD, pp. 2749–2752. ACM (2020). DOI 10.1145/3318464.3384696. URL https: //doi.org/10.1145/3318464.3384696 
+
+34. Park, N., Mohammadi, M., Gorde, K., Jajodia, S., Park, H., Kim, Y.: Data synthesis based on generative adver-sarial networks. VLDB 11 (10), 1071–1083 (2018). DOI 10.14778/3231751.3231757. URL http://www.vldb.org/ pvldb/vol11/p1071-park.pdf 
+
+35. Rombach, R., Blattmann, A., Lorenz, D., Esser, P., Om-mer, B.: High-resolution image synthesis with latent dif-fusion models. In: CVPR, pp. 10,674–10,685. IEEE (2022). DOI 10.1109/CVPR52688.2022.01042. URL 
+
+https://doi.org/10.1109/CVPR52688.2022.01042 
+
+36. Ross, S.M.: A first course in probability. Pearson (2020) 37. Shankar, A., Brouwer, H., Hai, R., Chen, L.Y.: S i 1 o F use: Cross-silo synthetic data generation with la-tent tabular diffusion models. In: ICDE, pp. 110–123. IEEE (2024). DOI 10.1109/ICDE60146.2024.00016. URL 
+
+https://doi.org/10.1109/ICDE60146.2024.00016 
+
+38. Shehab, M., Bertino, E., Ghafoor, A.: Watermarking re-lational databases using optimization-based techniques. TKDE 20 (1), 116–129 (2008). DOI 10.1109/TKDE.2007. 190668. URL https://doi.org/10.1109/TKDE.2007. 190668 
+
+39. Sion, R.: Proving ownership over categorical data. In: ICDE, pp. 584–595. IEEE Computer Society (2004). DOI 10.1109/ICDE.2004.1320029. URL https://doi. org/10.1109/ICDE.2004.1320029 
+
+40. Sion, R., Atallah, M.J., Prabhakar, S.: Rights protection for relational data. TKDE 16 (12), 1509–1525 (2004). DOI 10.1109/TKDE.2004.94. URL https://doi.org/ 10.1109/TKDE.2004.94 
+
+41. Song, J., Meng, C., Ermon, S.: Denoising diffusion im-plicit models. In: ICLR. OpenReview.net (2021). URL 
+
+https://openreview.net/forum?id=St1giarCHLP 
+
+42. Wang, J., Cao, L., Chai, C., Li, G.: Federated data analytics with differentially private density estimation model. In: ICDE, pp. 2768–2781. IEEE (2025). DOI 10. 1109/ICDE65448.2025.00208. URL https://doi.org/ 10.1109/ICDE65448.2025.00208 
+
+43. Wang, J., Chai, C., Liu, J., Li, G.: Face: A normalizing flow based cardinality estimator. VLDB 15 (1), 72–84 (2021). DOI 10.14778/3485450.3485458. URL http:// www.vldb.org/pvldb/vol15/p72-li.pdf 
+
+44. Xia, H., Liu, J., Lou, J., Qin, Z., Ren, K., Cao, Y., Xiong, L.: Equitable data valuation meets the right to be forgotten in model markets. VLDB 16 (11), 3349– 3362 (2023). DOI 10.14778/3611479.3611531. URL 
+
+https://www.vldb.org/pvldb/vol16/p3349-liu.pdf 
+
+45. Yan, C., Yan, Y., Wan, Z., Zhang, Z., Omberg, L., Guin-ney, J., Mooney, S.D., Malin, B.A.: A multifaceted bench-marking of synthetic electronic health record generation models. Nature communications 13 (1), 7609 (2022) 46. Yang, Z., Liang, E., Kamsetty, A., Wu, C., Duan, Y., Chen, X., Abbeel, P., Hellerstein, J.M., Krishnan, S., Stoica, I.: Deep unsupervised cardinality estima-tion. VLDB 13 (3), 279–292 (2019). DOI 10.14778/ 3368289.3368294. URL http://www.vldb.org/pvldb/ vol13/p279-yang.pdf 
+
+47. Yang, Z., Zeng, K., Chen, K., Fang, H., Zhang, W., Yu, N.: Gaussian shading: Provable performance-lossless image watermarking for diffusion models. In: CVPR, pp. 12,162–12,171. IEEE (2024). DOI 10. 1109/CVPR52733.2024.01156. URL https://doi.org/ 10.1109/CVPR52733.2024.01156 
+
+48. Yu, N., Skripniuk, V., Abdelnabi, S., Fritz, M.: Artificial fingerprinting for generative models: Rooting deepfake attribution in training data. In: ICCV, pp. 14,428–14,437. IEEE (2021). DOI 10.1109/ICCV48922.2021.01418. URL 
+
+https://doi.org/10.1109/ICCV48922.2021.01418 
+
+49. Zhang, H., Zhang, J., Shen, Z., Srinivasan, B., Qin, X., Faloutsos, C., Rangwala, H., Karypis, G.: Mixed-type tabular data synthesis with score-based diffusion in la-tent space. In: ICLR. OpenReview.net (2024). URL 
+
+https://openreview.net/forum?id=4Ay23yeuz0 
+
+50. Zheng, Y., Xia, H., Pang, J., Liu, J., Ren, K., Chu, L., Cao, Y., Xiong, L.: Tabularmark: Watermarking tabu-lar datasets for machine learning. In: CCS, pp. 3570– 3584. ACM (2024). DOI 10.1145/3658644.3690373. URL 
+
+https://doi.org/10.1145/3658644.3690373 
+
+51. Zhu, C., Tang, J., Galjaard, J.M., Chen, P., Birke, R., Bos, C., Chen, L.Y.: Tabwak: A watermark for tabu-lar diffusion models. In: ICLR. OpenReview.net (2025). URL https://openreview.net/forum?id=71pur4y8gs 
+
+52. Zhu, Y., Zhang, H., Zhang, J., Liu, J., Ren, K.: Dataprice: An interactive system for pricing datasets in data mar-ketplaces. VLDB 17 (12), 4433–4436 (2024). DOI 10. 14778/3685800.3685893. URL https://www.vldb.org/ pvldb/vol17/p4433-liu.pdf
