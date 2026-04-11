@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.07934v1/fig-001.webp",
+      "caption": "Figure 1: System architecture of the Top Management Journal Portal artifact",
+      "page": 6,
+      "index": 1,
+      "width": 852,
+      "height": 488
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07934v1/fig-002.webp",
+      "caption": "Table 4: Analytics Objects and Intended Use",
+      "page": 11,
+      "index": 2,
+      "width": 977,
+      "height": 394
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07934v1/fig-003.webp",
+      "caption": "Figure 2: Search-to-insight workflow",
+      "page": 7,
+      "index": 3,
+      "width": 826,
+      "height": 352
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07934v1/fig-004.webp",
+      "caption": "Figure 5: Implemented analytics interface with trend views, source tracking, favorites ranking, and traffic visualization",
+      "page": 10,
+      "index": 4,
+      "width": 802,
+      "height": 454
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07934v1/fig-005.webp",
+      "caption": "Figure 6: Illustrative cumulative analytics view used in the portal dashboard",
+      "page": 10,
+      "index": 5,
+      "width": 862,
+      "height": 274
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07934v1/fig-006.webp",
+      "caption": "Table 1: Problem Context and Artifact Response",
+      "page": 3,
+      "index": 6,
+      "width": 977,
+      "height": 450
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07934v1/fig-007.webp",
+      "caption": "Figure 3: Implemented homepage view showing real-source positioning, quick access modules, and statistics",
+      "page": 8,
+      "index": 7,
+      "width": 802,
+      "height": 472
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07934v1/fig-008.webp",
+      "caption": "Table 2: Core Design Objectives and Implemented Features",
+      "page": 4,
+      "index": 8,
+      "width": 977,
+      "height": 338
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07934v1/fig-009.webp",
+      "caption": "Figure 4: Implemented search interface showing live article retrieval, hotspot analysis, citation tools, and filtering controls",
+      "page": 9,
+      "index": 9,
+      "width": 802,
+      "height": 472
+    },
+    {
+      "url": "assets/figures/arxiv/2604.07934v1/fig-010.webp",
+      "caption": "Table 3: Front-End and Back-End Technical Composition",
+      "page": 5,
+      "index": 10,
+      "width": 977,
+      "height": 450
+    }
+  ]
+}

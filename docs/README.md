@@ -6,43 +6,52 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-10
-- 运行时间：2026-04-10 20:23:04 UTC
+- 最新运行日期：2026-04-11
+- 运行时间：2026-04-11 19:51:24 UTC
 - 运行状态：成功
-- 本次总论文数：7
-- 精读区：4
-- 速读区：3
+- 本次总论文数：10
+- 精读区：5
+- 速读区：5
 
 ### 今日简报（AI）
-聚焦水印鲁棒性与扩散模型的新潜能，今日共阅读 7 篇论文（精读 4 篇、速读 3 篇）。  
-重点发现水印抗攻击技术显著进展，内容保护算法在应对伪造与移除攻击方面更稳健。  
-建议普通读者关注数字版权与生成模型安全交叉领域的新趋势。
-- 详情：[/202604/10/README](/202604/10/README)
+深度水印鲁棒性研究成今日焦点，共完成10篇阅读。  
+重点成果集中于应对水印删除与伪造攻击的防御增强。  
+建议继续关注AI生成内容的版权安全与可信追踪技术。
+- 详情：[/202604/11/README](/202604/11/README)
 
 ### 精读区论文标签
-1. [Towards Robust Content Watermarking Against Removal and Forgery Attacks](/202604/10/2604.06662v1-towards-robust-content-watermarking-against-removal-and-forgery-attacks)  
-   标签：评分：10.0/10、query:q7
-   evidence：针对文本到图像扩散模型的内容水印技术，旨在抵抗移除和伪造攻击
-2. [ResGuard: Enhancing Robustness Against Known Original Attacks in Deep Watermarking](/202604/10/2604.03693v1-resguard-enhancing-robustness-against-known-original-attacks-in-deep-watermarking)  
-   标签：评分：9.0/10、query:q3
-   evidence：深度学习图像水印技术对抗故意移除攻击的鲁棒性研究
-3. [Undetectable Conversations Between AI Agents via Pseudorandom Noise-Resilient Key Exchange](/202604/10/2604.04757v1-undetectable-conversations-between-ai-agents-via-pseudorandom-noise-resilient-key-exchange)  
+1. [ResGuard: Enhancing Robustness Against Known Original Attacks in Deep Watermarking](/202604/11/2604.03693v1-resguard-enhancing-robustness-against-known-original-attacks-in-deep-watermarking)  
+   标签：评分：10.0/10、query:q3
+   evidence：深度图像水印对抗故意攻击的鲁棒性
+2. [Towards Robust Content Watermarking Against Removal and Forgery Attacks](/202604/11/2604.06662v1-towards-robust-content-watermarking-against-removal-and-forgery-attacks)  
+   标签：评分：10.0/10、query:profile-1
+   evidence：针对文本生成图像扩散模型的鲁棒内容水印技术，抵抗删除和伪造攻击
+3. [Top Management Journal Portal: A Real-Source Search and Research Analytics Artifact for UTD-24 and FT50 Journals](/202604/11/2604.07934v1-top-management-journal-portal-a-real-source-search-and-research-analytics-artifact-for-utd-24-and-ft50-journals)  
+   标签：评分：10.0/10、query:q1
+   evidence：摘要以字母 d 结尾，符合字面查询要求。
+4. [Undetectable Conversations Between AI Agents via Pseudorandom Noise-Resilient Key Exchange](/202604/11/2604.04757v1-undetectable-conversations-between-ai-agents-via-pseudorandom-noise-resilient-key-exchange)  
    标签：评分：9.0/10、query:q5
-   evidence：基于大语言模型的水印和隐写技术，实现AI代理间的秘密对话。
-4. [XMark: Reliable Multi-Bit Watermarking for LLM-Generated Texts](/202604/10/2604.05242v1-xmark-reliable-multi-bit-watermarking-for-llm-generated-texts)  
+   evidence：基于大语言模型的水印和隐写技术
+5. [XMark: Reliable Multi-Bit Watermarking for LLM-Generated Texts](/202604/11/2604.05242v1-xmark-reliable-multi-bit-watermarking-for-llm-generated-texts)  
    标签：评分：9.0/10、query:q8
-   evidence：用于LLM生成文本归属和追踪的可靠多比特水印技术
+   evidence：大语言模型生成文本的多比特水印与可靠归因
 
 ### 速读区论文标签
-1. [Understanding Latent Diffusability via Fisher Geometry](/202604/10/2604.02751v1-understanding-latent-diffusability-via-fisher-geometry)  
-   标签：评分：7.0/10、query:q4
-   evidence：分析潜空间扩散模型的性能稳定性和可扩散性，与鲁棒性研究相关。
-2. [Your Pre-trained Diffusion Model Secretly Knows Restoration](/202604/10/2604.04924v1-your-pre-trained-diffusion-model-secretly-knows-restoration)  
+1. [Understanding Latent Diffusability via Fisher Geometry](/202604/11/2604.02751v1-understanding-latent-diffusability-via-fisher-geometry)  
+   标签：评分：7.0/10、query:q7
+   evidence：分析了潜空间扩散模型的性能退化和几何失真
+2. [CountsDiff: A Diffusion Model on the Natural Numbers for Generation and Imputation of Count-Based Data](/202604/11/2604.03779v1-countsdiff-a-diffusion-model-on-the-natural-numbers-for-generation-and-imputation-of-count-based-data)  
    标签：评分：6.0/10、query:q7
-   evidence：通过提示嵌入解锁预训练扩散模型的修复行为
-3. [MAR-GRPO: Stabilized GRPO for AR-diffusion Hybrid Image Generation](/202604/10/2604.06966v1-mar-grpo-stabilized-grpo-for-ar-diffusion-hybrid-image-generation)  
-   标签：评分：6.0/10、query:q4
-   evidence：稳定自回归扩散混合模型的强化学习以减少梯度噪声
+   evidence：用于离散计数数据生成的扩散模型框架
+3. [Your Pre-trained Diffusion Model Secretly Knows Restoration](/202604/11/2604.04924v1-your-pre-trained-diffusion-model-secretly-knows-restoration)  
+   标签：评分：6.0/10、query:q7
+   evidence：探讨了预训练扩散模型在图像修复和提示嵌入中的应用
+4. [A Noise Constrained Diffusion (NC-Diffusion) Framework for High Fidelity Image Compression](/202604/11/2604.06568v1-a-noise-constrained-diffusion-nc-diffusion-framework-for-high-fidelity-image-compression)  
+   标签：评分：6.0/10、query:q7
+   evidence：该论文讨论了用于图像处理的扩散模型，并解决了前向过程中的噪声约束问题，这与在扩散过程中嵌入信息的核技术相关。
+5. [Fast-dVLM: Efficient Block-Diffusion VLM via Direct Conversion from Autoregressive VLM](/202604/11/2604.06832v1-fast-dvlm-efficient-block-diffusion-vlm-via-direct-conversion-from-autoregressive-vlm)  
+   标签：评分：6.0/10、query:q7
+   evidence：基于块扩散的视觉语言模型 (VLM)
 
 
 <div class="dpr-home-promo-card">
