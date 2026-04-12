@@ -1,0 +1,166 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-12T19:46:11.678739+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 4,
+    "deep_cap": 6,
+    "deep_selected": 4,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2604.03693v1",
+      "source": "arxiv",
+      "title": "ResGuard: Enhancing Robustness Against Known Original Attacks in Deep Watermarking",
+      "abstract": "Deep learning-based image watermarking commonly adopts an \"Encoder-Noise Layer-Decoder\" (END) architecture to improve robustness against random channel distortions, yet it often overlooks intentional manipulations introduced by adversaries with additional knowledge. In this paper, we revisit this paradigm and expose a critical yet underexplored vulnerability: the Known Original Attack (KOA), where an adversary has access to multiple original-watermarked image pairs, enabling various targeted suppression strategies. We show that even a simple residual-based removal approach, namely estimating an embedding residual from known pairs and subtracting it from unseen watermarked images, can almost completely remove the watermark while preserving visual quality. This vulnerability stems from the insufficient image dependency of residuals produced by END frameworks, which makes them transferable across images. To address this, we propose ResGuard, a plug-and-play module that enhances KOA robustness by enforcing image-dependent embedding. Its core lies in a residual specificity enhancement loss, which encourages residuals to be tightly coupled with their host images and thus improves image dependency. Furthermore, an auxiliary KOA noise layer injects residual-style perturbations during training, allowing the decoder to remain reliable under stronger embedding inconsistencies. Integrated into existing frameworks, ResGuard boosts KOA robustness, improving average watermark extraction accuracy from 59.87% to 99.81%.",
+      "authors": [
+        "Hanyi Wang",
+        "Han Fang",
+        "Yupeng Qiu",
+        "Shilin Wang",
+        "Ee-Chien Chang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-04T11:45:48+00:00",
+      "link": "https://arxiv.org/pdf/2604.03693v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Enhances robustness of deep image watermarking against intentional attacks",
+      "llm_evidence_cn": "增强深度图像水印对抗有意攻击的鲁棒性",
+      "llm_evidence": "增强深度图像水印对抗有意攻击的鲁棒性",
+      "canonical_evidence": "增强深度图像水印对抗有意攻击的鲁棒性",
+      "llm_tldr_en": "Introduces ResGuard to protect deep watermarking against Known Original Attacks (KOA).",
+      "llm_tldr_cn": "引入ResGuard以保护深度水印免受已知原始攻击（KOA）的影响。",
+      "llm_tldr": "引入ResGuard以保护深度水印免受已知原始攻击（KOA）的影响。",
+      "llm_tags": [
+        "query:q3"
+      ],
+      "matched_query_tag": "query:q3",
+      "matched_query_text": "用于识别或保护图像内容的数字水印技术",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.06662v1",
+      "source": "arxiv",
+      "title": "Towards Robust Content Watermarking Against Removal and Forgery Attacks",
+      "abstract": "Generated contents have raised serious concerns about copyright protection, image provenance, and credit attribution. A potential solution for these problems is watermarking. Recently, content watermarking for text-to-image diffusion models has been studied extensively for its effective detection utility and robustness. However, these watermarking techniques are vulnerable to potential adversarial attacks, such as removal attacks and forgery attacks. In this paper, we build a novel watermarking paradigm called Instance-Specific watermarking with Two-Sided detection (ISTS) to resist removal and forgery attacks. Specifically, we introduce a strategy that dynamically controls the injection time and watermarking patterns based on the semantics of users' prompts. Furthermore, we propose a new two-sided detection approach to enhance robustness in watermark detection. Experiments have demonstrated the superiority of our watermarking against removal and forgery attacks.",
+      "authors": [
+        "Yifan Zhu",
+        "Yihan Wang",
+        "Xiao-Shan Gao"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-04-08T04:28:56+00:00",
+      "link": "https://arxiv.org/pdf/2604.06662v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Robust content watermarking for text-to-image diffusion models against removal and forgery attacks",
+      "llm_evidence_cn": "针对文本生成图像扩散模型的鲁棒内容水印技术，抵抗移除和伪造攻击",
+      "llm_evidence": "针对文本生成图像扩散模型的鲁棒内容水印技术，抵抗移除和伪造攻击",
+      "canonical_evidence": "针对文本生成图像扩散模型的鲁棒内容水印技术，抵抗移除和伪造攻击",
+      "llm_tldr_en": "Proposes a novel watermarking paradigm for diffusion models to enhance copyright protection and robustness.",
+      "llm_tldr_cn": "为扩散模型提出一种新型水印范式，以增强版权保护和鲁棒性。",
+      "llm_tldr": "为扩散模型提出一种新型水印范式，以增强版权保护和鲁棒性。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 检索与水印及扩散模型相关的学术论文, especially work that connects or combines: d; w; 用于识别或保护图像内容的数字水印技术; 探讨扩散模型在添加水印后保持性能稳定的鲁棒性; 研究隐写或信息隐藏方法与水印技术的关系; 通过水印验证图像或模型输出的真伪; 查找探讨水印嵌入与扩散模型结合的最新研究论文; 检索关于生成模型中水印鲁棒性与验证机制的学术资料; 获取讨论扩散模型内容保护和版权标记方法的论文.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.04757v1",
+      "source": "arxiv",
+      "title": "Undetectable Conversations Between AI Agents via Pseudorandom Noise-Resilient Key Exchange",
+      "abstract": "AI agents are increasingly deployed to interact with other agents on behalf of users and organizations. We ask whether two such agents, operated by different entities, can carry out a parallel secret conversation while still producing a transcript that is computationally indistinguishable from an honest interaction, even to a strong passive auditor that knows the full model descriptions, the protocol, and the agents' private contexts. Building on recent work on watermarking and steganography for LLMs, we first show that if the parties possess an interaction-unique secret key, they can facilitate an optimal-rate covert conversation: the hidden conversation can exploit essentially all of the entropy present in the honest message distributions.   Our main contributions concern extending this to the keyless setting, where the agents begin with no shared secret. We show that covert key exchange, and hence covert conversation, is possible even when each model has an arbitrary private context, and their messages are short and fully adaptive, assuming only that sufficiently many individual messages have at least constant min-entropy. This stands in contrast to previous covert communication works, which relied on the min-entropy in each individual message growing with the security parameter. To obtain this, we introduce a new cryptographic primitive, which we call pseudorandom noise-resilient key exchange: a key-exchange protocol whose public transcript is pseudorandom while still remaining correct under constant noise. We study this primitive, giving several constructions relevant to our application as well as strong limitations showing that more naive variants are impossible or vulnerable to efficient attacks.   These results show that transcript auditing alone cannot rule out covert coordination between AI agents, and identify a new cryptographic theory that may be of independent interest.",
+      "authors": [
+        "Vinod Vaikuntanathan",
+        "Or Zamir"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-04-06T15:25:38+00:00",
+      "link": "https://arxiv.org/pdf/2604.04757v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Builds on watermarking and steganography for LLMs to enable covert conversations",
+      "llm_evidence_cn": "基于大语言模型的水印和隐写技术实现秘密对话",
+      "llm_evidence": "基于大语言模型的水印和隐写技术实现秘密对话",
+      "canonical_evidence": "基于大语言模型的水印和隐写技术实现秘密对话",
+      "llm_tldr_en": "Explores undetectable AI agent conversations using watermarking and steganography techniques.",
+      "llm_tldr_cn": "利用水印和隐写技术探索 AI 智能体之间不可检测的秘密对话。",
+      "llm_tldr": "利用水印和隐写技术探索 AI 智能体之间不可检测的秘密对话。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "研究隐写或信息隐藏方法与水印技术的关系",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.05242v1",
+      "source": "arxiv",
+      "title": "XMark: Reliable Multi-Bit Watermarking for LLM-Generated Texts",
+      "abstract": "Multi-bit watermarking has emerged as a promising solution for embedding imperceptible binary messages into Large Language Model (LLM)-generated text, enabling reliable attribution and tracing of malicious usage of LLMs. Despite recent progress, existing methods still face key limitations: some become computationally infeasible for large messages, while others suffer from a poor trade-off between text quality and decoding accuracy. Moreover, the decoding accuracy of existing methods drops significantly when the number of tokens in the generated text is limited, a condition that frequently arises in practical usage. To address these challenges, we propose \\textsc{XMark}, a novel method for encoding and decoding binary messages in LLM-generated texts. The unique design of \\textsc{XMark}'s encoder produces a less distorted logit distribution for watermarked token generation, preserving text quality, and also enables its tailored decoder to reliably recover the encoded message with limited tokens. Extensive experiments across diverse downstream tasks show that \\textsc{XMark} significantly improves decoding accuracy while preserving the quality of watermarked text, outperforming prior methods. The code is at https://github.com/JiiahaoXU/XMark.",
+      "authors": [
+        "Jiahao Xu",
+        "Rui Hu",
+        "Olivera Kotevska",
+        "Zikai Zhang"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.CR"
+      ],
+      "published": "2026-04-06T23:08:01+00:00",
+      "link": "https://arxiv.org/pdf/2604.05242v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Reliable multi-bit watermarking for LLM-generated text verification",
+      "llm_evidence_cn": "用于大语言模型生成文本验证的可靠多比特水印",
+      "llm_evidence": "用于大语言模型生成文本验证的可靠多比特水印",
+      "canonical_evidence": "用于大语言模型生成文本验证的可靠多比特水印",
+      "llm_tldr_en": "Proposes XMark for reliable multi-bit watermarking in LLM-generated texts to enable attribution.",
+      "llm_tldr_cn": "提出XMark，用于LLM生成文本的可靠多比特水印，以实现归因和追踪。",
+      "llm_tldr": "提出XMark，用于LLM生成文本的可靠多比特水印，以实现归因和追踪。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}
