@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.08759v1/fig-001.webp",
+      "caption": "Table 2: Example of P (1) m construction given P (1) X = (0.05, 0.1, 0.15, 0.15)",
+      "page": 11,
+      "index": 1,
+      "width": 977,
+      "height": 562
+    },
+    {
+      "url": "assets/figures/arxiv/2604.08759v1/fig-002.webp",
+      "caption": "Table 4: Example of general case layered step-vector allocation: P (2) X = (0, 0, 0.1, 0.15)",
+      "page": 15,
+      "index": 2,
+      "width": 980,
+      "height": 665
+    },
+    {
+      "url": "assets/figures/arxiv/2604.08759v1/fig-003.webp",
+      "caption": "Table 3: Example of simple case step-vector allocation: P (2) X = (0, 0, 0.1, 0.1)",
+      "page": 14,
+      "index": 3,
+      "width": 980,
+      "height": 715
+    },
+    {
+      "url": "assets/figures/arxiv/2604.08759v1/fig-004.webp",
+      "caption": "Table 5: Illustration of Construction Pm = P (1) m + P (2) m + P (3) m for PX = (0.05, 0.1, 0.25, 0.6).",
+      "page": 17,
+      "index": 4,
+      "width": 980,
+      "height": 538
+    },
+    {
+      "url": "assets/figures/arxiv/2604.08759v1/fig-005.webp",
+      "caption": "Table 7: Example of constructing Pm from P ′ m in Table 6 with PX = (0.1, 0.3, 0.6).",
+      "page": 20,
+      "index": 5,
+      "width": 614,
+      "height": 439
+    },
+    {
+      "url": "assets/figures/arxiv/2604.08759v1/fig-006.webp",
+      "caption": "Table 6: Example of constructing extended P ′ m with N = 3, T = 2, n = 1, P ′ X = (0.1, 0.3, 0.4, 0.2).",
+      "page": 20,
+      "index": 6,
+      "width": 776,
+      "height": 444
+    }
+  ]
+}

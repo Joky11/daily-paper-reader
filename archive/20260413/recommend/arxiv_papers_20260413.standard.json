@@ -1,0 +1,326 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-13T20:44:48.320589+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 4,
+    "deep_cap": 6,
+    "deep_selected": 4,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2604.06662v1",
+      "source": "arxiv",
+      "title": "Towards Robust Content Watermarking Against Removal and Forgery Attacks",
+      "abstract": "Generated contents have raised serious concerns about copyright protection, image provenance, and credit attribution. A potential solution for these problems is watermarking. Recently, content watermarking for text-to-image diffusion models has been studied extensively for its effective detection utility and robustness. However, these watermarking techniques are vulnerable to potential adversarial attacks, such as removal attacks and forgery attacks. In this paper, we build a novel watermarking paradigm called Instance-Specific watermarking with Two-Sided detection (ISTS) to resist removal and forgery attacks. Specifically, we introduce a strategy that dynamically controls the injection time and watermarking patterns based on the semantics of users' prompts. Furthermore, we propose a new two-sided detection approach to enhance robustness in watermark detection. Experiments have demonstrated the superiority of our watermarking against removal and forgery attacks.",
+      "authors": [
+        "Yifan Zhu",
+        "Yihan Wang",
+        "Xiao-Shan Gao"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.LG"
+      ],
+      "published": "2026-04-08T04:28:56+00:00",
+      "link": "https://arxiv.org/pdf/2604.06662v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Robust content watermarking for text-to-image diffusion models against removal and forgery attacks.",
+      "llm_evidence_cn": "针对文本生成图像扩散模型的鲁棒性内容水印技术，可抵抗移除和伪造攻击。",
+      "llm_evidence": "针对文本生成图像扩散模型的鲁棒性内容水印技术，可抵抗移除和伪造攻击。",
+      "canonical_evidence": "针对文本生成图像扩散模型的鲁棒性内容水印技术，可抵抗移除和伪造攻击。",
+      "llm_tldr_en": "Proposes ISTS, a novel watermarking paradigm for diffusion models to enhance robustness and copyright protection.",
+      "llm_tldr_cn": "提出一种新型扩散模型水印范式ISTS，旨在增强水印的鲁棒性并保护生成内容的版权。",
+      "llm_tldr": "提出一种新型扩散模型水印范式ISTS，旨在增强水印的鲁棒性并保护生成内容的版权。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 检索与水印及扩散模型相关的学术论文, especially work that connects or combines: d; w; 用于识别或保护图像内容的数字水印技术; 探讨扩散模型在添加水印后保持性能稳定的鲁棒性; 研究隐写或信息隐藏方法与水印技术的关系; 通过水印验证图像或模型输出的真伪; 查找探讨水印嵌入与扩散模型结合的最新研究论文; 检索关于生成模型中水印鲁棒性与验证机制的学术资料; 获取讨论扩散模型内容保护和版权标记方法的论文.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.04757v1",
+      "source": "arxiv",
+      "title": "Undetectable Conversations Between AI Agents via Pseudorandom Noise-Resilient Key Exchange",
+      "abstract": "AI agents are increasingly deployed to interact with other agents on behalf of users and organizations. We ask whether two such agents, operated by different entities, can carry out a parallel secret conversation while still producing a transcript that is computationally indistinguishable from an honest interaction, even to a strong passive auditor that knows the full model descriptions, the protocol, and the agents' private contexts. Building on recent work on watermarking and steganography for LLMs, we first show that if the parties possess an interaction-unique secret key, they can facilitate an optimal-rate covert conversation: the hidden conversation can exploit essentially all of the entropy present in the honest message distributions.   Our main contributions concern extending this to the keyless setting, where the agents begin with no shared secret. We show that covert key exchange, and hence covert conversation, is possible even when each model has an arbitrary private context, and their messages are short and fully adaptive, assuming only that sufficiently many individual messages have at least constant min-entropy. This stands in contrast to previous covert communication works, which relied on the min-entropy in each individual message growing with the security parameter. To obtain this, we introduce a new cryptographic primitive, which we call pseudorandom noise-resilient key exchange: a key-exchange protocol whose public transcript is pseudorandom while still remaining correct under constant noise. We study this primitive, giving several constructions relevant to our application as well as strong limitations showing that more naive variants are impossible or vulnerable to efficient attacks.   These results show that transcript auditing alone cannot rule out covert coordination between AI agents, and identify a new cryptographic theory that may be of independent interest.",
+      "authors": [
+        "Vinod Vaikuntanathan",
+        "Or Zamir"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-04-06T15:25:38+00:00",
+      "link": "https://arxiv.org/pdf/2604.04757v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "covert conversation building on watermarking and steganography for LLMs",
+      "llm_evidence_cn": "基于大语言模型水印与隐写技术的隐蔽对话构建",
+      "llm_evidence": "基于大语言模型水印与隐写技术的隐蔽对话构建",
+      "canonical_evidence": "基于大语言模型水印与隐写技术的隐蔽对话构建",
+      "llm_tldr_en": "Explores undetectable AI agent communication using LLM watermarking and steganography.",
+      "llm_tldr_cn": "利用大语言模型水印和隐写技术探索AI代理间的不可检测通信。",
+      "llm_tldr": "利用大语言模型水印和隐写技术探索AI代理间的不可检测通信。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "研究隐写或信息隐藏方法与水印技术的关系",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.05242v1",
+      "source": "arxiv",
+      "title": "XMark: Reliable Multi-Bit Watermarking for LLM-Generated Texts",
+      "abstract": "Multi-bit watermarking has emerged as a promising solution for embedding imperceptible binary messages into Large Language Model (LLM)-generated text, enabling reliable attribution and tracing of malicious usage of LLMs. Despite recent progress, existing methods still face key limitations: some become computationally infeasible for large messages, while others suffer from a poor trade-off between text quality and decoding accuracy. Moreover, the decoding accuracy of existing methods drops significantly when the number of tokens in the generated text is limited, a condition that frequently arises in practical usage. To address these challenges, we propose \\textsc{XMark}, a novel method for encoding and decoding binary messages in LLM-generated texts. The unique design of \\textsc{XMark}'s encoder produces a less distorted logit distribution for watermarked token generation, preserving text quality, and also enables its tailored decoder to reliably recover the encoded message with limited tokens. Extensive experiments across diverse downstream tasks show that \\textsc{XMark} significantly improves decoding accuracy while preserving the quality of watermarked text, outperforming prior methods. The code is at https://github.com/JiiahaoXU/XMark.",
+      "authors": [
+        "Jiahao Xu",
+        "Rui Hu",
+        "Olivera Kotevska",
+        "Zikai Zhang"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.CR"
+      ],
+      "published": "2026-04-06T23:08:01+00:00",
+      "link": "https://arxiv.org/pdf/2604.05242v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Reliable multi-bit watermarking for LLM-generated texts and verification",
+      "llm_evidence_cn": "针对大模型生成文本的可靠多比特水印与验证",
+      "llm_evidence": "针对大模型生成文本的可靠多比特水印与验证",
+      "canonical_evidence": "针对大模型生成文本的可靠多比特水印与验证",
+      "llm_tldr_en": "Introduces XMark, a multi-bit watermarking method for reliable attribution of LLM-generated text.",
+      "llm_tldr_cn": "提出 XMark 方法，通过多比特水印实现对大模型生成文本的可靠归属识别与追踪。",
+      "llm_tldr": "提出 XMark 方法，通过多比特水印实现对大模型生成文本的可靠归属识别与追踪。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.08759v1",
+      "source": "arxiv",
+      "title": "Optimal Multi-bit Generative Watermarking Schemes Under Worst-Case False-Alarm Constraints",
+      "abstract": "This paper considers the problem of multi-bit generative watermarking for large language models under a worst-case false-alarm constraint. Prior work established a lower bound on the achievable miss-detection probability in the finite-token regime and proposed a scheme claimed to achieve this bound. We show, however, that the proposed scheme is in fact suboptimal. We then develop two new encoding-decoding constructions that attain the previously established lower bound, thereby completely characterizing the optimal multi-bit watermarking performance. Our approach formulates the watermark design problem as a linear program and derives the structural conditions under which optimality can be achieved. In addition, we identify the failure mechanism of the previous construction and compare the tradeoffs between the two proposed schemes.",
+      "authors": [
+        "Yu-Shin Huang",
+        "Chao Tian",
+        "Krishna Narayanan"
+      ],
+      "primary_category": "cs.IT",
+      "categories": [
+        "cs.IT",
+        "cs.CL"
+      ],
+      "published": "2026-04-09T20:46:24+00:00",
+      "link": "https://arxiv.org/pdf/2604.08759v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "multi-bit generative watermarking for large language models and verification performance",
+      "llm_evidence_cn": "大语言模型的多比特生成水印及其验证性能研究",
+      "llm_evidence": "大语言模型的多比特生成水印及其验证性能研究",
+      "canonical_evidence": "大语言模型的多比特生成水印及其验证性能研究",
+      "llm_tldr_en": "Characterizes optimal multi-bit watermarking for LLMs under false-alarm constraints.",
+      "llm_tldr_cn": "研究了虚警约束下大语言模型的最优多比特水印方案。",
+      "llm_tldr": "研究了虚警约束下大语言模型的最优多比特水印方案。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.08304v1",
+      "source": "arxiv",
+      "title": "Securing Retrieval-Augmented Generation: A Taxonomy of Attacks, Defenses, and Future Directions",
+      "abstract": "Retrieval-augmented generation (RAG) significantly enhances large language models (LLMs) but introduces novel security risks through external knowledge access. While existing studies cover various RAG vulnerabilities, they often conflate inherent LLM risks with those specifically introduced by RAG. In this paper, we propose that secure RAG is fundamentally about the security of the external knowledge-access pipeline. We establish an operational boundary to separate inherent LLM flaws from RAG-introduced or RAG-amplified threats. Guided by this perspective, we abstract the RAG workflow into six stages and organize the literature around three trust boundaries and four primary security surfaces, including pre-retrieval knowledge corruption, retrieval-time access manipulation, downstream context exploitation, and knowledge exfiltration. By systematically reviewing the corresponding attacks, defenses, remediation mechanisms, and evaluation benchmarks, we reveal that current defenses remain largely reactive and fragmented. Finally, we discuss these gaps and highlight future directions toward layered, boundary-aware protection across the entire knowledge-access lifecycle.",
+      "authors": [
+        "Yuming Xu",
+        "Mingtao Zhang",
+        "Zhuohan Ge",
+        "Haoyang Li",
+        "Nicole Hu",
+        "Jason Chen Zhang",
+        "Qing Li",
+        "Lei Chen"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI"
+      ],
+      "published": "2026-04-09T14:38:18+00:00",
+      "link": "https://arxiv.org/pdf/2604.08304v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Taxonomy of security risks and defense mechanisms for retrieval-augmented generation pipelines",
+      "llm_evidence_cn": "检索增强生成流水线的安全风险分类及防御机制研究",
+      "llm_evidence": "检索增强生成流水线的安全风险分类及防御机制研究",
+      "canonical_evidence": "检索增强生成流水线的安全风险分类及防御机制研究",
+      "llm_tldr_en": "Provides a comprehensive taxonomy of attacks and defenses for securing the RAG knowledge-access pipeline.",
+      "llm_tldr_cn": "为检索增强生成（RAG）知识访问流水线的安全提供了全面的攻击与防御分类。",
+      "llm_tldr": "为检索增强生成（RAG）知识访问流水线的安全提供了全面的攻击与防御分类。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.04057v1",
+      "source": "arxiv",
+      "title": "CTD-Diff: Cooperative Time-Division Diffusion for Multi-User Semantic Communication Systems",
+      "abstract": "Semantic communication (SemCom) has emerged as a transformative paradigm for efficient information transmission by emphasizing the exchange of task-relevant meaning rather than raw data. While diffusion-based SemCom models have demonstrated remarkable generative capabilities, existing studies predominantly focus on point-to-point links, overlooking the potential of multi-user (MU) cooperation in MU wireless environments. To address this limitation, we propose a Cooperative Time-Division Diffusion (CTD-Diff) framework. Unlike traditional approaches that view channel noise solely as a detriment, our framework innovatively integrates the noisy wireless transmission process directly into the forward diffusion chain. Specifically, we design a multi-user cooperation mechanism based on Time-Division Multiple Access (TDMA), where idle users overhearing the active transmitter act as semantic collaborators. To maximize the signal fidelity, the receiver employs direct signal aggregation to fuse the direct signal with cooperative copies. This aggregated noisy semantic representation serves as the condition for the reverse diffusion process, allowing the receiver to reconstruct high-fidelity data by mitigating the cumulative channel distortions. By effectively converting physical channel noise into diffusion noise, the proposed method significantly enhances the transmission reliability. Extensive experiments demonstrate that CTD-Diff outperforms various baselines regarding the reconstruction accuracy and the perceptual quality, particularly under challenging low signal-to-noise ratio (SNR) conditions.",
+      "authors": [
+        "Chengyang Liang",
+        "Dong Li"
+      ],
+      "primary_category": "cs.IT",
+      "categories": [
+        "cs.IT"
+      ],
+      "published": "2026-04-05T11:01:36+00:00",
+      "link": "https://arxiv.org/pdf/2604.04057v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Discusses diffusion models for semantic communication and handles noise in the diffusion chain.",
+      "llm_evidence_cn": "讨论了用于语义通信的扩散模型，并处理了扩散链中的噪声。",
+      "llm_evidence": "讨论了用于语义通信的扩散模型，并处理了扩散链中的噪声。",
+      "canonical_evidence": "讨论了用于语义通信的扩散模型，并处理了扩散链中的噪声。",
+      "llm_tldr_en": "A framework integrating wireless channel noise into diffusion models for multi-user semantic communication.",
+      "llm_tldr_cn": "一种将无线信道噪声集成到扩散模型中的多用户语义通信框架。",
+      "llm_tldr": "一种将无线信道噪声集成到扩散模型中的多用户语义通信框架。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "查找探讨水印嵌入与扩散模型结合的最新研究论文",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.06832v2",
+      "source": "arxiv",
+      "title": "Fast-dVLM: Efficient Block-Diffusion VLM via Direct Conversion from Autoregressive VLM",
+      "abstract": "Vision-language models (VLMs) predominantly rely on autoregressive decoding, which generates tokens one at a time and fundamentally limits inference throughput. This limitation is especially acute in physical AI scenarios such as robotics and autonomous driving, where VLMs are deployed on edge devices at batch size one, making AR decoding memory-bandwidth-bound and leaving hardware parallelism underutilized. While block-wise discrete diffusion has shown promise for parallel text generation, extending it to VLMs remains challenging due to the need to jointly handle continuous visual representations and discrete text tokens while preserving pretrained multimodal capabilities. We present Fast-dVLM, a block-diffusion-based VLM that enables KV-cache-compatible parallel decoding and speculative block decoding for inference acceleration. We systematically compare two AR-to-diffusion conversion strategies: a two-stage approach that first adapts the LLM backbone with text-only diffusion fine-tuning before multimodal training, and a direct approach that converts the full AR VLM in one stage. Under comparable training budgets, direct conversion proves substantially more efficient by leveraging the already multimodally aligned VLM; we therefore adopt it as our recommended recipe. We introduce a suite of multimodal diffusion adaptations, block size annealing, causal context attention, auto-truncation masking, and vision efficient concatenation, that collectively enable effective block diffusion in the VLM setting. Extensive experiments across 11 multimodal benchmarks show Fast-dVLM matches its autoregressive counterpart in generation quality. With SGLang integration and FP8 quantization, Fast-dVLM achieves over 6x end-to-end inference speedup over the AR baseline.",
+      "authors": [
+        "Chengyue Wu",
+        "Shiyi Lan",
+        "Yonggan Fu",
+        "Sensen Gao",
+        "Jin Wang",
+        "Jincheng Yu",
+        "Jose M. Alvarez",
+        "Pavlo Molchanov",
+        "Ping Luo",
+        "Song Han",
+        "Ligeng Zhu",
+        "Enze Xie"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-04-08T08:50:08+00:00",
+      "link": "https://arxiv.org/pdf/2604.06832v2",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Diffusion-based vision-language model for efficient generation",
+      "llm_evidence_cn": "基于扩散模型的视觉语言模型，用于高效生成",
+      "llm_evidence": "基于扩散模型的视觉语言模型，用于高效生成",
+      "canonical_evidence": "基于扩散模型的视觉语言模型，用于高效生成",
+      "llm_tldr_en": "Presents a block-diffusion VLM that converts from autoregressive models for faster inference.",
+      "llm_tldr_cn": "提出了一种块扩散视觉语言模型，通过转换自回归模型实现更快的推理。",
+      "llm_tldr": "提出了一种块扩散视觉语言模型，通过转换自回归模型实现更快的推理。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "查找探讨水印嵌入与扩散模型结合的最新研究论文",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.09430v1",
+      "source": "arxiv",
+      "title": "On the Representational Limits of Quantum-Inspired 1024-D Document Embeddings: An Experimental Evaluation Framework",
+      "abstract": "Text embeddings are central to modern information retrieval and Retrieval-Augmented Generation (RAG). While dense models derived from Large Language Models (LLMs) dominate current practice, recent work has explored quantum-inspired alternatives motivated by the geometric properties of Hilbert-like spaces and their potential to encode richer semantic structure.   This paper presents an experimental framework for constructing quantum-inspired 1024-dimensional document embeddings based on overlapping windows and multi-scale aggregation. The pipeline combines semantic projections (e.g., EigAngle), circuit-inspired feature mappings, and optional teacher-student distillation, together with a fingerprinting mechanism for reproducibility and controlled evaluation.   We introduce a set of diagnostic tools for hybrid retrieval, including static and dynamic interpolation between BM25 and embedding-based scores, candidate union strategies, and a conceptual alpha-oracle that provides an upper bound for score-level fusion.   Experiments on controlled corpora of Italian and English documents across technical, narrative, and legal domains, using synthetic queries, show that BM25 remains a strong baseline, teacher embeddings provide stable semantic structure, and standalone quantum-inspired embeddings exhibit weak and unstable ranking signals. Distillation yields mixed effects, improving alignment in some cases but not consistently enhancing retrieval performance, while hybrid retrieval can recover competitive results when lexical and embedding-based signals are combined.   Overall, the results highlight structural limitations in the geometry of quantum-inspired embeddings, including distance compression and ranking instability, and clarify their role as auxiliary components rather than standalone retrieval representations.",
+      "authors": [
+        "Dario Maio"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR",
+        "cs.AI"
+      ],
+      "published": "2026-04-10T15:48:37+00:00",
+      "link": "https://arxiv.org/pdf/2604.09430v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Mentions a fingerprinting mechanism within a document embedding and retrieval framework.",
+      "llm_evidence_cn": "在文档嵌入和检索框架中提到了指纹识别机制。",
+      "llm_evidence": "在文档嵌入和检索框架中提到了指纹识别机制。",
+      "canonical_evidence": "在文档嵌入和检索框架中提到了指纹识别机制。",
+      "llm_tldr_en": "Evaluates quantum-inspired document embeddings for retrieval and includes a fingerprinting mechanism.",
+      "llm_tldr_cn": "评估了用于检索的量子启发式文档嵌入，并包含指纹识别机制。",
+      "llm_tldr": "评估了用于检索的量子启发式文档嵌入，并包含指纹识别机制。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 检索与水印及扩散模型相关的学术论文, especially work that connects or combines: d; w; 用于识别或保护图像内容的数字水印技术; 探讨扩散模型在添加水印后保持性能稳定的鲁棒性; 研究隐写或信息隐藏方法与水印技术的关系; 通过水印验证图像或模型输出的真伪; 查找探讨水印嵌入与扩散模型结合的最新研究论文; 检索关于生成模型中水印鲁棒性与验证机制的学术资料; 获取讨论扩散模型内容保护和版权标记方法的论文.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
