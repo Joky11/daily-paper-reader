@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.10611v1/fig-001.webp",
+      "caption": "Fig. 1. An overview of DuCodeMark.",
+      "page": 6,
+      "index": 1,
+      "width": 812,
+      "height": 235
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10611v1/fig-002.webp",
+      "caption": "Table 4. Similarity and compila-",
+      "page": 6,
+      "index": 2,
+      "width": 573,
+      "height": 277
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10611v1/fig-003.webp",
+      "caption": "Table 8. FPR and recall of watermark attacks, and the 𝑝-value from post-attack watermark detection.",
+      "page": 15,
+      "index": 3,
+      "width": 814,
+      "height": 252
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10611v1/fig-004.webp",
+      "caption": "Table 9. Accuracy, compilation rate, and time cost of static-analysis-based detection, code obfuscation, and",
+      "page": 15,
+      "index": 4,
+      "width": 814,
+      "height": 206
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10611v1/fig-005.webp",
+      "caption": "Table 7. Impact of DuCodeMark on code readability.",
+      "page": 14,
+      "index": 5,
+      "width": 677,
+      "height": 207
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10611v1/fig-006.webp",
+      "caption": "Fig. 3. Heat maps of 𝑡-test 𝑝-values for𝑊1, where darker colors indicate smaller 𝑝-values. STC: SantaCoder;",
+      "page": 12,
+      "index": 6,
+      "width": 814,
+      "height": 426
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-001.webp",
+      "caption": "Fig. 5: LatentOpt-Removal (top) and LatentOpt-Forgery (bottom) results for different budgets c ∈ { 2 255 , 4 255 , 8 255 , 16 255 , 32 255 }. The top row also shows different perturbation baselines in varying strengths.",
+      "page": 11,
+      "index": 1,
+      "width": 719,
+      "height": 943
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-002.webp",
+      "caption": "Fig. 8: LatentOpt attacks for perturbation budgets c ∈ { 2 255 , 4 255 , 8 255 , 16 255 , 32 255 }.",
+      "page": 30,
+      "index": 2,
+      "width": 714,
+      "height": 1034
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-003.webp",
+      "caption": "Fig. 1: Watermark Mimicry subverts synthetic content filtering. An image generated with the radioactive BitMark watermark (left) carries an embedded signal that allows service providers to identify synthetic content and exclude it from future training to prevent model collapse. However, other parties can transfer this watermark onto unrelated images, causing the detector to mistake authentic images (here, Ranitomeya imitator - the mimic poison frog) as AI-generated (right). This adversarial strategy inverts the protective intent of radioactive watermarking: rather than preventing real data from being mislabeled, one may exploit the detector’s own decision boundary to shield genuine content from being harvested for training.",
+      "page": 2,
+      "index": 3,
+      "width": 625,
+      "height": 506
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-004.webp",
+      "caption": "Fig. 6: Visual examples of the LatentOpt-Removal attack (c = 8 255 at step 300).",
+      "page": 29,
+      "index": 4,
+      "width": 688,
+      "height": 282
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-005.webp",
+      "caption": "Fig. 7: Visual examples of the Frequency Injection Forgery and LatentOptForgery (c = 8 255 at step 300) attacks on BitMark.",
+      "page": 29,
+      "index": 5,
+      "width": 682,
+      "height": 276
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-006.webp",
+      "caption": "Table 9: Full experimental results (ClusterMark deployed w. LlamaGen GPT-L)",
+      "page": 34,
+      "index": 6,
+      "width": 436,
+      "height": 512
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-007.webp",
+      "caption": "Table 10: Full experimental results (ClusterMark w. LlamaGen RAR-XL)",
+      "page": 34,
+      "index": 7,
+      "width": 436,
+      "height": 514
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-008.webp",
+      "caption": "Table 1: Results for token-based methods, aggregated over multiple target models deployed with each watermarking scheme. ■ is black-box, ■ is grey-box, □ is whitebox. P-values are reported as median, and all others as mean. For removal, attackers target lower TPR (higher p-values); for forgery, higher TPR (lower p-values).",
+      "page": 10,
+      "index": 8,
+      "width": 724,
+      "height": 935
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-009.webp",
+      "caption": "Table 7: Full experimental results (WMAR deployed w. RAR-XL)",
+      "page": 33,
+      "index": 9,
+      "width": 436,
+      "height": 512
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-010.webp",
+      "caption": "Table 8: Full experimental results (ClusterMark deployed w. LlamaGen GPT-B)",
+      "page": 33,
+      "index": 10,
+      "width": 436,
+      "height": 514
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-011.webp",
+      "caption": "Table 11: Full experimental results (BitMark deployed w. ∞-2B (Vd = 232)",
+      "page": 35,
+      "index": 11,
+      "width": 714,
+      "height": 420
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-012.webp",
+      "caption": "Fig. 2: Token-based semantic watermarking. During generation (left), green tokens (e.g., T1) are boosted. During verification (right), a statistical test is performed based on the fraction of present green tokens to determine the presence of a watermark.",
+      "page": 4,
+      "index": 12,
+      "width": 720,
+      "height": 476
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-013.webp",
+      "caption": "Table 5: Full experimental results (WMAR deployed w. Anole)",
+      "page": 32,
+      "index": 13,
+      "width": 436,
+      "height": 512
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-014.webp",
+      "caption": "Table 6: Full experimental results (WMAR deployed w. Taming)",
+      "page": 32,
+      "index": 14,
+      "width": 436,
+      "height": 514
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-015.webp",
+      "caption": "Table 4: Full experimental results (IndexMark deployed w. LlamaGen GPT-L)",
+      "page": 31,
+      "index": 15,
+      "width": 436,
+      "height": 514
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11720v1/fig-016.webp",
+      "caption": "Table 3: Full experimental results (IndexMark deployed w. LlamaGen GPT-B)",
+      "page": 31,
+      "index": 16,
+      "width": 436,
+      "height": 512
+    }
+  ]
+}

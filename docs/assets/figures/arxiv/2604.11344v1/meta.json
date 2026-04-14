@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.11344v1/fig-001.webp",
+      "caption": "Table 1: Performance comparison of different defensemethods on SST-2, Enron, AGNews, andMIND. For utility, higher accuracy is better (↑), while for ownership verification a lower 𝑝-value is better from the defender’s perspective (↓). In the Verif? column, ✓ and ✗ denote successful and failed copyright protection, respectively. We regard 𝑝 < 0.05 as successful protection.",
+      "page": 6,
+      "index": 1,
+      "width": 1040,
+      "height": 565
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11344v1/fig-002.webp",
+      "caption": "Figure 1: Motivation of GeoMark. Existing EaaS watermarking methods face a robustness–utility–verifiability tension, while GeoMark decouples localized triggering from sharedtarget attribution to improve robustness and verification reliability with low false-positive risk.",
+      "page": 2,
+      "index": 2,
+      "width": 494,
+      "height": 374
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11344v1/fig-003.webp",
+      "caption": "Figure 2: Overall framework of GeoMark. Given a shared in-manifold watermark target, GeoMark performs geometry-aware anchor initialization, localized watermark injection, and shared-target verification for robust EaaS copyright protection.",
+      "page": 3,
+      "index": 3,
+      "width": 990,
+      "height": 569
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11344v1/fig-004.webp",
+      "caption": "Figure 4: Hyper-parameter analysis on the number of anchors 𝐾 on the Enron dataset.",
+      "page": 8,
+      "index": 4,
+      "width": 1038,
+      "height": 210
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11344v1/fig-005.webp",
+      "caption": "Figure 5: Hyper-parameter analysis on local coverage ratio 𝜌 on the Enron dataset.",
+      "page": 8,
+      "index": 5,
+      "width": 1038,
+      "height": 210
+    }
+  ]
+}

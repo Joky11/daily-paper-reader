@@ -6,46 +6,61 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-13
-- 运行时间：2026-04-13 20:46:20 UTC
+- 最新运行日期：2026-04-14
+- 运行时间：2026-04-14 20:17:06 UTC
 - 运行状态：成功
-- 本次总论文数：8
-- 精读区：4
-- 速读区：4
+- 本次总论文数：13
+- 精读区：10
+- 速读区：3
 
 ### 今日简报（AI）
-探究AI安全与通信优化前沿，精读与速读共计8篇论文。  
-重点聚焦内容水印抗攻击能力与AI间隐秘通信安全，新型防护与加密机制值得关注。  
-建议读者后续持续关注生成式AI安全及多用户语义通信的融合趋势。
-- 详情：[/202604/13/README](/202604/13/README)
+聚焦图像内容安全与水印鲁棒性，今日深度精读与速读共 13 篇论文。  
+最值得关注的是内容水印的防篡改策略与多比特编码方法，正成为生成内容保护的关键方向。  
+建议读者关注水印与检测共同演进的趋势，了解未来 AI 内容可信标识的新技术。
+- 详情：[/202604/14/README](/202604/14/README)
 
 ### 精读区论文标签
-1. [Towards Robust Content Watermarking Against Removal and Forgery Attacks](/202604/13/2604.06662v1-towards-robust-content-watermarking-against-removal-and-forgery-attacks)  
-   标签：评分：10.0/10、query:profile-1
-   evidence：针对文本生成图像扩散模型的鲁棒性内容水印技术，可抵抗移除和伪造攻击。
-2. [Undetectable Conversations Between AI Agents via Pseudorandom Noise-Resilient Key Exchange](/202604/13/2604.04757v1-undetectable-conversations-between-ai-agents-via-pseudorandom-noise-resilient-key-exchange)  
-   标签：评分：9.0/10、query:q5
-   evidence：基于大语言模型水印与隐写技术的隐蔽对话构建
-3. [XMark: Reliable Multi-Bit Watermarking for LLM-Generated Texts](/202604/13/2604.05242v1-xmark-reliable-multi-bit-watermarking-for-llm-generated-texts)  
+1. [Towards Robust Content Watermarking Against Removal and Forgery Attacks](/202604/14/2604.06662v1-towards-robust-content-watermarking-against-removal-and-forgery-attacks)  
+   标签：评分：10.0/10、query:q4
+   evidence：针对文生图扩散模型的鲁棒水印技术，防御移除和伪造攻击
+2. [ADD for Multi-Bit Image Watermarking](/202604/14/2604.11491v1-add-for-multi-bit-image-watermarking)  
+   标签：评分：10.0/10、query:q3
+   evidence：生成模型的多比特图像水印
+3. [Toward Accountable AI-Generated Content on Social Platforms: Steganographic Attribution and Multimodal Harm Detection](/202604/14/2604.10460v1-toward-accountable-ai-generated-content-on-social-platforms-steganographic-attribution-and-multimodal-harm-detection)  
+   标签：评分：9.5/10、query:q5
+   evidence：启用隐写术的归属框架，在图像中嵌入标识符
+4. [On the Robustness of Watermarking for Autoregressive Image Generation](/202604/14/2604.11720v1-on-the-robustness-of-watermarking-for-autoregressive-image-generation)  
+   标签：评分：9.5/10、query:q8
+   evidence：自回归图像生成水印的鲁棒性与验证机制
+5. [XMark: Reliable Multi-Bit Watermarking for LLM-Generated Texts](/202604/14/2604.05242v1-xmark-reliable-multi-bit-watermarking-for-llm-generated-texts)  
    标签：评分：9.0/10、query:q8
-   evidence：针对大模型生成文本的可靠多比特水印与验证
-4. [Optimal Multi-bit Generative Watermarking Schemes Under Worst-Case False-Alarm Constraints](/202604/13/2604.08759v1-optimal-multi-bit-generative-watermarking-schemes-under-worst-case-false-alarm-constraints)  
+   evidence：大语言模型生成文本的多比特水印
+6. [Optimal Multi-bit Generative Watermarking Schemes Under Worst-Case False-Alarm Constraints](/202604/14/2604.08759v1-optimal-multi-bit-generative-watermarking-schemes-under-worst-case-false-alarm-constraints)  
    标签：评分：9.0/10、query:q8
-   evidence：大语言模型的多比特生成水印及其验证性能研究
+   evidence：针对大语言模型的多位生成式水印及验证机制
+7. [DuCodeMark: Dual-Purpose Code Dataset Watermarking via Style-Aware Watermark-Poison Design](/202604/14/2604.10611v1-ducodemark-dual-purpose-code-dataset-watermarking-via-style-aware-watermark-poison-design)  
+   标签：评分：9.0/10、query:q3
+   evidence：提出了一种隐蔽且鲁棒的代码数据集水印方法，用于保护所有权。
+8. [Beyond A Fixed Seal: Adaptive Stealing Watermark in Large Language Models](/202604/14/2604.10893v1-beyond-a-fixed-seal-adaptive-stealing-watermark-in-large-language-models)  
+   标签：评分：9.0/10、query:q8
+   evidence：大语言模型中的水印窃取算法与水印可靠性
+9. [Geometry-Aware Localized Watermarking for Copyright Protection in Embedding-as-a-Service](/202604/14/2604.11344v1-geometry-aware-localized-watermarking-for-copyright-protection-in-embedding-as-a-service)  
+   标签：评分：9.0/10、query:q3
+   evidence：提出了一种用于嵌入服务版权保护的局部水印框架。
+10. [RLSpoofer: A Lightweight Evaluator for LLM Watermark Spoofing Resilience](/202604/14/2604.11546v1-rlspoofer-a-lightweight-evaluator-for-llm-watermark-spoofing-resilience)  
+   标签：评分：9.0/10、query:q8
+   evidence：评估大语言模型水印对抗黑盒欺骗攻击的鲁棒性
 
 ### 速读区论文标签
-1. [Securing Retrieval-Augmented Generation: A Taxonomy of Attacks, Defenses, and Future Directions](/202604/13/2604.08304v1-securing-retrieval-augmented-generation-a-taxonomy-of-attacks-defenses-and-future-directions)  
-   标签：评分：7.0/10、query:q8
-   evidence：检索增强生成流水线的安全风险分类及防御机制研究
-2. [CTD-Diff: Cooperative Time-Division Diffusion for Multi-User Semantic Communication Systems](/202604/13/2604.04057v1-ctd-diff-cooperative-time-division-diffusion-for-multi-user-semantic-communication-systems)  
+1. [A Noise Constrained Diffusion (NC-Diffusion) Framework for High Fidelity Image Compression](/202604/14/2604.06568v1-a-noise-constrained-diffusion-nc-diffusion-framework-for-high-fidelity-image-compression)  
+   标签：评分：7.0/10、query:q7
+   evidence：用于图像生成的扩散模型与噪声约束框架
+2. [C-ReD: A Comprehensive Chinese Benchmark for AI-Generated Text Detection Derived from Real-World Prompts](/202604/14/2604.11796v1-c-red-a-comprehensive-chinese-benchmark-for-ai-generated-text-detection-derived-from-real-world-prompts)  
+   标签：评分：7.0/10、query:q6
+   evidence：检测AI生成的文本以应对学术不端等风险
+3. [Single-Stage Signal Attenuation Diffusion Model for Low-Light Image Enhancement and Denoising](/202604/14/2604.05727v1-single-stage-signal-attenuation-diffusion-model-for-low-light-image-enhancement-and-denoising)  
    标签：评分：6.0/10、query:q7
-   evidence：讨论了用于语义通信的扩散模型，并处理了扩散链中的噪声。
-3. [Fast-dVLM: Efficient Block-Diffusion VLM via Direct Conversion from Autoregressive VLM](/202604/13/2604.06832v2-fast-dvlm-efficient-block-diffusion-vlm-via-direct-conversion-from-autoregressive-vlm)  
-   标签：评分：6.0/10、query:q7
-   evidence：基于扩散模型的视觉语言模型，用于高效生成
-4. [On the Representational Limits of Quantum-Inspired 1024-D Document Embeddings: An Experimental Evaluation Framework](/202604/13/2604.09430v1-on-the-representational-limits-of-quantum-inspired-1024-d-document-embeddings-an-experimental-evaluation-framework)  
-   标签：评分：6.0/10、query:profile-1
-   evidence：在文档嵌入和检索框架中提到了指纹识别机制。
+   evidence：用于图像增强和去噪的扩散模型
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,1261 @@
+Title: XMark: Reliable Multi-Bit Watermarking for LLM-Generated Texts
+
+URL Source: https://arxiv.org/pdf/2604.05242v1
+
+Published Time: Wed, 08 Apr 2026 00:21:34 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# XM ARK : Reliable Multi-Bit Watermarking for LLM-Generated Texts 
+
+Jiahao Xu 1,2 * Rui Hu 1 Olivera Kotevska 2 Zikai Zhang 1
+
+> 1
+
+University of Nevada, Reno 
+
+> 2
+
+Oak Ridge National Laboratory 
+
+{jiahaox, ruihu, zikaiz}@unr.edu kotevskao@ornl.gov 
+
+Abstract 
+
+Multi-bit watermarking has emerged as a promising solution for embedding impercep-tible binary messages into Large Language Model (LLM)-generated text, enabling reli-able attribution and tracing of malicious usage of LLMs. Despite recent progress, existing methods still face key limitations: some be-come computationally infeasible for large mes-sages, while others suffer from a poor trade-off between text quality and decoding accuracy. Moreover, the decoding accuracy of existing methods drops significantly when the number of tokens in the generated text is limited, a condition that frequently arises in practical us-age. To address these challenges, we propose XM ARK , a novel method for encoding and decoding binary messages in LLM-generated texts. The unique design of XM ARK ’s encoder produces a less distorted logit distribution for watermarked token generation, preserving text quality, and also enables its tailored decoder to reliably recover the encoded message with limited tokens. Extensive experiments across diverse downstream tasks show that XM ARK 
+
+significantly improves decoding accuracy while preserving the quality of watermarked text, outperforming prior methods. The code is at 
+
+https://github.com/JiiahaoXU/XMark .
+
+1 Introduction 
+
+The rapid advancement and widespread adoption of Large Language Models (LLMs), both closed-source (e.g., ChatGPT (Schulman et al., 2022)) and open-source (e.g., LLaMA (Touvron et al., 2023)), have endowed them with remarkable abilities to generate high-quality text. As a result, they have become integral to many text generation applica-tions, such as question answering (Perkins, 2023). However, these powerful generative capabilities also raise significant security and ethical concerns, 
+
+> *This work was done during Jiahao’s internship at Oak Ridge National Laboratory.
+
+as malicious users can exploit LLMs to generate harmful content such as fake news, phishing emails, and fraudulent reviews (Zhang et al., 2025). Recently, researchers have proposed watermark-ing methods that embed identifiable signals into text, enabling post hoc detection of AI-generated content, i.e., zero-bit watermarking (Liu et al., 2024b; Wu et al., 2025; Pan et al., 2024). However, zero-bit watermarking is insufficient to prevent mis-use of AI. To address this limitation, multi-bit wa-termarking methods have been actively studied, which embed and extract binary messages within text. Such messages can convey richer informa-tion, like user IDs, timestamps, and other meta-data (Jiang et al., 2025). Multi-bit watermarking methods can be broadly categorized into two types: (1) Distortion-free methods , where the watermarked text follows the same logit distribution as the unwatermarked text (Boroujeny et al., 2024; Hu et al., 2024; Mao et al., 2025; Christ et al., 2024; Kuditipudi et al., 2024; Dathathri et al., 2024; Wu et al., 2024). (2) 
+
+Logit-perturbation methods which instead encode messages by perturbing the logits of selected to-kens. Compared with distortion-free methods, they can embed richer watermark information and pro-duce watermarked text that is more robust to text editing (Jiang et al., 2025). These methods gen-erally follow a common paradigm: at each token generation step of LLM, once the model logits are obtained, a hash seed, computed from a hash key and previously-generated token(s), is used to per-mute the model’s vocabulary. From this permuted vocabulary, a subset of tokens (the green list) is se-lected, and their logits are boosted to increase their sampling probability. The model then samples the next token from the modified logits. During de-coding, green-list tokens appear more frequently in the watermarked text, thereby providing the wa-termark signal needed to recover the encoded mes-sage (Kirchenbauer et al., 2023; Yoo et al., 2024; 
+
+> arXiv:2604.05242v1 [cs.CL] 6 Apr 2026
+
+Qu et al., 2024; Li et al., 2024; Fernandez et al., 2023; Wang et al., 2024; Xu et al., 2025). Early methods such as CycleShift (Fernandez et al., 2023), CTWL (Wang et al., 2024), and DepthW (Li et al., 2024) take the message to be encoded as input to the hash function, yielding a distinct hash seed for vocabulary permutation. However, their decoding process requires brute-force enumeration over all possible message candi-dates to identify the encoded one, which becomes computationally infeasible for longer messages. To address this, MPAC (Yoo et al., 2024) introduces a block-wise method that divides the message into multiple blocks and encodes/decodes one block per token. Nonetheless, its encoder suffers from de-graded text quality because it heavily constrains the size of the green list, causing noticeable dis-tortion in token sampling probabilities. A recent method, StealthInk (Jiang et al., 2025), improves text quality by directly boosting the sampling prob-abilities of tokens with larger logits while elimi-nating the chance of sampling tokens with smaller logits, thereby better preserving quality. However, this comes at the cost of weakening the watermark signal and decreasing decoding accuracy. Impor-tantly, we observe that all existing methods rely on the availability of a sufficient number of tokens in the suspect text for reliable decoding. In prac-tice, however, the length of the suspect text may be limited, which can cause a significant drop in decoding accuracy. In this work, we propose XM ARK , which lever-ages green lists a cross ( X ) multiple vocabulary per-mutations to improve the text quality and decoding accuracy of multi-bit water MARK ing. Specifically, XM ARK follows the block-wise encoding and de-coding scheme as in (Yoo et al., 2024). The core innovation of XM ARK ’s encoding process is its use of k distinct hash keys to generate k permutations of the vocabulary. Each permutation is partitioned into 2d shards, where d is the length of a message block. For each permutation, a green list is formed by unioning all shards except the one indexed by the decimal value of the message block to be en-coded, a paradigm we refer to as Leave-one-Shard-out (L OSO). An evergreen list is constructed by intersecting all k green lists, and a positive bias is added to its tokens’ logits to boost their probabil-ities to be sampled. This method ensures the size of the evergreen list is proportional to (1 − 2−d)k
+
+of the vocabulary, thereby largely preserving the quality of watermarked texts. A novel decoder is designed with a constrained token–shard mapping matrix (cTMM) to enhance decoding accuracy, particularly when only a lim-ited number of generated tokens are available. For each token, the decoder reconstructs the same k
+
+permutations and their corresponding shard parti-tions, incrementing by at most one the count of the shard that the token belongs to in the cTMM. Through this process, each token contributes to updating the cTMM up to k times, providing a more accurate estimation of the mapping between a token and its originating shard and amplifying the distinction between the boosted shards (from which tokens are more likely drawn) and the un-boosted shard (which encodes the message). This design effectively enhances token–shard mapping construction and hence improves decoding relia-bility under limited-token conditions. Extensive evaluations demonstrate that XM ARK consistently achieves higher decoding accuracy while maintain-ing text quality comparable to existing approaches, especially under limited-token settings. 
+
+2 Preliminaries and Background 
+
+2.1 Problem Formulation 
+
+We consider the widely studied multi-bit water-marking setting (Yoo et al., 2024; Qu et al., 2024; Xu et al., 2025), where a cloud-hosted LLM-as-a-Service provider stamps each model-generated response with a watermark. Given an LLM f ,a user prompt xp, and a b1-bit binary message 
+
+m ∈ { 0, 1}b associated with identifying informa-tion (such as user ID, timestamp, or other meta-data (Jiang et al., 2025)), the task is to encode m
+
+into the model’s output to produce a watermarked text x′ 
+
+> g
+
+via an encoder : x′ 
+
+> g
+
+= Enc (f, xp, m), while preserving fluency and semantics relative to the un-watermarked output xg. When a suspicious text is later encountered, a decoder can be applied to recover the encoded message: m′ = Dec (x′
+
+> g
+
+), en-abling provenance verification and attribution of misuse to the originating account. The objective of multi-bit watermarking is to maximize the probabil-ity of exact message recovery subject to a minimum text quality constraint: 
+
+max Pr 
+
+h
+
+m′ = m m′ = Dec (Enc (f, xp, m)) 
+
+i
+
+s.t. Quality (x′ 
+
+> g
+
+| xp) ≥ τ,                       
+
+> 1Throughout, we assume b > 0and is an even number. mi= 11 ⇒arg max
+> MPAC:
+> ⇒m′
+> i= 11
+> mi= 11 ⇒arg min
+> LoSo:
+> ⇒m′
+> i= 11
+> Shard Index
+> 0123
+> Token Count
+> +δ
+> Shard Index
+> Token Count
+> +δ+δ+δ
+> 0123
+> Encoder Decoder
+
+Figure 1: Illustration of the encoder and decoder for MPAC (top) and L OSO (bottom). 
+
+where Quality (·) measures text quality and τ is a threshold calibrated to approximate the quality of xg. In practice, conditional perplexity PPL (·) is a common choice for Quality (·). This formula-tion ensures highly reliable message recovery with negligible degradation in text quality. 
+
+2.2 Classic Solution 
+
+To solve the above problem, the encoder of the classic multi-bit watermarking method MPAC (Yoo et al., 2024) divides the message m into r blocks 
+
+{m0, m1, . . . , mr−1}, each containing d ≥ 2 bits. 
+
+Encoder: For generating an output sequence of T tokens, in the t-th ( t ∈ [T ]) token generation step of the model f , the encoding process of MPAC includes the following three steps: 
+
+① Logits generation: The model computes the logits vector ℓt = [ ℓvt ]v∈V , where ℓvt = f (v |
+
+xp, x:t−1) denotes the logit score assigned to to-ken v in its vocabulary V of size V and x:t−1 =
+
+{x1, x 2, . . . , x t−1} denotes the generated tokens. 
+
+② Logits perturbation: A message block mi is pseudo-randomly selected (e.g., i = xt−1 mod r). The encoder then computes a hash seed s =
+
+Hash (xt−1, k), where Hash (·) is a hash function and k is a pre-defined hash key. This seed is used to permute the vocabulary, producing a permuted vocabulary V′. Next, the encoder partitions V′ into 
+
+2d disjoint shards {S 0, S1, . . . , S2d−1}, and desig-nates the [mi]10 -th shard as the green list G, where 
+
+[·]10 denotes the decimal value of the binary mes-sage block. This results in a green list ratio of 
+
+γ = |G| /|V| = 2 −d. Finally, the logits of tokens in G are boosted by adding a watermarking bias 
+
+δ > 0, yielding perturbed logits ℓ′
+
+> t
+
+.A concrete example is shown in Figure 1. Sup-pose the block length is d = 2 and the selected message block is mi = 11 . The permuted vo-cabulary V′ is then divided into 2d = 4 shards 
+
+{S 0, S1, S2, S3}, and since [11] 10 = 3 , S3 is se-lected as G, and its logits are perturbed. 500 300 100     
+
+> Tokens T
+> 70
+> 80
+> 90
+> 100
+> Bit Accuracy (%)  →
+> MPAC
+> LoSo
+> unWM-PPL
+> 500 300 100
+> Tokens T
+> 3.6
+> 4.0
+> 4.4
+> 4.8
+> 5.2
+> Perplexity  ←
+
+Figure 2: Left: Perplexity vs. T for MPAC, L OSO, and clean (unwatermarked) text. Right: Bit accuracy vs. 
+
+T for MPAC and L OSO. Note that we do not report bit accuracy for clean text, since it corresponds to the false-positive case. Results are from the text completion task on LLaMA-2-7B (Touvron et al., 2023) using C 4
+
+dataset (Raffel et al., 2020), with message length b = 16 
+
+under varying output sequence lengths T .
+
+③ Token sampling: With the perturbed logits 
+
+ℓ′
+
+> t
+
+, the model completes the token generation by converting ℓ′ 
+
+> t
+
+into a probability distribution over 
+
+V via softmax (·) and sampling a token x′ 
+
+> t
+
+from it. The encoder repeats these three steps for each generation step and finally obtains the watermarked sequence x′ 
+
+> g
+
+= {x′
+
+> t
+
+}Tt=1 .
+
+Decoder: Given a suspect text sequence xs con-sisting of T tokens, the MPAC decoder examines each token x′ 
+
+> t
+
+∈ xs. For each token, it first de-termines the index i of the message block that the token corresponds to, and reconstructs the shard partitions using the hash key k. It then updates a token-shard mapping matrix (TMM) A ∈ Nr×2d
+
+by incrementing A[i, u ] whenever x′ 
+
+> t
+
+belongs to the shard Su. After processing all tokens, the de-coder recovers the decimal value of the i-th mes-sage block p′ 
+
+> i
+
+as 
+
+p′ 
+
+> i
+
+= arg max 
+
+> u∈{ 0,..., 2d−1}
+
+A[i, u ],
+
+that is, the index of the shard with the highest token-shard mapping counts. This shard corresponds to 
+
+G, since G = S[mi]10 , and logits of tokens in G
+
+were boosted during encoding, causing them to appear more frequently in the suspect text (see Figure 1). Finally, the block message is recovered by converting p′ 
+
+> i
+
+into its d-bit binary representation. Empirically, MPAC achieves good decoding ac-curacy when the text sequence is sufficiently long for decoding, as more tokens lead to more accu-rate token-shard mapping estimates, thereby im-proving the reliability of correctly identifying the green list. As shown in Figure 2, when T = 500 ,Algorithm 1: The Encoder of XM ARK 
+
+Input :User prompt xp, LLM f , bias δ,vocabulary V, maximum length T ,message m ∈ { 0, 1}b, number of blocks r, hash keys {kj }k−1 
+
+> j=0
+
+.
+
+Output : Watermarked text x′
+
+> g
+
+. 
+
+> 1
+
+x:2 ← { xp, −2, x p, −1} 
+
+> 2
+
+m0, . . . , mr−1 ← divide (m, r ) 
+
+> 3
+
+d ← b/r  
+
+> 4
+
+for t ← 1 to T do  
+
+> 5
+
+ℓt ← f (xp, x3: ) 
+
+> 6
+
+i ← (xt−2 + xt−1) mod r 
+
+> 7
+
+p ← [mi]10  
+
+> 8
+
+for j ← 0 to k − 1 do  
+
+> 9
+
+sj ← Hash (xt−2, x t−1, kj ) 
+
+> 10
+
+V′ 
+
+> j
+
+← permute (V, sj ) 
+
+> 11
+
+Sj, 0, . . . , Sj, 2d−1 ← part (V′ 
+
+> j
+
+, 2d) 
+
+> 12
+
+Gj ← V ′ 
+
+> j
+
+\ S j,p  
+
+> 13
+
+end  
+
+> 14
+
+E ← Tk−1 
+
+> j=0
+
+Gj 
+
+> 15
+
+ℓ′ 
+
+> t
+
+← ℓt 
+
+> 16
+
+for v ∈ E do  
+
+> 17
+
+ℓ′,v t ← ℓ′,v t + δ 
+
+> 18
+
+end  
+
+> 19
+
+Sample x′ 
+
+> t
+
+∼ Softmax (ℓ′
+
+> t
+
+) 
+
+> 20
+
+Append x′ 
+
+> t
+
+to x 
+
+> 21
+
+end  
+
+> 22
+
+Return x′ 
+
+> g
+
+= x3: 
+
+MPAC reaches a bit accuracy (i.e., the proportion of bits correctly decoded from the text) of 95 .12% 
+
+. However, when T decreases to 100 , the bit ac-curacy drops significantly to 83 .62% . Moreover, another major limitation of MPAC is that it largely degrades the quality of the generated texts: MPAC significantly increases the perplexity compared to the unwatermarked text. In fact, a larger green list ratio better preserves the quality of watermarked text, since it induces less distortion in the overall logits distribution (Qu et al., 2024; Xu et al., 2025). However, MPAC is constrained to γ ≤ 0.25 for any d ≥ 2 by design, leading to a sharp distortion. 
+
+3 Our Method: XM ARK 
+
+We propose XM ARK , a novel multi-bit watermark-ing method that incorporates three key designs (L OSO, evergreen list, and constrained TMM) to improve text quality and decoding accuracy. 
+
+3.1 Leave-one-shard-out Watermarking 
+
+Recall that in MPAC, the vocabulary shard indexed by the block value [mi]10 is selected as the green list. In contrast, we propose a method called Leave-one-Shard-out (L OSO) watermarking, which re-verses this choice by marking all shards except the 
+
+[mi]10 -th as green (leaving [mi]10 -th shard unper-turbed). For example (see Figure 1), when d = 2 
+
+and mi = 11 , S0, S1, and S2 form the green list while S3 is excluded. During decoding, the block value is inferred as the index of the shard with 
+
+fewest token-shard mapping counts, i.e., the ex-cluded one. This design achieves a larger green list ratio of γ = 1 − 2−d ≥ 0.75 for any d ≥ 2,compared to γ = 2 −d in MPAC, thereby substan-tially improving text quality. As shown in Fig-ure 2, L OSO yields significantly lower perplexity than MPAC and is closer to the quality of unwa-termarked text. However, this gain in text quality comes with a cost of reduced decodability, since enlarging the green list weakens the watermark signal. As shown in Figure 2, when T = 500 ,LOSO attains 91 .38% bit accuracy versus 95 .12% 
+
+for MPAC (a 3.74% gap). This gap goes up to 
+
+9.50% when T = 100 .In the following, based on L OSO, we propose a novel method, named XM ARK , which preserves the quality of watermarked text while ensuring high decoding accuracy, even when the number of to-kens available for decoding is limited. We provide the detailed algorithm of the encoder of XM ARK 
+
+in Algorithm 1. The algorithm of the decoder can be found in the Appendix A.4. 
+
+3.2 Encoder of XM ARK 
+
+We first describe the encoding process of XM ARK ,and then analyze its advantages in preserving text quality. Specifically, before text generation starts, XM ARK first divides the binary message m into 
+
+r blocks {m0, m1, . . . , mr−1}, where each block has d ≥ 2 bits (Line 2-3). It also prepares k hash keys {k0, k1, . . . , kk−1}.At the t-th generation step for token xt, the encoder of XM ARK obtains the model logits ℓt
+
+based on the user prompt and previous generated tokens (Line 5). It samples a message block mi
+
+to be embedded, where i = ( xt−2 + xt−1) mod r
+
+(Line 6). Given a hash function that takes as input the two previously generated token IDs and a hash key, it obtains k distinct hash seeds {sj }k−1 
+
+> j=0
+
+, i.e., 
+
+sj = Hash (xt−2, x t−1, kj ), ∀j ∈ { 0, 1, . . . , k −1}k1 ⇒ V′                                    
+
+> 1=
+> k2⇒V′
+> 2=
+> dog couch water cat bed chair floor sofa
+> dog floor chair couch sofa bed cat water
+> V=
+> cat couch water bed dog chair floor sofa
+> E=G1∩G2={dog, couch, bed, chair }
+> mi= 11;
+
+Figure 3: Illustration showing that tokens in E may origi-nate from different shards across multiple permutations. 
+
+(Line 9). Using these seeds, the encoder per-mutes the vocabulary V to generate k different permutations: {V ′ 
+
+> j
+
+}k−1 
+
+> j=0
+
+(Line 10). Each permuted vocabulary V′ 
+
+> j
+
+is then evenly partitioned into 2d
+
+shards: V′ 
+
+> j
+
+= {S j, 0, Sj, 1, . . . , Sj, 2d−1} (Line 11). For V′ 
+
+> j
+
+, the corresponding green list is constructed via L OSO as Gj = V′ 
+
+> j
+
+\ S j,p (Line 12), where 
+
+p = [ mi]10 (Line 7). The intersection of all k green lists constructs an evergreen list E = Tk−1 
+
+> j=0
+
+Gj
+
+(Line 14). Finally, the logits of all tokens in E
+
+are perturbed by a watermarking bias δ > 0, and the token x′ 
+
+> t
+
+is sampled correspondingly (Line 16-19). This process continues until all T tokens are generated. By using the L OSO strategy, the encoder of XM ARK achieves an improved green list ratio, thereby preserving the quality of the watermarked texts. The following theorem characterizes the ex-pected green list ratio of XM ARK .
+
+Theorem 1 (γ of XM ARK ). The evergreen list E
+
+constructed by XM ARK satisfies E[|E| ] ≈ (1 −
+
+2−d)k|V| , i.e., E[γ] = E[|E| /|V| ] ≈ (1 − 2−d)k.
+
+Proof. The proof is in the Appendix A.9. 
+
+Remark 1. (1) Discussion on d: For a fixed k,
+
+XM ARK produces an exponentially increasing γ
+
+with d, thereby improving text quality. In con-trast, if XM ARK adopts MPAC’s encoding strat-egy instead of LOSO, the expected γ becomes 
+
+E[γ] = (2 −d)k, which decreases exponentially with d and thus severely degrades text quality. In practice, a large d is not preferred, as it increases the number of candidate shards during decoding and thus requires substantially more tokens to es-timate token-shard mapping reliably. In this work, we set d = 2 for XM ARK . (2) Discussion on k:When k = 1 , the encoder of XM ARK reduces to that of LOSO (i.e., E = G0). When k ≥ 2, the γ of 
+
+XM ARK gradually decreases. However, the ever-green list design can improve decoding accuracy (see Section 3.3); thus, k serves as a hyperparame-ter that balances the trade-off between text quality and decoding accuracy. 
+
+3.3 Decoder of XM ARK 
+
+Here, we first present the details of the decoding process of XM ARK and then discuss the impor-tance of the evergreen list and constrained TMM for decoding accuracy. Given a suspect text xs, the decoder first ini-tializes a constrained token-shard mapping matrix 
+
+(cTMM) A ∈ Nr×2d
+
+as all zeros, i.e., A0 = 0.For each token x′ 
+
+> t
+
+∈ xs, the decoder of XM ARK 
+
+first computes current message block index i as 
+
+i = ( x′ 
+
+> t−2
+
++ x′
+
+> t−1
+
+) mod r. Given each hash key used in the encoder kj , ∀j ∈ { 0, 1, . . . , k − 1},it reconstructs each permuted vocabulary V′ 
+
+> j
+
+with the seed sj = Hash (x′
+
+> t−2
+
+, x ′
+
+> t−1
+
+, kj ) and partitions 
+
+V′ 
+
+> j
+
+into 2d shards {S j,u }2d−1 
+
+> u=0
+
+. If x′ 
+
+> t
+
+∈ S j,u , the decoder updates the cTMM At ∈ Nr×2d
+
+by in-crementing A[i, u ] by 1, subject to the constraint 
+
+At[i, :] − At−1[i, :] ∈ { 0, 1}2d
+
+. This process con-tinues until all tokens in xs are enumerated. For each block i ∈ { 0, . . . , r − 1}, the decoder determines the decimal value of i-th block p′ 
+
+> i
+
+by 
+
+p′ 
+
+> i
+
+= arg min 
+
+> u∈{ 0,..., 2d−1}
+
+A[i, u ],
+
+since the shard with the fewest token–mapping counts is more likely unboosted during encoding. Finally, it converts each p′ 
+
+> i
+
+to its d-bit binary repre-sentation and concatenates them to recover the full message. 
+
+Evergreen List vs L OSO Green List. Recall the decoding challenge of existing methods when given a short suspect text sequence, which cannot provide sufficient tokens for extracting the mes-sage. The evergreen list in XM ARK provides more observations for the token-shard mapping. Specifi-cally, when k = 1 , the evergreen list reduces to the LOSO’s green list, P A = T indicates exactly T
+
+observations that construct the mapping between the token and its originating shard. When k ≥ 2,the number of observations increases to at most 
+
+kT . An example is given in Figure 3. With k = 2 
+
+and mi = 11 , the token “ dog ” in E belongs to S1,0
+
+of V′ 
+
+> 1
+
+and S2,2 of V′
+
+> 2
+
+. This mitigates the problem of inaccurate construction of token-shard mapping due to the limited tokens. 
+
+cTMM vs TMM. In existing methods and also our naive L OSO method, a TMM is used for de-coding. While intuitive, the TMM results in each token–shard mapping being counted up to k times in the extreme case, when the evergreen list is used during encoding. For instance, consider a gener-ated token belonging to V \ Sk−1 
+
+> j=0
+
+Gj , i.e., it does not appear in any green list across all permuta-tions. In this case, the token would be counted 
+
+k times into the same unboosted shard (like the shard 3 of L OSO in Figure 1), making it difficult to distinguish between the boosted shards and the unboosted shard, especially when the limited num-ber of tokens does not provide sufficient observa-tions for reliable token-shard mapping construction. cTMM addresses this issue by constraining each token to contribute at most once to any shard, ef-fectively preventing the explosion of counts for the unboosted shard. 
+
+4 Empirical Evaluations 
+
+4.1 Experimental Settings General Settings. By default, we consider a total of 50 users, corresponding to 50 randomly gener-ated messages to be encoded. Each user submits two prompts, and each prompt is used to gener-ate a text of T / 2 tokens, resulting in T tokens per user for decoding. Unless otherwise specified, we set T = 150 by default. We compare our pro-posed methods with five state-of-the-art methods, including DepthW (Li et al., 2024), CycleShift (Fer-nandez et al., 2023), MPAC (Yoo et al., 2024), RSBH (Qu et al., 2024), and StealthInk (Jiang et al., 2025). For DepthW and CycleShift, we only evalu-ate the case of b = 8 , as their decoding time grows exponentially and becomes impractical for larger message lengths. For XM ARK , we set d = 2 and 
+
+k = 2 by default. These settings result in an ex-pected green list ratio of E[γ] ≈ 0.5625 , which is larger than those of existing methods ( 0.25 for MPAC and CycleShift and 0.5 for DepthW and RSBH). We set the watermarking bias to δ = 2 
+
+for all methods by default, except for StealthInk, which does not require δ.
+
+Datasets and Models. We evaluate our method on three widely studied LLM down-stream tasks: text completion on C4 news (Raf-fel et al., 2020), story generation on Writing-Prompts (Fan et al., 2018), and text summarization 
+
+on CNN/DailyMail (Hermann et al., 2015). Un-less otherwise specified, we adopt the widely-used open-source LLaMA-2-7B (Touvron et al., 2023) for the text completion task, and the LLaMA-2-7B-chat for the story generation and text summariza-tion tasks. The system prompts used for these tasks are provided in the Appendix A.5. 
+
+Metrics. We evaluate the quality of generated text using perplexity (PPL), computed by a larger LLaMA-2-13 B model. In addition, we consider the semantic metric BERTScore (BSc.) (Zhang et al., 2020) and the lexical metrics ROUGE-1 (R.-1) and ROUGE-Lsum (R.-Lsum) (Lin, 2004). Following prior practice, these quality metrics are computed by comparing the watermarked text with the cor-responding unwatermarked text generated by the same model. For decoding performance, we adopt bit accuracy (BA), following prior works (Zhu et al., 2018; Qu et al., 2024; Yoo et al., 2024; Xu et al., 2025; Jiang et al., 2025), which is defined as the proportion of correctly decoded bits with respect to the ground-truth message. A desirable method should achieve a low PPL and a high BA, BSc., R.-1, and R.-Lsum. 
+
+4.2 Results Main Results. Table 1 reports the comprehen-sive BA and PPL results of representative multi-bit watermarking methods on three tasks with b = 8 
+
+and different values of T ∈ { 150 , 200 , 250 , 300 }.As expected, increasing T generally improves BA across all methods and tasks. Notably, our method XM ARK consistently achieves higher BA than all baselines for every T and task. On the text sum-marization and story generation tasks, XM ARK 
+
+reaches average BAs of 82 .75% and 80 .94% , out-performing the second-best method MPAC by 
+
++5 .81% and +6 .81% , respectively. On the text completion task, which is inherently more chal-lenging due to higher token entropy, XM ARK al-ready achieves a near-perfect BA of 98 .75% with only T = 150 tokens, a +3 .5% improvement over CycleShift. These results demonstrate XM ARK ’s robustness in ensuring reliable decoding with lim-ited generated tokens. This advantage stems from the co-design of the evergreen list and cTMM that enhances the construction of accurate token-shard mapping during decoding. In addition to improving BA, XM ARK preserves the quality of generated texts at a level comparable to or better than existing methods. For the text com-pletion task, XM ARK achieves an average PPL of 
+
+4.61 , outperforming all methods except StealthInk. However, the high fluency of StealthInk comes at the cost of significantly lower BA. For the text sum-marization and story generation tasks, XM ARK 
+
+attains PPLs of 4.66 and 4.03 , which are only 0.07 
+
+and 0.34 higher than the unwatermarked baselines, Table 1: Comparison of methods on three downstream tasks with b = 8 under different token budgets 
+
+T ∈ { 150 , 200 , 250 , 300 }. The average PPL of unwatermarked texts is 3.97 , 4.59 , and 3.69 for the three tasks, respectively, serving as the lower bounds for the PPLs of watermarked texts. 
+
+Method T = 150 T = 200 T = 250 T = 300 Avg. BA ↑
+
+Avg. PPL ↓BA ↑ PPL ↓ BA ↑ PPL ↓ BA ↑ PPL ↓ BA ↑ PPL ↓
+
+Text Completion 
+
+CycleShift 95 .25 5.17 98 .00 5.02 97 .00 5.07 98 .25 4.96 97 .13 5.06 
+
+DepthW 79 .50 4.62 89 .00 4.67 90 .50 4.63 95 .75 4.62 88 .69 4.64 
+
+StealthInk 85 .00 4.13 89 .50 4.21 92 .25 4.13 92 .50 4.04 89 .81 4.13 
+
+MPAC 94 .00 5.19 94 .00 5.00 96 .25 5.03 98 .25 5.10 95 .63 5.08 
+
+RSBH 92 .75 4.83 96 .00 4.83 95 .50 4.67 97 .75 4.83 95 .50 4.79 
+
+XM ARK 98 .75 4.68 99 .00 4.61 99 .75 4.60 100 .00 4.56 99 .38 4.61 
+
+Text Summarization 
+
+CycleShift 54 .50 5.57 59 .25 4.82 64 .75 4.36 62 .25 4.10 60 .19 4.71 
+
+DepthW 58 .50 5.60 55 .00 4.76 57 .25 4.29 54 .00 3.95 56 .19 4.65 
+
+StealthInk 62 .75 5.55 65 .00 4.60 69 .50 4.26 71 .50 3.93 67 .19 4.59 
+
+MPAC 71 .75 5.71 75 .75 4.94 78 .25 4.36 82 .00 4.13 76 .94 4.79 
+
+RSBH 62 .50 5.60 65 .00 5.04 63 .75 4.56 64 .75 4.13 64 .00 4.83 
+
+XM ARK 74 .75 5.50 79 .00 4.85 87 .75 4.33 89 .50 3.97 82 .75 4.66 
+
+Story Generation 
+
+CycleShift 66 .00 4.93 66 .00 4.21 66 .75 3.80 74 .00 3.58 68 .19 4.13 
+
+DepthW 56 .25 4.78 59 .75 3.99 55 .75 3.60 54 .75 3.36 56 .63 3.93 
+
+StealthInk 59 .00 4.55 62 .50 3.88 69 .00 3.44 71 .25 3.22 65 .44 3.77 
+
+MPAC 71 .00 4.98 71 .25 4.24 76 .25 3.83 78 .00 3.61 74 .13 4.17 
+
+RSBH 58 .00 4.96 62 .75 4.33 65 .75 3.85 77 .00 3.47 65 .88 4.15 
+
+XM ARK 75 .50 4.86 79 .75 4.12 82 .50 3.68 86 .00 3.44 80 .94 4.03 12 16 20 24 32 
+
+Message Length b
+
+> 55
+> 65
+> 75
+> 85
+> 95
+> Bit Accuracy (%)  →
+
+Text Completion     
+
+> MPAC RSBH StealthInk
+> XMark
+> 12 16 20 24 32
+
+Message Length b
+
+> 55
+> 60
+> 65
+> 70
+> 75
+> Bit Accuracy (%)  →
+
+Text Summarization 
+
+> MPAC RSBH StealthInk
+> XMark
+
+Figure 4: Impact of message length b on BA for MPAC, RSBH, StealthInk, and XM ARK on the text completion and text summarization tasks. 
+
+respectively. This strong quality preservation stems from the design of L OSO, which allows XM ARK to maintain a longer green list than existing methods. 
+
+Impact of Message Length. In practical appli-cations of watermarking, a binary message length of b = 8 can encode at most 256 distinct values (e.g., user IDs), which is often insufficient. To eval-uate scalability, we extend the message length up to b = 32 and examine how different methods per-form with longer messages. Figure 4 reports the BA of MPAC, RSBH, StealthInk, and XM ARK on the text completion and text summarization tasks. As shown, all methods experience a decrease in BA 5.2 5.8 6.4 7.0 7.6
+
+Perplexity ←
+
+> 67
+> 72
+> 77
+> 82
+> 87
+> Bit Accuracy (%)  →
+
+Story Generation     
+
+> MPAC RSBH
+> XMark
+> 5.96.46.97.47.9
+
+Perplexity ←
+
+> 62
+> 67
+> 72
+> 77
+> 82
+> Bit Accuracy (%)  →
+
+Text Summarization 
+
+> MPAC RSBH
+> XMark
+
+Figure 5: Impact of bias δ on BA and PPL for MPAC, RSBH, and XM ARK on the text summarization and story generation tasks. Hollow markers indicate results with δ = 3 , while solid markers correspond to δ = 4 .
+
+as b increases. Nevertheless, XM ARK consistently outperforms the baselines, maintaining relatively higher BA across different message lengths. On the text completion task, even with b = 32 , XM ARK 
+
+achieves a BA of 82 .62% , which is +4 .62% higher than the second-best method, MPAC. On the text summarization task, although the absolute BA of all methods becomes low for large b, XM ARK still attains the highest performance, achieving a +3 .5% 
+
+improvement over MPAC when b = 32 .
+
+Impact of Watermarking Bias. We next inves-tigate the impact of different watermarking biases 
+
+δ on performance. Theoretically, a larger δ can 10 20 30     
+
+> ∆(%)
+> 50
+> 60
+> 70
+> 80
+> 90
+> Bit Accuracy (%)  → Copy-Paste Attack
+> StealthInk RSBH MPAC
+> XMark
+> 200 250 300
+> Tokens T
+> 50
+> 60
+> 70
+> 80
+> 90
+> Bit Accuracy (%)  → Paraphrase Attack
+> StealthInk RSBH MPAC
+> XMark
+
+Figure 6: Robustness of methods against text editing attacks on the text completion task with b = 16 .
+
+increase decoding accuracy, but at the cost of de-grading text quality since stronger perturbations are applied to the token logits. We report the BA and PPL of MPAC, RSBH, and XM ARK on the text summarization and story generation tasks with 
+
+δ = 3 and δ = 4 , as shown in Figure 5. Overall, XM ARK consistently achieves a better trade-off between BA and PPL across both settings. With 
+
+δ = 3 , XM ARK attains the highest BA while also preserving the lowest PPL on the story generation task. When δ increases to 4, all methods show improved BA but at the expense of higher PPL, verifying the theoretical analysis of the impact of 
+
+δ. For instance, on the text summarization task, MPAC’s BA increases from 73 .88% to 78 .55% ,while its PPL degrades sharply from 6.37 to 7.64 .In contrast, XM ARK continues to provide the better trade-off, achieving the highest BA ( 80 .38 ) with low PPL ( 6.51 ) in this setting. 
+
+Robustness to Text Editing Attacks. When users receive watermarked texts generated by LLMs, they may edit them to improve fluency or, more intentionally, to attempt watermark re-moval. We evaluate the robustness of different methods against two widely studied text editing attacks: Copy-Paste and Paraphrase (Zhang et al., 2024), using the text completion task with b = 16 .For the Copy-Paste attack, we mix watermarked and human-written texts by randomly interleaving unwatermarked text segments into watermarked texts, following prior work (Yoo et al., 2024; Qu et al., 2024). The proportion of unwatermarked text is controlled by ∆, while keeping the total length fixed. For the Paraphrase attack, we employ the strong paraphraser Dipper (Krishna et al., 2023). We report the BA of StealthInk, RSBH, MPAC, and XM ARK under varying ∆ for Copy-Paste attack and varying number of generated tokens T under Paraphrase attack in Figure 6. As shown in Figure 6, for Copy-Paste attack, as 
+
+Table 2: Results on the machine translation task using WMT14 German-to-English dataset.                     
+
+> Method BA ↑PPL ↓R.-1 ↑R.-Lsum ↑BLEU ↑
+> RSBH 58 .62 7.60 0.61 0.58 38 .96
+> MPAC 60 .88 7.54 0.65 0.61 43 .21
+> XM ARK 64 .62 7.26 0.64 0.61 44.52
+
+Table 3: Performance comparison with long messages (b = 64 ) and long generated texts ( T = 1000 ) on the text completion task.                     
+
+> Method BA ↑PPL ↓R.-1 ↑R.-Lsum ↑BSc. ↑
+> RSBH 84 .47 4.46 0.36 0.33 0.8266
+> MPAC 85 .81 4.71 0.35 0.32 0.8254
+> XM ARK 93 .00 4.50 0.38 0.35 0.8304
+
+∆ increases, all methods exhibit a decline in BA, as expected. Despite this degradation, XM ARK con-sistently achieves the highest BA, demonstrating superior robustness. Interestingly, MPAC achieves BA comparable to XM ARK , largely because its design fixes the green list ratio at a small level 
+
+0.25 , resulting in a stronger watermark signal that confers additional robustness against editing. For Paraphrase attack, which remains a significant open challenge in the literature (Jiang et al., 2025), we observe that BA slightly improves for all methods as T increases. Here, MPAC performs better than StealthInk and RSBH, while XM ARK achieves a BA comparable to MPAC. 
+
+Results on Machine Translation Task. We fur-ther evaluate XM ARK on a downstream machine translation task. Specifically, we use the WMT14 German-to-English dataset (Bojar et al., 2014). In addition to BA and PPL, we also report BSc., R.-1, R.-Lsum, and BLEU (Papineni et al., 2002), where BLEU serves as a standard task-specific metric for translation quality. The results under message length b = 16 , bias δ = 2 , and generation length 
+
+T = 150 are summarized in Table 2. We observe that XM ARK achieves the highest BLEU score of 
+
+44 .52 , outperforming the strongest baseline MPAC, which obtains 43 .21 . This suggests that XM ARK 
+
+imposes the smallest negative impact on the func-tional utility of the translation task. Meanwhile, XM ARK also achieves the highest BA of 64 .62% ,showing that it provides the best trade-off between decodability and task performance. 
+
+Longer Message, Longer Text, and More Se-mantic Metrics. We further evaluate all methods under a larger-scale setting with a long message Table 4: Comparison of runtime (in seconds) and BA under the default setting.                   
+
+> Method Encoding Decoding BA ↑
+> DepthW 11 .51 16 .16 79 .50
+> MPAC 10 .93 0.06 94 .00
+> RSBH 11 .80 8.45 92 .75
+> StealthInk 11 .47 0.07 85 .00
+> XM ARK 11 .54 0.08 98 .75
+
+length ( b = 64 ) and a long generated text length (T = 1000 ) on the text completion task. In addi-tion to BA and PPL, we also report BSc. as well as R.-1 and ROUGE-Lsum (R.-Lsum) (Lin, 2004). The results are summarized in Table 3. We can see that XM ARK achieves the highest BA by a clear margin, improving from 85 .81% with MPAC to 
+
+93 .00% . At the same time, it also provides the best overall text quality, achieving the highest BSc., R.-1, and R.-Lsum, while maintaining a low PPL comparable to the baselines. These results show that XM ARK remains highly effective for long mes-sages, while better preserving both the semantic meaning and lexical content of watermarked texts. 
+
+Runtime Analysis. We report the average en-coding and decoding time under the default setting, with results shown in Table 4. The encoding time of all methods is around 11 .5 seconds, suggesting that the overall latency is mainly dominated by the LLM inference process itself. This also shows that XM ARK introduces negligible additional overhead during generation. For decoding, XM ARK remains highly efficient, requiring only 0.08 seconds, which is comparable to the fastest baseline, MPAC ( 0.06 
+
+seconds). By contrast, DepthW and RSBH are much slower, taking 16 .16 and 8.45 seconds, re-spectively, even for the short message length of 
+
+b = 8 , mainly because they rely on candidate enu-meration. These results show that XM ARK effec-tively overcomes the computational inefficiency of prior methods while still achieving substantially higher BA ( 98 .75% ). 
+
+Ablation Study. We conduct an ablation study on XM ARK by varying the number of hash keys 
+
+k from 1 to 4. Note that when k = 1 , XM ARK 
+
+reduces to L OSO. By default, XM ARK employs the cTMM in decoding. For comparison, we also evaluate XM ARK with the TMM in decoding, de-noted as XM ARK −. Experiments are conducted on the text completion task with b = 32 , with 
+
+T set to 150 and 250 , and the results are summa-rized in Table 5. We ignore the PPL results for 
+
+Table 5: Ablation study of XM ARK with different num-bers of hash keys ( k) and different token–shard mapping matrices: cTMM in XM ARK vs. TMM in XM ARK −.                                                        
+
+> Method T= 150 T= 250 Avg. BA ↑
+> Avg. PPL ↓BA ↑PPL ↓BA ↑PPL ↓
+> LOSO74 .06 4.45 81 .38 4.46 77 .72 4.46
+> XM ARK (k=2 )82 .62 4.84 88 .00 4.60 85 .31 4.72
+> XM ARK (k=3 )82 .94 5.01 89 .38 4.97 86 .16 4.99
+> XM ARK (k=4 )84 .25 5.07 92 .06 5.14 88 .16 5.11
+> XM ARK −(k=2 )81 .31 −88 .06 −84 .69 −
+> XM ARK −(k=3 )80 .69 −87 .75 −84 .22 −
+> XM ARK −(k=4 )80 .31 −89 .56 −84 .94 −
+
+XM ARK − as they are the same as XM ARK ’s PPL. The findings are clear: as k increases, XM ARK 
+
+achieves consistently higher BA, since additional keys allow more observations to accurately esti-mate the mapping between each generated token and its originating shard during decoding. How-ever, this also slightly increases PPL due to the mildly reduced green list ratio. Compared with XM ARK , XM ARK − exhibits marginally lower BA due to the over-counting of the unboosted shard in TMM, especially when the number of generated tokens is small. Overall, the results indicate that cTMM is a more effective token-shard mapping construction method for XM ARK .
+
+Additional Results. Results on more widely-used public LLMs and datasets are provided in Ap-pendix A.7. We also discuss how XM ARK handles 
+
+false positive cases in Appendix A.6. 
+
+5 Conclusion 
+
+We propose a novel multi-bit watermarking method, XM ARK , for LLM-generated texts. During encod-ing, XM ARK leverages distinct hash keys to gener-ate multiple permutations of the vocabulary, from which an evergreen list is constructed by intersect-ing the green lists across permutations. Tokens in the evergreen list are then boosted to increase their sampling probability. During decoding, each token can update multiple shard observations under the cTMM constraint, thereby providing a more accu-rate estimation of the mapping between a gener-ated token and its originating shard. This enhanced counting mechanism ensures a more reliable decod-ing process, especially when the number of tokens for decoding is limited. Extensive experiments on diverse LLM downstream tasks and settings demonstrate that XM ARK substantially improves decoding accuracy compared with other methods, while preserving the quality of watermarked texts. Limitations 
+
+We now discuss the limitations and potential future directions of our work. First, during the decoding process of XM ARK ,each row of the cTMM has a size of 1 × 2d, re-sulting in a total of r × 2d shards available for token–shard mappings. In our experiments, we fix 
+
+d = 2 . Increasing d substantially expands the num-ber of shard candidates, which in turn reduces the number of observations/counts for the token–shard mappings per shard, given a fixed k and T, and decreases the accuracy of estimation, thereby de-grading the decoding accuracy. Adapting XM ARK 
+
+to larger d values is an important future direction, as increasing d can significantly enhance the qual-ity of watermarked text, as discussed in Remark 1. Second, although XM ARK demonstrates robust-ness against text editing attacks in our evalua-tion, its design does not explicitly incorporate mechanisms to enhance robustness against attacks. Introducing such mechanisms represents another promising avenue for future research. Third, as discussed in Remark 1, the hyperparam-eter k controls the trade-off between text quality and decoding accuracy. Although we conducted an ablation study on k, in practice, the optimal value still requires manual tuning. Designing an adaptive strategy to automatically determine the optimal k
+
+is another valuable direction for future exploration. Finally, in our experiments, all methods are eval-uated under a fixed δ. In fact, δ also plays an im-portant role in balancing text quality and decoding accuracy. Specifically, a larger δ yields more reli-able decoding but may degrade the quality of the generated text. Jointly optimizing XM ARK with respect to δ constitutes an additional important di-rection for future work. 
+
+Acknowledgments 
+
+The work of Jiahao, Rui, and Zikai was supported in part by the National Science Foundation under Grant No. 2511989. This material is based upon work co-supported by the U.S. Department of En-ergy, Office of Science, Office of Advanced Sci-entific Computing Research under Contract No. DE-AC05-00OR22725. This manuscript has been co-authored by UT-Battelle, LLC under Contract No. DE-AC05-00OR22725 with the U.S. Depart-ment of Energy. The United States Government re-tains and the publisher, by accepting the article for publication, acknowledges that the United States Government retains a non-exclusive, paid-up, ir-revocable, world-wide license to publish or repro-duce the published form of this manuscript, or al-low others to do so, for United States Government purposes. The Department of Energy will provide public access to these results of federally sponsored research in accordance with the DOE Public Ac-cess Plan (http://energy.gov/downloads/doe-public-access-plan). 
+
+References         
+
+> Ondrej Bojar, Christian Buck, Christian Federmann, Barry Haddow, Philipp Koehn, Johannes Leveling, Christof Monz, Pavel Pecina, Matt Post, Herve Saint-Amand, Radu Soricut, Lucia Specia, and Ale s Tam-chyna. 2014. Findings of the 2014 workshop on statistical machine translation. In Proceedings of the Ninth Workshop on Statistical Machine Translation ,pages 12–58, Baltimore, Maryland, USA. Associa-tion for Computational Linguistics. Massieh Kordi Boroujeny, Ya Jiang, Kai Zeng, and Brian Mark. 2024. Multi-bit distortion-free water-marking for large language models. arXiv preprint arXiv:2402.16578 .Yapei Chang, Kalpesh Krishna, Amir Houmansadr, John Frederick Wieting, and Mohit Iyyer. 2024. Post-Mark: A robust blackbox watermark for large lan-guage models. In Proceedings of the 2024 Confer-ence on Empirical Methods in Natural Language Processing , pages 8969–8987, Miami, Florida, USA. Association for Computational Linguistics. Miranda Christ, Sam Gunn, and Or Zamir. 2024. Un-detectable watermarks for language models. In The Thirty Seventh Annual Conference on Learning The-ory , pages 1125–1139. PMLR. Sumanth Dathathri, Abigail See, Sumedh Ghaisas, Po-Sen Huang, Rob McAdam, Johannes Welbl, Vandana Bachani, Alex Kaskasoli, Robert Stanforth, Tatiana Matejovicova, and 1 others. 2024. Scalable water-marking for identifying large language model outputs.
+> Nature , 634(8035):818–823. Angela Fan, Mike Lewis, and Yann Dauphin. 2018. Hierarchical neural story generation. In Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) ,pages 889–898, Melbourne, Australia. Association for Computational Linguistics. Pierre Fernandez, Antoine Chaffin, Karim Tit, Vivien Chappelier, and Teddy Furon. 2023. Three bricks to consolidate watermarks for large language models. In 2023 IEEE International Workshop on Information Forensics and Security (WIFS) , pages 1–6. IEEE. Eva Giboulot and Teddy Furon. 2024. Watermax: breaking the llm watermark detectability-robustness-
+
+quality trade-off. Advances in Neural Information Processing Systems , 37:18848–18881. Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Abhishek Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan Schelten, Alex Vaughan, and 1 others. 2024. The llama 3 herd of models. arXiv preprint arXiv:2407.21783 .Karl Moritz Hermann, Tomas Kocisky, Edward Grefen-stette, Lasse Espeholt, Will Kay, Mustafa Suleyman, and Phil Blunsom. 2015. Teaching machines to read and comprehend. Advances in neural information processing systems , 28. Zhengmian Hu, Lichang Chen, Xidong Wu, Yihan Wu, Hongyang Zhang, and Heng Huang. 2024. Unbiased watermark for large language models. In The Twelfth International Conference on Learning Representa-tions .Ya Jiang, Chuxiong Wu, Massieh Kordi Boroujeny, Brian Mark, and Kai Zeng. 2025. StealthInk: A multi-bit and stealthy watermark for large language models. In Forty-second International Conference on Machine Learning .John Kirchenbauer, Jonas Geiping, Yuxin Wen, Jonathan Katz, Ian Miers, and Tom Goldstein. 2023. A watermark for large language models. In Inter-national Conference on Machine Learning , pages 17061–17084. PMLR. John Kirchenbauer, Jonas Geiping, Yuxin Wen, Manli Shu, Khalid Saifullah, Kezhi Kong, Kasun Fernando, Aniruddha Saha, Micah Goldblum, and Tom Gold-stein. 2024. On the reliability of watermarks for large language models. In The Twelfth International Conference on Learning Representations .Kalpesh Krishna, Yixiao Song, Marzena Karpinska, John Wieting, and Mohit Iyyer. 2023. Paraphras-ing evades detectors of ai-generated text, but retrieval is an effective defense. Advances in Neural Informa-tion Processing Systems , 36:27469–27500. Rohith Kuditipudi, John Thickstun, Tatsunori Hashimoto, and Percy Liang. 2024. Robust distortion-free watermarks for language models. 
+
+Transactions on Machine Learning Research .Liying Li, Yihan Bai, and Minhao Cheng. 2024. Where am I from? identifying origin of LLM-generated content. In Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing ,pages 12218–12229, Miami, Florida, USA. Associa-tion for Computational Linguistics. Chin-Yew Lin. 2004. ROUGE: A package for auto-matic evaluation of summaries. In Text summariza-tion branches out , pages 74–81. Aiwei Liu, Leyi Pan, Xuming Hu, Shiao Meng, and Lijie Wen. 2024a. A semantic invariant robust wa-termark for large language models. In The Twelfth International Conference on Learning Representa-tions .Aiwei Liu, Leyi Pan, Yijian Lu, Jingjing Li, Xuming Hu, Xi Zhang, Lijie Wen, Irwin King, Hui Xiong, and Philip Yu. 2024b. A survey of text watermarking in the era of large language models. ACM Computing Surveys , 57(2):1–36. Minjia Mao, Dongjun Wei, Zeyu Chen, Xiao Fang, and Michael Chau. 2025. Watermarking large language models: An unbiased and low-risk method. In Pro-ceedings of the 63rd Annual Meeting of the Associa-tion for Computational Linguistics (Volume 1: Long Papers) , pages 7939–7960, Vienna, Austria. Associa-tion for Computational Linguistics. Travis Munyer, Abdullah All Tanvir, Arjon Das, and Xin Zhong. 2024. Deeptextmark: a deep learning-driven text watermarking approach for identifying large language model generated text. IEEE ACCESS ,12:40508–40520. Leyi Pan, Aiwei Liu, Zhiwei He, Zitian Gao, Xuan-dong Zhao, Yijian Lu, Binglin Zhou, Shuliang Liu, Xuming Hu, Lijie Wen, and 1 others. 2024. Mark-llm: An open-source toolkit for llm watermarking. In Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing: System Demonstrations , pages 61–71. Kishore Papineni, Salim Roukos, Todd Ward, and Wei-Jing Zhu. 2002. BLEU: a method for automatic eval-uation of machine translation. In Proceedings of the 40th annual meeting of the Association for Computa-tional Linguistics , pages 311–318. Mike Perkins. 2023. Academic integrity considerations of ai large language models in the post-pandemic era: Chatgpt and beyond. Journal of University Teaching and Learning Practice , 20(2):1–24. Julien Piet, Chawin Sitawarin, Vivian Fang, Norman Mu, and David Wagner. 2025. Markmywords: An-alyzing and evaluating language model watermarks. In 2025 IEEE Conference on Secure and Trustworthy Machine Learning (SaTML) , pages 68–91. IEEE. Wenjie Qu, Wengrui Zheng, Tianyang Tao, Dong Yin, Yanze Jiang, Zhihua Tian, Wei Zou, Jinyuan Jia, and Jiaheng Zhang. 2024. Provably robust multi-bit watermarking for ai-generated text. arXiv preprint arXiv:2401.16820 .Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, and Peter J Liu. 2020. Exploring the lim-its of transfer learning with a unified text-to-text transformer. Journal of machine learning research ,21(140):1–67. Christoph Schuhmann. 2023. Essays with in-structions dataset. https://huggingface. co/datasets/ChristophSchuhmann/ essays-with-instructions . Accessed: 2025-07-14. John Schulman, Barret Zoph, Christina Kim, Jacob Hilton, Jacob Menick, Jiayi Weng, Juan Felipe Ceron Uribe, Liam Fedus, Luke Metz, Michael Pokorny, and 1 others. 2022. ChatGPT: Optimizing language models for dialogue. OpenAI blog , 2(4). Hugo Touvron, Louis Martin, Kevin Stone, Peter Al-bert, Amjad Almahairi, Yasmine Babaei, Nikolay Bashlykov, Soumya Batra, Prajjwal Bhargava, Shruti Bhosale, and 1 others. 2023. Llama 2: Open foun-dation and fine-tuned chat models. arXiv preprint arXiv:2307.09288 .Lean Wang, Wenkai Yang, Deli Chen, Hao Zhou, Yankai Lin, Fandong Meng, Jie Zhou, and Xu Sun. 2024. Towards codable watermarking for injecting multi-bits information to llms. In The Twelfth Inter-national Conference on Learning Representations, ICLR 2024, Vienna, Austria, May 7-11, 2024 . Open-Review.net. Zongqi Wang, Tianle Gu, Baoyuan Wu, and Yujiu Yang. 2025. Morphmark: Flexible adaptive water-marking for large language models. arXiv preprint arXiv:2505.11541 .Junchao Wu, Shu Yang, Runzhe Zhan, Yulin Yuan, Lidia Sam Chao, and Derek Fai Wong. 2025. Asurvey on llm-generated text detection: Necessity, methods, and future directions. Computational Lin-guistics , 51(1):275–338. Yihan Wu, Zhengmian Hu, Junfeng Guo, Hongyang Zhang, and Heng Huang. 2024. A resilient and ac-cessible distribution-preserving watermark for large language models. In Forty-first International Confer-ence on Machine Learning .Jiahao Xu, Rui Hu, and Zikai Zhang. 2025. Majority bit-aware watermarking for large language models. 
+
+arXiv preprint arXiv:2508.03829 .An Yang, Baosong Yang, Binyuan Hui, Bo Zheng, Bowen Yu, Chang Zhou, Chengpeng Li, Chengyuan Li, Dayiheng Liu, Fei Huang, Guanting Dong, Hao-ran Wei, Huan Lin, Jialong Tang, Jialin Wang, Jian Yang, Jianhong Tu, Jianwei Zhang, Jianxin Ma, and 40 others. 2024. Qwen2 technical report. arXiv preprint arXiv:2407.10671 .KiYoon Yoo, Wonhyuk Ahn, and Nojun Kwak. 2024. Advancing beyond identification: Multi-bit water-mark for large language models. In Proceedings of the 2024 Conference of the North American Chap-ter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers) , pages 4031–4055, Mexico City, Mexico. As-sociation for Computational Linguistics. Ruisi Zhang, Shehzeen Samarah Hussain, Paarth Neekhara, and Farinaz Koushanfar. 2024. REMARK-LLM: A robust and efficient watermarking frame-work for generative large language models. In 33rd USENIX Security Symposium (USENIX Security 24) ,pages 1813–1830. Tianyi Zhang, Varsha Kishore, Felix Wu, Kilian Q. Weinberger, and Yoav Artzi. 2020. Bertscore: Eval-uating text generation with bert. In International Conference on Learning Representations .Zhaoxi Zhang, Xiaomei Zhang, Yanjun Zhang, He Zhang, Shirui Pan, Bo Liu, Asif Qumer Gill, and Leo Yu Zhang. 2025. Character-level pertur-bations disrupt llm watermarks. arXiv preprint arXiv:2509.09112 .Jiren Zhu, Russell Kaplan, Justin Johnson, and Li Fei-Fei. 2018. Hidden: Hiding data with deep networks. In Proceedings of the European conference on com-puter vision (ECCV) , pages 657–672. Table 6: Notation table.                                           
+
+> Symbol Description
+> γThe green list ratio
+> mThe binary multi-bit message
+> bThe length of message m
+> fThe large language model
+> xpThe input prompt
+> xsThe suspect text
+> xtThe t-th token generated by f
+> VThe vocabulary of f
+> xgThe generated text of fwithout watermark
+> x′
+> gThe generated text of fwith watermark
+> TThe generation step of fand length of xg
+> GThe green list
+> SThe token shard
+> δThe watermarking bias
+> Enc (·)The encoding function
+> Dec (·)The decoding function
+> m′The decoded message via Dec (·)
+> Quality (·)The quality function
+> PPL (·)The conditional perplexity
+> τThe tolerance margin on text quality
+> kThe secret hash key
+> kThe number of hash keys
+> Hash (·)The Hash function
+> sThe pseudo-random seed generated by Hash
+> rThe number of blocks
+> dThe number of bits in a message block
+> AThe token-shard mapping matrix
+> pThe decimal value of a message block
+> EThe evergreen list
+
+A Appendix 
+
+A.1 Notation Table 
+
+We present the detailed notation table in Table 6 for the reader’s convenience. 
+
+A.2 Hardware Settings. 
+
+All experiments were carried out on a self-managed Linux-based computing cluster running Ubuntu 20.04.6 LTS. The cluster is equipped with eight NVIDIA RTX A6000 GPUs (each with 48 GB of memory) and AMD EPYC 7763 CPUs featuring 64 cores. Model inference leveraged GPU accel-eration extensively. In total, the experiments ac-cumulated roughly two weeks of GPU compute time. 
+
+A.3 Related Work Zero-bit Watermarking for LLMs. The first zero-bit watermarking approach, KGW, was proposed by Kirchenbauer et al. (2023). At each generation step t, after the language model f produces the logit vector for the next token, a pseudo-random seed is deterministically derived using a hash func-tion that takes as input a hash key k and the pre-viously generated token xt−1. This seed governs a fixed permutation and subsequent partitioning of the vocabulary V into two disjoint subsets: the green list G and the red list R. A positive bias δ is then added to the logits corresponding to tokens in 
+
+G, increasing their likelihood under the softmax (·)
+
+distribution. While a larger δ strengthens the water-mark signal, it also amplifies the distortion in the token sampling distribution, potentially degrading the fluency and naturalness of the generated text. Repeating this process at every generation step pro-duces a watermarked sequence x′
+
+> g
+
+. For verification, given a suspect text xs, the decoder reconstructs the green list for each token position using the same key and hashing procedure, and then conducts a statistical z-test to evaluate whether the observed proportion of tokens from G significantly exceeds the expected baseline, thereby determining the pres-ence of the watermark. A statistically significant ex-cess over the expected frequency indicates the pres-ence of the watermark. Several subsequent works have improved this zero-bit watermarking method to achieve higher decoding accuracy and better util-ity of the watermarked text (Kirchenbauer et al., 2024; Kuditipudi et al., 2024; Wang et al., 2025; Chang et al., 2024; Giboulot and Furon, 2024; Liu et al., 2024a; Piet et al., 2025; Christ et al., 2024; Munyer et al., 2024). 
+
+Multi-bit Watermarking for LLMs. While zero-bit watermarking enables text verification, it is insufficient for traceable watermarking, motivating the development of multi-bit watermarking meth-ods. CycleShift (Fernandez et al., 2023) cyclically shifts vocabulary permutations according to the em-bedded message and biases the tokens within the resulting green list. However, overlapping shifts can introduce interference among message bits, re-ducing distinctiveness and weakening statistical separability (Jiang et al., 2025). DepthW (Li et al., 2024) directly encodes the message as input to the hash function and further sets a dark green list inside of the green list, to which stronger perturba-tions are applied. Despite their effectiveness, both CycleShift and DepthW rely on brute-force search over all possible message candidates, rendering them impractical for long messages. To improve decoding efficiency, MPAC (Yoo et al., 2024) partitions the message into multiple blocks and uses each block’s value to guide green Algorithm 2: The Decoder of XM ARK 
+
+Input :Vocabulary V, hash keys 
+
+{k0, k1, . . . , kk−1}, number of blocks r, length of message block 
+
+d, suspect text x′ of length T
+
+Output : Decoded message m′ 
+
+> 1
+
+Initialize A ← 0r×2d 
+
+> 2
+
+for t = 3 to T do  
+
+> 3
+
+i ← (x′ 
+
+> t−2
+
++ x′
+
+> t−1
+
+) mod r 
+
+> 4
+
+cc ← 01×2d 
+
+> 5
+
+for j ← 0 to k − 1 do  
+
+> 6
+
+sj ← Hash (x′
+
+> t−2
+
+, x ′
+
+> t−1
+
+, kj ) 
+
+> 7
+
+V′ ← permute (V, sj ) 
+
+> 8
+
+Sj, 0, . . . , Sj, 2d−1 ← part (V′, 2d) 
+
+> 9
+
+if x′ 
+
+> t
+
+∈ S j,u then  
+
+> 10
+
+cc [u] ← cc [u] + 1  
+
+> 11
+
+end  
+
+> 12
+
+end  
+
+> 13
+
+update ← sign (cc ) 
+
+> 14
+
+A[i, :] ← A[i, :] + update  
+
+> 15
+
+end  
+
+> 16
+
+for i ← 0 to r − 1 do  
+
+> 17
+
+p′ 
+
+> i
+
+← arg min A[i :]  
+
+> 18
+
+m′ 
+
+> i
+
+← binary (p′
+
+> i
+
+) 
+
+> 19
+
+end  
+
+> 20
+
+Return m′ = concat (m′
+
+> 0
+
+, . . . , m′
+
+> r−1
+
+)
+
+list construction. However, as discussed in this paper, MPAC substantially degrades text quality. RSBH (Qu et al., 2024) enhances MPAC by in-corporating the message block value into the hash seed computation and adopting a larger green list ratio γ = 0 .5. This design improves text utility but increases decoding complexity exponentially with 
+
+2d. More recently, StealthInk (Jiang et al., 2025) improves text quality by directly amplifying the sampling probabilities of high-logit tokens while suppressing low-logit ones, thereby preserving flu-ency. Nevertheless, this approach weakens the wa-termark signal and consequently reduces decoding accuracy. 
+
+A.4 Decoder Algorithm 
+
+We present the detailed decoding procedure of XM ARK in Algorithm 2. Note that we start from the third token during decoding because computing the block index and hash seed requires x′ 
+
+> t−2
+
+and 
+
+x′
+
+> t−1
+
+. In Line 13, the function sign (·) operates element-wise, setting any value greater than 0 to 1
+
+while keeping 0 unchanged, thereby producing the constrained token-shard mapping matrix (cTMM). 
+
+A.5 System Prompt Settings 
+
+Recall that in our work, we use the LLaMA-2-7B-chat model (Touvron et al., 2023) for story genera-tion and text summarization tasks. The chat prompt for story generation is designed to encourage coher-ent and imaginative story generation and is defined as follows: 
+
+[System] You are a helpful assistant that writes engaging and coherent sto-ries. 
+
+[User] Please write a detailed and imag-inative short story based on the following prompt: [prompt]. 
+
+For the text summarization task, the chat prompt is designed to instruct the model to generate con-cise and faithful summaries given an input article, using the following format: 
+
+[System] You are a helpful assistant spe-cialized in summarization. You take a document and write a concise, faithful summary. 
+
+[User] Please summarize the following article in a few sentences: [article]. 
+
+A.6 Discussion on False Positive Cases 
+
+False positives are a common issue across all multi-bit watermarking methods. Specifically, even when applied to unwatermarked text, a decoder may still output a message that could be mistakenly inter-preted as a valid watermark. However, this problem has received little attention in the existing literature. We observe that our method, XM ARK , is inherently robust to false positives. Recall that during decod-ing, XM ARK leverages the cTMM to recover the embedded message. Our recovery strategy identi-fies the shard with the fewest token–shard mapping counts, and this statistical property naturally serves as an indicator of false positives: if no shard ex-hibits a noticeably small count, the text is likely unwatermarked. In practice, one can set a thresh-old based on the entropy of the token–shard count distribution for each message block. If the entropy exceeds this threshold, the decoder concludes that the text is unwatermarked; otherwise, it proceeds with message recovery as usual. We further conduct empirical experiments to evaluate XM ARK ’s ability to detect false positives, Table 7: Performance comparison on text completion tasks with message length b = 16 under different numbers of available tokens T ∈ { 150 , 200 , 250 , 300 } on the Essays and OpenGen datasets.                                                                                                  
+
+> Task (Dataset) Method T= 150 T= 200 T= 250 T= 300 Avg. BA ↑
+> Avg. PPL ↓BA ↑PPL ↓BA ↑PPL ↓BA ↑PPL ↓BA ↑PPL ↓
+> Text Completion (Essays) StealthInk 71 .62 4.12 75 .00 3.90 78 .88 3.75 79 .25 3.66 76 .19 3.86
+> MPAC 85 .88 5.37 89 .12 5.09 91 .75 4.93 92 .88 4.78 89 .91 5.04
+> RSBH 80 .12 4.97 85 .00 4.80 89 .75 4.66 91 .00 4.53 86 .47 4.74
+> XM ARK 92 .62 4.88 95 .62 4.68 97 .12 4.50 97 .75 4.40 95 .78 4.62
+> Text Completion (OpenGen) StealthInk 72 .75 4.11 75 .75 3.98 77 .88 4.04 80 .12 3.85 76 .63 3.99
+> MPAC 84 .88 5.01 89 .25 4.98 90 .38 4.97 92 .62 4.84 89 .28 4.95
+> RSBH 77 .00 4.73 81 .75 4.75 88 .25 4.72 87 .12 4.56 83 .53 4.69
+> XM ARK 90 .62 4.70 91 .12 4.68 95 .25 4.66 95 .88 4.67 93 .22 4.68
+
+Table 8: Performance comparison on text completion tasks with message length b = 32 under different numbers of available tokens T ∈ { 150 , 200 , 250 , 300 } on the Essays and OpenGen datasets.                                                                                                  
+
+> Task (Dataset) Method T= 150 T= 200 T= 250 T= 300 Avg. BA ↑
+> Avg. PPL ↓BA ↑PPL ↓BA ↑PPL ↓BA ↑PPL ↓BA ↑PPL ↓
+> Text Completion (Essays) StealthInk 65 .94 4.17 67 .76 3.96 71 .12 3.84 72 .12 3.74 69 .24 3.93
+> MPAC 77 .81 5.03 80 .38 4.89 80 .94 4.76 83 .19 4.65 80 .58 4.83
+> RSBH 75 .06 5.07 80 .38 4.77 82 .00 4.67 84 .06 4.54 80 .38 4.76
+> XM ARK 82 .38 4.89 85 .38 4.65 89 .31 4.44 91 .25 4.32 87 .08 4.58
+> Text Completion (OpenGen) StealthInk 67 .12 4.22 67 .88 4.03 69 .94 4.07 71 .69 4.01 69 .16 4.08
+> MPAC 76 .06 4.97 79 .31 4.91 82 .69 4.97 84 .94 4.99 80 .75 4.96
+> RSBH 70 .88 4.67 76 .06 4.82 78 .62 4.62 77 .56 4.71 75 .78 4.71
+> XM ARK 79 .50 4.81 83 .88 4.52 85 .81 4.75 90 .62 4.68 84 .95 4.69
+
+and compare it with CycleShift, MPAC, and Steal-thInk under the setting of b = 8 , T = 150 , and 
+
+δ = 2 . For each baseline, we follow the detection metric used in its original paper, such as the p-value for CycleShift and the z-score for MPAC, and vary the corresponding decision threshold to measure detection performance. For XM ARK , given the well-updated cTMM AT , we compute the stan-dard deviation of each row (corresponding to each message block) and then take the average. We re-port the TPR at a fixed 10% FPR, together with the F 1 score, in Table 9. Note that RSBH and DepthW are not included in this comparison, as their original papers do not provide explicit false-positive detection modules or statistical thresholds for unwatermarked text detection. From the results, XM ARK achieves strong detection performance, with a TPR of 94% at 10% FPR and an F 1 score of 
+
+0.92 . It substantially outperforms CycleShift and StealthInk, and remains competitive with MPAC, which achieves slightly higher detection metrics. We note that MPAC benefits from a stricter green list ratio ( γ = 0 .25 ), which produces a stronger de-tection signal but typically comes at the cost of text quality. Overall, these results show that XM ARK 
+
+provides a favorable balance between detection re-liability and generation quality. 
+
+A.7 More Results More Results on Additional Text Completion Tasks. We further evaluate MPAC, RSBH, Steal-thInk, and our proposed XM ARK on the text com-pletion task using the OpenGen (Krishna et al., 2023) and Essays (Schuhmann, 2023) datasets. Re-sults for message lengths b = 16 and b = 32 with 
+
+T ∈ { 150 , 200 , 250 , 300 } are summarized in Ta-ble 7 and Table 8, respectively. Across all T set-tings, XM ARK consistently achieves higher BA than the compared methods. When b = 16 , on Essays and OpenGen, XM ARK attains the high-est average BA of 95 .78% and 93 .22% , yielding gains of +5 .87% and +3 .94% over the second-best method (MPAC). In addition to BA improvements, XM ARK also demonstrates clear PPL reductions, achieving PPL values of 4.62 and 4.68 , respec-tively. When b = 32 , the advantage of XM ARK 
+
+becomes even more pronounced, as the BA gaps over MPAC further widen to +6 .50% on Essays and +4 .20% on OpenGen. 
+
+More Results on Additional LLMs. We fur-ther evaluate our method on two widely used lan-guage models: Qwen 2.5-7B (Yang et al., 2024) and Table 9: False positive detection performance measured by TPR at 10% FPR (TPR@ 10% FPR) and F 1 score.                      
+
+> Method Detection Mechanism and Threshold TPR@ 10% FPR ↑F1 Score ↑
+> CycleShift p-value ( p < 2e −2)80 .00 0.85
+> MPAC z-score ( z > 4.10 )98 .00 0.94
+> StealthInk p-value ( p < 8e −4)60 .00 0.70
+> XM ARK Standard Deviation ( σ > 3.30 )94 .00 0.92
+
+Table 10: Performance comparison of MPAC and XM ARK on Qwen 2.5-7B and LLaMA-3.1-8B models with message lengths b ∈ { 8, 16 } and number of available tokens T ∈ { 150 , 200 , 250 , 300 }.                                                                                                        
+
+> Message Length Model Method T= 150 T= 200 T= 250 T= 300 Avg. BA ↑
+> Avg. PPL ↓BA ↑PPL ↓BA ↑PPL ↓BA ↑PPL ↓BA ↑PPL ↓
+> b= 8
+> Qwen 2.5-7BMPAC 96 .50 8.25 98 .00 7.69 98 .50 7.57 98 .50 7.66 97 .88 7.79
+> XM ARK 97 .75 7.66 100 .00 7.19 100 .00 7.07 100 .00 7.00 99 .44 7.23
+> LLaMA-3.1-8BMPAC 97 .25 6.55 98 .25 6.44 98 .75 6.38 99 .50 6.33 98 .44 6.43
+> XM ARK 100 .00 6.37 99 .75 6.05 100 .00 5.98 100 .00 5.94 99 .94 6.09
+> b= 16
+> Qwen 2.5-7BMPAC 91 .12 7.97 91 .00 7.90 94 .75 7.54 95 .38 7.55 93 .06 7.74
+> XM ARK 96 .38 7.62 97 .12 7.07 97 .75 6.92 99 .25 6.76 97 .63 7.09
+> LLaMA-3.1-8BMPAC 91 .00 7.03 92 .25 6.53 95 .00 6.69 96 .62 6.39 93 .72 6.66
+> XM ARK 95 .50 6.26 98 .00 6.07 97 .88 5.93 98 .62 6.01 97 .50 6.07
+
+LLaMA-3.1-8B (Grattafiori et al., 2024). The BA and PPL results with message lengths b ∈ { 8, 16 }
+
+and T ∈ { 150 , 200 , 250 , 300 } are reported in Ta-ble 10. For PPL evaluation, we employ the larger models Qwen 2.5-32 B and LLaMA-3.1-70 B to ob-tain more accurate text quality measurements. As shown, XM ARK consistently achieves higher BA and lower PPL than MPAC across all configura-tions, confirming its strong generalization ability across different LLM architectures. Specifically, when b = 8 , XM ARK attains nearly perfect BA while maintaining average PPLs of 7.23 and 6.09 
+
+on Qwen 2.5-7B and LLaMA-3.1-8B, respectively. When b increases to 16 , XM ARK still delivers very high BA ( 97 .63% and 97 .50% ), outperform-ing MPAC by +4 .57% and +3 .78% , respectively. Moreover, XM ARK achieves lower PPLs of 7.09 
+
+and 6.07 , corresponding to improvements of +0 .65 
+
+and +0 .59 compared with MPAC. 
+
+A.8 Generated Text Example 
+
+Table 11 presents examples of generated texts pro-duced by XM ARK for a given prompt, with water-marking bias δ = 2 and message length b = 16 .
+
+A.9 Proof of the Expected Green List Size of XM ARK 
+
+Setup and notation. Let V denote the vocabu-lary, and fix integers d ≥ 1 and k ≥ 1, representing the length of the message block and the number of hash keys, respectively. For each hash key, we independently (i) generate a uniformly random per-mutation of V, and (ii) partition the permuted vo-cabulary into 2d disjoint shards of (nearly) equal size 2. For a given key j ∈ { 0, . . . , k − 1}, we define the green list Gj as the complement of one designated shard. Consequently, a uniformly cho-sen token belongs to Gj with probability 1 − 2−d.The evergreen list is then defined as the intersection 
+
+E =
+
+> k−1
+
+\
+
+> j=0
+
+Gj .
+
+In the following, we prove that the expected size of 
+
+E is (1 − 2−d)k|V| .
+
+Proof. For each token v ∈ V , define the indicator variable 
+
+Xv = 1{v ∈ E} =
+
+> k−1
+
+Y
+
+> j=0
+
+1{v ∈ G j }.
+
+By construction and independence across keys, we have Pr[ v ∈ G j ] = 1 − 2−d, and {1{v ∈Gj }} k−1 
+
+> j=0
+
+are independent. Therefore, we have 
+
+E[Xv] = Pr[ v ∈
+
+> k−1
+
+\
+
+> j=0
+
+Gj ]=
+
+> k−1
+
+Y
+
+> j=0
+
+Pr[ v ∈ G j ] = (1 − 2−d)k.
+
+> 2
+
+We assume that |V| is divisible by 2d; otherwise, there is an O(1 /|V| ) discrepancy due to the near-equal partition. Table 11: Example of generated texts of XM ARK .
+
+Prompt : MIDDLETOWN, NJ - The Middletown Township Public Library and the Township of Middletown are pleased to announce the appointment of Kim Rinaldi as Provisional Library Director, beginning on February 24, 2014. [...] choice for the residents of the Township. 
+
+Method Generated Text PPL ↓
+
+Nonwatermarked The Middletown Board of Trustees interviewed three highly qualified candidates for the Library Director position. The Board of Trustees voted to appoint Ms. Rialdi to the position of Provisional Library director at a meeting held on February 10, 2004. The MTPL is a member of the Monmouth County Library 
+
+3.17 
+
+XM ARK The provisional library director contract will be ratified by the Middletown Township Public Library Board of Trustees on Tuesday, February 25, 2024. Ms Rinaldi will begin on Monday, February 24th. Previous MTPL Receives 2013 
+
+3.92 
+
+Prompt : Belying expectations, Prasar Bharti has earned only Rs 58.19 crore (Rs 581.9 million) as revenue during the Commonwealth Games [...] Rs 90,000 for the same in the opening of the CWG. 
+
+Method Generated Text PPL ↓
+
+Nonwatermarked The advertisements were supposed to be telecasted live and the revenue was supposed to be earned in real time. But after the complaints, the channel was not allowed to telecast advertisements during closing ceremony. The opening ceremony was telecasted live on DD and was deferred live for the evening slot to accommodate advertising. 
+
+4.61 
+
+XM ARK But the channel had to forego the rate hike as advertisers did not want to be associated with a sports event, sources said. Prasar Bharati’s revenue from the last CWG Games was Rs 59.19 cr (Rs 403.8 million), a sharp drop from Rs 
+
+5.49 
+
+Since |E| = P
+
+v∈V Xv, by linearity of expecta-tion, we have 
+
+E[|E| ] = X
+
+v∈V 
+
+E[Xv] = (1 − 2−d)k|V| .
+
+Dividing both sides by |V| gives 
+
+E[γ] = E
+
+ |E| |V| 
+
+
+
+= (1 − 2−d)k,
+
+which concludes the proof.

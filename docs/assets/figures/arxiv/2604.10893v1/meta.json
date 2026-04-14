@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.10893v1/fig-001.webp",
+      "caption": "Figure 1: Part 1 illustrates the watermark generation process in LLMs, while Part 2 depicts the traditional Stealing Watermark Algorithm (SWA).",
+      "page": 1,
+      "index": 1,
+      "width": 458,
+      "height": 391
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10893v1/fig-002.webp",
+      "caption": "Table 1: Results of scrubbing attack for different watermarks and different scrubbing method. “Random” represents random classification during detection. Lower WCS, AUC, and TPR@1% values indicate better attack effectiveness.",
+      "page": 6,
+      "index": 2,
+      "width": 917,
+      "height": 302
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10893v1/fig-003.webp",
+      "caption": "Table 2: Results of spoofing attacks on different watermarks. w/o Attack represents the detectability performance of victim. Higher WCS, AUC, and TPR@1% values indicate better attack effectiveness.",
+      "page": 6,
+      "index": 3,
+      "width": 896,
+      "height": 306
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10893v1/fig-004.webp",
+      "caption": "Table 6: Results of spoofing attacks on KGW with different LMatt.",
+      "page": 15,
+      "index": 4,
+      "width": 883,
+      "height": 308
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10893v1/fig-005.webp",
+      "caption": "Table 3: Spoofing attack performance (AUC) across different watermark configurations using various seals. LMvic=Llama3-8b, and dataset is Dolly. no denotes the specific forged seal used for attack, “AVE” represents equally weighted ensemble of seals with no from 0 to 7. Left, Min and Max respectively indicates LeftHash-scheme, MinHash-scheme and MaxHash-scheme.",
+      "page": 7,
+      "index": 5,
+      "width": 671,
+      "height": 215
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10893v1/fig-006.webp",
+      "caption": "Figure 3: Trade-off between text quality (PPL) and watermark detectability (WCS) under spoofing attacks on KGW with varying δatt.",
+      "page": 7,
+      "index": 6,
+      "width": 427,
+      "height": 348
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10893v1/fig-007.webp",
+      "caption": "Figure 5: Results of spoofing attacks on KGW with different lengths of ctx.",
+      "page": 14,
+      "index": 7,
+      "width": 450,
+      "height": 366
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10893v1/fig-008.webp",
+      "caption": "Figure 2: The overall process of Adaptive Stealing (AS). Red arrows indicate the actions of AS, while black arrows indicate standard generation processes without the intervention of watermarking.",
+      "page": 3,
+      "index": 8,
+      "width": 854,
+      "height": 410
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10893v1/fig-009.webp",
+      "caption": "Figure 4: Results of spoofing attacks on KGW with varying |Dw|. The minimum |Dw| is 100.",
+      "page": 8,
+      "index": 9,
+      "width": 427,
+      "height": 348
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10893v1/fig-010.webp",
+      "caption": "Table 8: Spoofing attack result on different watermarks with WS as stealing watermark algorithm. The left three columns represent different settings of WS. Higher metric values indicate better attack performance.",
+      "page": 16,
+      "index": 10,
+      "width": 791,
+      "height": 236
+    }
+  ]
+}
