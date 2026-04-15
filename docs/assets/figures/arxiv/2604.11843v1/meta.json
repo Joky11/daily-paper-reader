@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.11843v1/fig-001.webp",
+      "caption": "Figure 4: Security analysis: (a) green ratio distributions under correct/wrong keys; (b) forgery success rate vs. partition exposure fraction.",
+      "page": 11,
+      "index": 1,
+      "width": 818,
+      "height": 353
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11843v1/fig-002.webp",
+      "caption": "Figure 5: Efficiency analysis: (a) absolute time comparison (log scale); (b) relative overhead percentage.",
+      "page": 11,
+      "index": 2,
+      "width": 818,
+      "height": 353
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11843v1/fig-003.webp",
+      "caption": "Figure 2: Radar chart comparing robustness (TPR@FPR=1%) across six attack types on LlamaGen.",
+      "page": 10,
+      "index": 3,
+      "width": 392,
+      "height": 311
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11843v1/fig-004.webp",
+      "caption": "Figure 3: Parameter sensitivity analysis: effect of green ratio γ on (a) FID, (b) TPR@FPR=1%, and (c) 32-bit extraction accuracy.",
+      "page": 10,
+      "index": 4,
+      "width": 822,
+      "height": 218
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11843v1/fig-005.webp",
+      "caption": "Table 1: Image quality comparison across AR models. ∆FID denotes the FID increase compared to unwatermarked generation.",
+      "page": 8,
+      "index": 5,
+      "width": 636,
+      "height": 317
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11843v1/fig-006.webp",
+      "caption": "Figure 6: Attack strength analysis: (a) JPEG quality, (b) Gaussian noise σ, (c) crop ratio vs. detection and extraction performance.",
+      "page": 12,
+      "index": 6,
+      "width": 821,
+      "height": 220
+    }
+  ]
+}
