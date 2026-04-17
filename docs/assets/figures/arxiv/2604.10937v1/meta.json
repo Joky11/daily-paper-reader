@@ -1,0 +1,118 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-001.webp",
+      "caption": "Figure 1: Efficiency-performance trade-off on CMedTEB Retrieval. The x-axis shows queries per second (QPS) on a single A100 80GB GPU, while the y-axis reports nDCG@10. Notably, CARE breaks the conventional trade-off: it matches the high retrieval quality of heavy LLM-based models while sustaining the high throughput of lightweight BERT-style models.",
+      "page": 1,
+      "index": 1,
+      "width": 458,
+      "height": 397
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-002.webp",
+      "caption": "Figure 3: Inference and Training pipeline for asymmetric embedding model. Stage I: Query encoder is trained to align with the frozen document encoder using Asym-InfoNCE and MSE losses. Stage II: Both encoders are jointly fine-tuned with Asym-InfoNCE loss on retrieval data.",
+      "page": 6,
+      "index": 2,
+      "width": 902,
+      "height": 342
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-003.webp",
+      "caption": "Table 25: Prompt template for training data annotation",
+      "page": 21,
+      "index": 3,
+      "width": 927,
+      "height": 460
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-004.webp",
+      "caption": "Table 24: Prompt template for CMedTEB STS tasks",
+      "page": 21,
+      "index": 4,
+      "width": 927,
+      "height": 731
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-005.webp",
+      "caption": "Figure 4: Asymmetric vs. Symmetric Architectures on performance and parameters. We evaluate models in two scenarios: leveraging power from 4B (left) and 8B (right) document encoders. The bars denote average performance on CMedTEB Retrieval and Rerank (higher is better), while the blue line represents the inference cost in terms of Query Encoder parameters (log scale, lower is better). CARE (Ours) bridge the performance gap to symmetric giants (Full) while maintaining same online inference cost to baselines.",
+      "page": 7,
+      "index": 5,
+      "width": 458,
+      "height": 323
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-006.webp",
+      "caption": "Table 2: Results of our models compare to the baselines on CMedTEB. Best results in bold, second-best in underline. Asymmetric models are marked with †.",
+      "page": 7,
+      "index": 6,
+      "width": 846,
+      "height": 396
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-007.webp",
+      "caption": "Table 11: Zero-shot results on CMedTEB (%). Best results in bold.",
+      "page": 14,
+      "index": 7,
+      "width": 939,
+      "height": 430
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-008.webp",
+      "caption": "Table 4: Ablation study on training stages and loss functions.",
+      "page": 8,
+      "index": 8,
+      "width": 407,
+      "height": 327
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-009.webp",
+      "caption": "Figure 2: Workflow for constructing the CMedTEB benchmark. The Figure shows the distinct curation strategies for discriminative tasks (Retrieval/Rerank) and semantic similarity tasks (STS).",
+      "page": 4,
+      "index": 9,
+      "width": 902,
+      "height": 454
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-010.webp",
+      "caption": "Table 22: An example of false negatives in MedicalRetrieval. This example shows the topic intensity phenomenon in medical domain: certain diseases or drugs generate a large volume of semantically similar queries and answers.",
+      "page": 19,
+      "index": 10,
+      "width": 927,
+      "height": 600
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-011.webp",
+      "caption": "Table 7: Detailed Statistics of CMedTEB Datasets. We aggregate statistics for both Training and Test splits across Retrieval, Reranking, and STS tasks. Avg. |Q| and Avg. |D| denote the average lengths of queries and documents, respectively. For STS, the last column indicates the ratio of positive pairs.",
+      "page": 12,
+      "index": 11,
+      "width": 939,
+      "height": 245
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-012.webp",
+      "caption": "Table 6: Instruction used on CMedTEB benchmarks",
+      "page": 12,
+      "index": 12,
+      "width": 939,
+      "height": 207
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-013.webp",
+      "caption": "Table 23: Prompt template for CMedTEB Retrieval and Rerank tasks",
+      "page": 20,
+      "index": 13,
+      "width": 767,
+      "height": 723
+    },
+    {
+      "url": "assets/figures/arxiv/2604.10937v1/fig-014.webp",
+      "caption": "Table 17: Detailed Training Hyperparameters. We list the configurations for both the general pre-training stages (RetroMAE, Unsupervised) and our proposed asymmetric alignment stages (Stage I & II). All stages utilize the AdamW optimizer with a linear decay scheduler.",
+      "page": 16,
+      "index": 14,
+      "width": 750,
+      "height": 188
+    }
+  ]
+}
