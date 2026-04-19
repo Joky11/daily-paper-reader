@@ -1,0 +1,988 @@
+Title: QuantileMark: A Message-Symmetric Multi-bit Watermark for LLMs
+
+URL Source: https://arxiv.org/pdf/2604.13786v1
+
+Published Time: Thu, 16 Apr 2026 00:53:50 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# QuantileMark: A Message-Symmetric Multi-bit Watermark for LLMs 
+
+Junlin Zhu, Baizhou Huang, Xiaojun Wan 
+
+Wangxuan Institute of Computer Technology, Peking University 
+
+zhujunlin@stu.pku.edu.cn, {hbz19, wanxiaojun}@pku.edu.cn 
+
+Abstract 
+
+As large language models become standard backends for content generation, practical provenance increasingly requires multi-bit wa-termarking. In provider-internal deployments, a key requirement is message symmetry: the message itself should not systematically af-fect either text quality or verification out-comes. Vocabulary-partition watermarks can break message symmetry in low-entropy de-coding: some messages are assigned most of the probability mass, while others are forced to use tail tokens. This makes embedding qual-ity and message decoding accuracy message-dependent. We propose QuantileMark, a white-box multi-bit watermark that embeds messages within the continuous cumulative probability interval [0 , 1) . At each step, QuantileMark par-titions this interval into M equal-mass bins and samples strictly from the bin assigned to the tar-get symbol, ensuring a fixed 1/M probability budget regardless of context entropy. For detec-tion, the verifier reconstructs the same partition under teacher forcing, computes posteriors over latent bins, and aggregates evidence for verifica-tion. We prove message-unbiasedness, a prop-erty ensuring that the base distribution is recov-ered when averaging over messages. This pro-vides a theoretical foundation for generation-side symmetry, while the equal-mass design ad-ditionally promotes uniform evidence strength across messages on the detection side. Empiri-cal results on C4 continuation and LFQA show improved multi-bit recovery and detection ro-bustness over strong baselines, with negligible impact on generation quality. Our code is avail-able at GitHub. 
+
+1 Introduction 
+
+Large language models (LLMs) have become stan-dard backends for applications ranging from dia-logue assistance and content creation to code gen-eration and data analysis (OpenAI, 2022). As high-quality synthetic text becomes ubiquitous and inex-pensive, provenance has emerged as a practical ne-cessity: platforms and providers must attribute the origin of content and its deployment settings. This capability is critical not only for mitigating misin-formation but also for policy enforcement, abuse response (e.g., toxic content), copyright disputes, and enterprise compliance (Yang et al., 2025). Generative watermarking addresses this need by embedding a covert signal during the decoding pro-cess, enabling a detector to verify the model’s au-thorship (Kirchenbauer et al., 2023). While early work focused on zero-bit schemes for binary pres-ence detection, real-world deployments increas-ingly demand multi-bit provenance to encode meta-data such as user IDs, model versions, or times-tamps (Yoo et al., 2024). Multi-bit attribution is inherently provider-internal . The entity hosting the model must also control the detection service. After all, even if a third party extracts an embedded identifier, they cannot map it to a real-world iden-tity without the provider’s private user database. Consequently, the provider is the ultimate root of trust for identity resolution. This dynamic prac-tically justifies white-box access to the model at detection time. Unlike zero-bit watermarking, where the detec-tor only answers a binary question of presence, multi-bit provenance requires decoding a specific message (e.g., a user ID). We represent the prove-nance message as a binary string segmented into m-bit symbols, so each symbol takes one of M = 2 m
+
+discrete values. At each watermarking step, we embed one symbol and can convey up to m bits of information. For example, a 24-bit message can be encoded as 12 symbols when m = 2 .The process of encoding these messages intro-duces a critical new requirement: message symme-try . Message symmetry means that the message itself should not systematically affect either text quality or verification outcomes. In particular, this concern arises in two places. During generation,             
+
+> arXiv:2604.13786v1 [cs.CL] 15 Apr 2026 (a) Vocabulary Partition
+> 00 01 10 11
+> 1
+> Token A BCD
+> (b) Equal-Mass Partition
+> 00 01 10 11
+> 1
+> Token A BCD
+> Figure 1: Impact of probability mass partitioning strate-gies on message symmetry under a low-entropy distribu-tion. (a) Vocabulary Partition allocates uneven probabil-ity budgets to messages that should ideally be weighted equally. (b) Equal-Mass Partition assigns a fixed proba-bility budget to each message.
+
+messages should receive comparable probability-mass budgets so that text quality does not depend on the identifier. During detection, evidence should accumulate comparably across messages so that watermark detection are not message-dependent. Ensuring this symmetry is essential for operational fairness, as it guarantees that the provider can de-liver consistent service quality and attribution relia-bility across the entire user base. Existing generative watermarks can be broadly grouped into distortionary and distribution-preserving designs. Both design lines face chal-lenges when message symmetry is required for multi-bit provenance. Distortionary schemes typically employ a vo-cabulary partition to construct the signal (Yoo et al., 2024). For a message space of size M , these methods partition the vocabulary into M disjoint sets and apply a logit bias to the subset correspond-ing to the target symbol. This approach, however, introduces severe asymmetry under low-entropy decoding. Consider a step where the model assigns probabilities {0.8, 0.1, 0.05, 0.05} to its top candi-dates, as shown in Figure 1. If the token with prob-ability 0.8 falls into the partition set for one value, embedding that value is almost free: the model out-puts its preferred token and the detector observes the signal with high probability. Conversely, for the other M − 1 values, their assigned sets may contain only low-probability tail tokens. Embed-ding these values forces the model to override its natural choice, which degrades text quality while simultaneously yielding weaker statistical evidence. Consequently, the expected evidence averaged over all messages is diluted. Distribution-preserving methods ensure the wa-termarked output preserves the base distribution when marginalized over randomness. This goal can already mitigate message-dependent distortion on the generation side. However, constrained by the requirement of black-box verification , these schemes typically prioritize stealth through mini-mal stepwise distortion (Jiang et al., 2025). This creates a fundamental bottleneck for multi-bit provenance: the evidence is often too subtle for robust message recovery. In provider-internal set-tings with white-box access, such constraints are unnecessary. A more attractive direction is to en-force message symmetry explicitly, then exploit its benefit: allocate each symbol a fixed probabil-ity budget and permit larger, controlled deviations, ensuring effective evidence accumulation. To overcome the structural asymmetry of vocab-ulary partitioning and the evidence limitations of existing distribution-preserving designs, we intro-duce QuantileMark , a white-box multi-bit water-mark based on continuous probability mass parti-tioning. At each step, QuantileMark partitions the cumulative probability interval [0 , 1) into M bins of equal probability mass and encodes a symbol by sampling within the corresponding bin (Fig-ure 2). During detection, the verifier reconstructs the same partition to compute posteriors for the la-tent bins. Equal-mass allocation enforces message symmetry by construction, and it turns symmetry into stronger and more stable stepwise evidence regardless of context entropy. In summary, our contributions are threefold. First, we introduce QuantileMark, a provenance framework that guarantees a uniform probability budget for every message symbol via quantile parti-tioning, accompanied by a white-box detector that computes posteriors for decoding. Second, we for-malize the notion of message-unbiasedness and prove that QuantileMark satisfies this property, pro-viding a theoretical guarantee for generation-side symmetry. Finally, we demonstrate that Quantile-Mark outperforms vocabulary-based baselines on C4 and LFQA in recovery and robustness, while maintaining generation quality. 
+
+2 Preliminaries 
+
+We study a provider-internal watermarking setting where a model generates a sequence x1: T using a fixed secret key K. Let ht := x<t denote the history at step t, and let p0(· | ht) denote the base next-token distribution. Our goal is to em-bed a message S = ( s1, . . . , s H ) consisting of (a) Embedding Stage     
+
+> Symbol Index i
+> & Permutation ϕ
+> Map Target Symbol si
+> to Bin Br⋆
+
+Message S
+
+[s1, s2=10 , s 3, s 4]
+
+Local Context h 
+
+Key  
+
+> 1
+> 2
+> 01
+
+Token Probability Intervals 
+
+“has” “is” “in” ... 
+
+Quantile Bins 
+
+B0 B1 B2 B3
+
+Bin-Restricted Sample    
+
+> u∼U(B2)
+
+Token covers u
+
+⇒ Output “is”  
+
+> 3
+> 4
+> Target Br⋆
+
+(b) Detection Stage                                                         
+
+> Stepwise Evidence: Step t= 1
+> 01
+> B0B1B2B3
+> Token xt
+> Overlap Mass Prob
+> pt(2)
+> pt(3)
+> ≈0≈0
+> 00 01 10 11
+> Posterior pt(r)
+> P(Rt=r|xt, h t) = Overlap Mass /Token Prob
+> Decoding (Target: Pos 2)
+> LPO
+> Pos it:242. . . 1
+> x1x2x3. . . xT
+> P
+> t:it=2
+> 00
+> 01
+> 10
+> 11
+> -10 -0.4 -0.8 . . . -2.1 -10.8
+> -10 -3.5 -0.5 . . . -1.0 -10.5
+> +8.2 +5.1 +3.3 . . . +9.4 +11.5
+> -2.5 -10 -0.9 . . . -3.2 -3.4
+> Argmax Decode ˆs2
+> Aggregated Message ˆS
+> [ˆ s1,ˆs2=10 ,ˆs3,ˆs4]
+
+Figure 2: Overview of QuantileMark, where m = 2 , H = 4 . (a) Embedding: The key-derived logic (green) maps symbol to target bin Br⋆ (blue frame). A random value u (red dashed line) is sampled uniformly within this bin, forcing the selection of the token is whose interval covers u. (b) Detection: Posteriors (blue bars) form the evidence 
+
+LPO at this step. These scores are aggregated across steps assigned to position it = 2 (right, blue columns) to decode ˆs2.
+
+H discrete symbols. Each symbol sh encodes 
+
+m bits of information and is drawn from the set 
+
+[M ] := {0, . . . , M − 1}, where M = 2 m.
+
+Position Allocation. Unlike zero-bit presence detection, recovering a multi-bit message requires locating where each symbol is embedded. A stan-dard abstraction is position allocation (Yoo et al., 2024): a keyed function maps each step t to an index it ∈ { 1, . . . , H }. This implies that step t
+
+carries evidence only about the specific message symbol sit .
+
+Vocabulary Partitioning as Multi-Bit Chan-nel. Many existing methods construct the channel by partitioning the vocabulary. At step t, the vo-cabulary is split into M disjoint sets {V (r) 
+
+> t
+
+}M −1 
+
+> r=0
+
+.To embed symbol sit , the sampler promotes tokens in V(sit ) 
+
+> t
+
+. In this paradigm, the abstract message symbol is tied directly to discrete token identities. 
+
+CDF and Quantile Function View of Sam-pling. It is convenient to represent discrete sam-pling using the cumulative distribution function (CDF) F and its inverse, the quantile function 
+
+Q(u) = F −1(u). Under an ordering of tokens at step t, each token corresponds to a specific interval on the cumulative probability interval [0 , 1) whose length equals its probability. Standard sampling is operationally equivalent to drawing u ∼ Unif[0 , 1) 
+
+and selecting the output token via x = Q(u),
+
+which returns the token whose interval contains 
+
+u. This geometric view allows us to decouple the channel from discrete token identities by defining the watermark logic directly on the continuous do-main of the quantile function. We refer to em-bedding strategies that operate on this continuous interval as quantile watermarking .
+
+3 Methodology: Equal-Mass Quantile Watermarking 
+
+We propose QuantileMark , a white-box water-marking framework designed to ensure message symmetry by defining the embedding channel (i.e., the medium where the watermark signal is injected) on the cumulative probability interval rather than vocabulary space. The framework consists of two procedures (Fig-ure 2). During generation, QuantileMark partitions the stepwise cumulative probability interval into 
+
+M equal-mass quantile bins and samples a token strictly from the bin assigned to the target message symbol. During detection, the verifier reconstructs this quantile geometry, computing the posterior probability of the latent bin to aggregate evidence and decode the message. 
+
+3.1 Setup: Message and Position Allocation 
+
+Let x1: T be the generated sequence and ht the history at step t. We embed a message S =(s1, . . . , s H ) consisting of H symbols, where each symbol sh ∈ { 0, . . . , M − 1} and M = 2 m.At each step t, we derive pseudo-random parame-ters from a secret key K and a local context window 
+
+gt (the previous w tokens). Specifically, we gener-ate a position allocation index it ∈ { 1, . . . , H } that determines which message symbol sit to embed at the current step, alongside a keyed permutation ϕt
+
+that maps this symbol to a specific target bin index on the CDF. The permutation ϕt ensures that a fixed sym-bol value is not systematically bound to the same quantile bin across steps, which is essential for the unbiasedness guarantees in Section 3.4. 
+
+3.2 Embedding via Quantile Partitioning 
+
+The core of our embedding strategy is to enforce a uniform probability budget for every symbol by operating on the continuous domain of the quantile function. This requires partitioning the unit inter-val and calculating the mass overlap to bridge the continuous design with the discrete vocabulary. 
+
+Quantile Geometry and Overlap Mass. At step t, we sort the vocabulary by probability to map each token v to a sub-interval It(v) ⊂ [0 , 1) 
+
+of length p0(v|ht). We simultaneously partition 
+
+[0 , 1) into M fixed bins Br = [ r/M, (r + 1) /M ).The alignment between token intervals and bins is captured by the overlap mass :
+
+μt(v, r ) = |It(v) ∩ Br| . (1) This explicitly quantifies the mass of v falling within Br, bridging the continuous design with the discrete vocabulary and enabling the use of partial mass from tokens that straddle bin boundaries. 
+
+Bin-Restricted Sampling. To embed the target symbol sit , we identify the target bin r⋆t = ϕt(sit ).Instead of standard sampling (drawing u ∈ [0 , 1) 
+
+globally), QuantileMark samples a random value 
+
+ut strictly within the target bin Br⋆t . The output token xt is determined by finding the token whose interval It(xt) contains ut. The resulting water-marked distribution for a chosen bin r is: 
+
+pwm (v | ht, r ) = M · μt(v, r ). (2) This sampling mechanism guarantees that ev-ery target symbol receives an identical probability budget 1/M regardless of context entropy. Con-sequently, this structurally enforces message sym-metry while effectively exploiting it: in contrast to minimal-distortion baselines like StealthInk, we concentrate the entire probability mass into the target bin, substantially boosting the stepwise evi-dence available for detection. 
+
+3.3 Decoding and Detection 
+
+The detection process follows a decode-then-test 
+
+paradigm: we first reconstruct the quantile geome-try to recover the most likely message ˆS, and then compute a detection score based on the confidence of this recovery. 
+
+Stepwise Evidence Extraction. The core of our detection strategy is to recover soft evidence about the embedding channel using teacher forcing. At each step t, the detector reconstructs the base distribution p0(· | ht) and the quantile geometry. The observed token xt occupies the interval It(xt).Given that the sampling value must lie within this interval, the posterior probability that it originated from bin r is the proportion of the token’s mass overlapping that bin: 
+
+pt(r) = P (Rt = r | xt, h t) = μt(xt, r )
+
+p0(xt | ht) . (3) Crucially, this posterior provides soft evidence. Unlike vocabulary partitioning, which forces a hard assignment (casting a vote for a single symbol and rejecting the other M −1), pt(r) distributes support proportional to the overlap mass. For example, a token straddling bins r1 and r2 yields positive support for both while decisively ruling out non-overlapping bins. To aggregate this evidence numerically, we com-pute the Log Posterior Odds (LPO): 
+
+LPO t(r) = log 
+
+ pt(r)1 − pt(r)
+
+
+
+. (4) For numerical stability, we clip pt(r) to the range 
+
+[ϵ, 1 − ϵ].
+
+Message Decoding. Since the position alloca-tion it is deterministic given the key, we aggre-gate evidence for each message symbol sh inde-pendently. The decoder identifies the symbol ˆsh
+
+that maximizes the cumulative LPO across all steps assigned to index h:
+
+ˆsh = arg max  
+
+> s∈{ 0,...,M −1}
+
+X
+
+> t:it=h
+
+LPO t
+
+ ϕt(s). (5) Here, ϕt(s) maps the candidate symbol s to its corresponding bin index at step t.
+
+Sequence-Level Scoring. Once the message 
+
+ˆS = (ˆ s1, . . . , ˆsH ) is decoded, we evaluate the overall presence of the watermark. We define the implied target bin path as ˆrt = ϕt(ˆ sit ) and compute the average evidence along this path: 
+
+T (x1: T ) = 1
+
+> T
+
+PTt=1 LPO t(ˆ rt)
+
+The watermark is detected if T (x1: T ) > θ,where θ is a threshold calibrated to control the false positive rate on non-watermarked text. 
+
+3.4 Unbiasedness Properties of Equal-Mass Channelization 
+
+We assume a uniform prior over the message space. Under this assumption, the target symbol s at any given step is uniformly distributed over [M ].
+
+Definition 1 (Message-unbiasedness at a step) . Fix a context ht and key K. Let s be a target symbol drawn uniformly from [M ], and let R = ϕt(s) be the relabeled bin index. The scheme is message-unbiased if, for all tokens v,
+
+Es
+
+pwm (v | ht, R ) = p0(v | ht).
+
+Lemma 1 (Equal-mass bins imply message-unbi-asedness) . Assume ϕt maps a uniform symbol to a uniform bin in [M ], then QuantileMark is message-unbiased at step t.The proof follows from the linearity of expec-tation and the partition of unity property of the quantile bins; see Appendix A.2 for details. Message-unbiasedness ensures that, on average, the watermark introduces no distortion if the mes-sage is unknown. Crucially, this property serves as a structural pathway to satisfying the dual notion of 
+
+cipher-unbiasedness (Jiang et al., 2025), which requires the distribution to be preserved when the message is fixed but the key is randomized. 
+
+Definition 2 (Cipher-unbiasedness at a step) . Fix a context ht, a key K, and a symbol s ∈ [M ]. Let 
+
+Z be a seed random variable, and let Φt,Z denote the resulting key-conditioned permutation on [M ]
+
+produced from Z. The scheme is cipher-unbiased if, for all tokens v,
+
+EZ [pwm (v | ht, Φt,Z (s))] = p0(v | ht).
+
+QuantileMark satisfies Definition 2 whenever, for any fixed s, the induced bin index Φt,Z (s) is uniform on [M ] under the seed distribution. The proof is given in Appendix A (Lemma 3). 
+
+4 Experiments 
+
+We evaluate QuantileMark in a provider-internal setting, focusing on accurate multi-bit recovery from clean generations and robustness against re-alistic deployment mismatches. Our results con-firm that QuantileMark significantly improves de-tection stability over vocabulary-based baselines while maintaining generation quality. 
+
+4.1 Experimental Setup 
+
+We conduct experiments on two tasks: open-ended continuation on C4 (Raffel et al., 2020) using Llama-2-7B (Touvron et al., 2023), and long-form QA on ELI5/LFQA (Fan et al., 2019) using Llama-3.1-8B-Instruct (Grattafiori et al., 2024). We pair each task with a suitable model, using a base model for continuation and an instruction-tuned model for QA, to ensure the evaluation reflects realistic deployment behavior. Unless otherwise stated, re-sults are averaged over 500 watermarked and 500 non-watermarked samples per task, all fixed to a length of T = 300 tokens. We use human refer-ences as non-watermarked text to simulate realistic detection against organic text. Appendix E.1 addi-tionally evaluates against non-watermarked model generations to isolate the watermark signal from distributional mismatch. We embed a 24-bit message using top-k=128 
+
+sampling and temperature τ =1 .0. We com-pare QuantileMark ( m=2 ) against MPAC (Yoo et al., 2024) ( m=2 , γ =0 .25 , δ =2 .0) and Steal-thInk (Jiang et al., 2025) ( m=1 ), following the recommended settings for best trade-offs. Detec-tion of QuantileMark reconstructs geometry via teacher forcing on output tokens (adding chat tem-plate headers for Instruct models) with matching top-k/τ ; detector mismatch is analyzed separately C4 LFQA Method Bit Acc ↑ AUC ↑ TPR@ 1%FPR ↑ PPL ↓ Time (s) ↓ Bit Acc ↑ AUC ↑ TPR@ 1%FPR ↑ PPL ↓ Time (s) ↓                                         
+
+> No watermark –––7.684 ––––2.647 –MPAC 0.9702 0.9887 0.9800 10.351 0.103 0.8770 0.9756 0.8056 3.793 0.111
+> StealthInk 0.9003 0.9869 0.7920 8.235 0.645 0.7447 0.8301 0.2425 2.636 1.013
+> QuantileMark (ours) 0.9893 0.9995 0.9840 7.404 0.343 0.9500 0.9997 1.0 2.759 0.348
+
+Table 1: Generation and detection performance on C4 and LFQA with 24 bits embedded in 300 tokens. Time (s) denotes average detection time per sample.                   
+
+> 50 100 150 200 250 300 350 400 450
+> 0.6
+> 0.8
+> 1
+> Tokens T
+> Bit accuracy
+> (a) Message Recovery
+> QuantileMark
+> MPAC
+> StealthInk
+> 50 100 150 200 250 300 350 400 450
+> 0.6
+> 0.8
+> 1
+> Tokens T
+> Detection AUC
+> (b) Presence Detection
+> QuantileMark
+> MPAC
+> StealthInk
+
+Figure 3: Varying detection length T on Llama-3.1-8B-Instruct for LFQA. 
+
+in Section 4.4. We report Bit Acc (bit-wise accu-racy, averaged over 500 watermarked samples), de-tection AUC, TPR@1%FPR, and perplexity (PPL). 
+
+4.2 Generation and Detection Results 
+
+Table 1 summarizes the generation and detection performance of different methods on two tasks. QuantileMark achieves consistently strong multi-bit recovery and near-saturated detection, with high bit accuracy and AUC and TPR@1%FPR close to 1.0 on both C4 and LFQA. Notably, these gains per-sist on LFQA, where the next-token distribution is often more peaked and vocabulary-partition meth-ods can allocate highly uneven probability mass across symbol values, destabilizing detection. In terms of generation quality, QuantileMark maintains PPL close to the unwatermarked base-line; minor fluctuations (e.g., 7.404 vs 7.684 on C4) fall within expected finite-sample randomness, con-sistent with our theoretical message-unbiasedness. In contrast, MPAC incurs a noticeable PPL increase due to distortionary green-list bias, while Steal-thInk shows weaker recovery at the same message length. This performance comes with negligible operational overhead: although detection requires a model forward pass, the computational cost is strictly bounded by the generation latency itself, making verification inherently affordable for any provider capable of hosting the service. Varying the generated length T (Figure 3) con-firms that QuantileMark accumulates evidence effi-ciently, reaching high recovery and detection rates with fewer tokens than baselines. We next vary the symbol size m while keeping the message length fixed at 24 bits. Figure 4 shows a trade-off between symbol resolution and reliable evidence. Moderate choices ( m = 2 , 3) perform best, while m = 4 sharply reduces recovery even though detection remains strong. Intuitively, since a single observed token reveals limited informa-tion about the latent bin (Appendix A.3), increas-ing m under a fixed-length budget fails to provide sufficient supporting tokens for M -ary decisions. This effectively dilutes the information per sym-bol, explaining the drop in bit accuracy observed at m = 4 .The lower AUC at m = 1 stems from the sharp CDF geometry of human text. Human tokens often fall in the tail, yielding nearly deterministic bin posteriors. With binary partitions ( M = 2 ), the detector’s maximization step can easily find a spu-rious message that fortuitously aligns with these strong signals. Increasing to M = 4 makes such chance agreement statistically much harder—as each token supports a specific bin while rejecting three others—thereby improving separation. 
+
+4.3 Robustness to Scrubbing Attacks on C4 
+
+We evaluate robustness on C4 under four scrub-bing attacks commonly used in prior multi-bit wa-No attack Copy-paste ( ϵ = 0 .2) Synonym ( ϵ = 0 .2) Deletion ( ϵ = 0 .1) Paraphrase (Dipper) Method Bit Acc ↑ AUC ↑ Bit Acc ↑ AUC ↑ Bit Acc ↑ AUC ↑ Bit Acc ↑ AUC ↑ Bit Acc ↑ AUC ↑                              
+
+> MPAC 0.9702 0.9887 0.9438 0.9849 0.9476 0.9876 0.8811 0.9750 0.7201 0.7936
+> StealthInk 0.9003 0.9869 0.8497 0.9550 0.8608 0.9701 0.7839 0.8854 0.6829 0.6536
+> QuantileMark 0.9893 0.9995 0.9730 0.9972 0.9712 0.9963 0.8712 0.9426 0.7640 0.7609
+
+Table 2: Robustness on C4 with 24 bits embedded in 300 tokens. The attack intensities ϵ denote the fraction of tokens modified.         
+
+> Bit Accuracy Detection AUC
+> 0
+> 0.25
+> 0.5
+> 0.75
+> 1
+> Score
+> m= 1 m= 2 m= 3 m= 4
+
+Figure 4: LFQA ablation of m for QuantileMark with 24 bits embedded. We vary the bits per symbol m (
+
+M = 2 m quantile bins). 
+
+termark evaluations (Jiang et al., 2025): copy-paste mixing with non-watermarked text, syn-onym substitution, random deletion, and paraphras-ing. Table 2 reports bit accuracy and detection AUC; full attack specifications are described in Appendix D.2. While the watermark resists local lexical edits (copy-paste and substitution), deletions and para-phrasing prove significantly more damaging. These attacks induce synchronization drift and degrade the context quality required to reconstruct the quan-tile geometry, thereby hindering the recovery of long multi-bit messages. Robust detection under paraphrasing remains an open challenge across all existing multi-bit watermarking schemes. 
+
+4.4 Detector-Generator Mismatch on LFQA 
+
+We evaluate detector-generator mismatch when text is generated with (k=128 , τ =1 .0) but detec-tor varies (ˆk, ˆτ ). Figure 5 shows that performance degrades smoothly under moderate mismatch: bit accuracy remains high across ˆτ ∈ [0 .8, 1.2] and remains stable even for small detector top-ˆk (e.g., 
+
+ˆk = 8 ). This robustness is expected in our white-box setting because the detector reconstructs quan-tile geometry from logits: moderate changes in truncation or temperature often preserve the prob-ability ordering on the head of the distribution, so                    
+
+> 0.60.70.80.911.11.21.31.4
+> 0.8
+> 0.9
+> 1
+> Detector temperature ˆτ
+> Bit accuracy
+> (a) Temperature mismatch ( ˆτ)
+> BitAcc
+> AUC 0.8
+> 0.9
+> 1
+> Detection AUC
+> 816 32 64 128 256 |V|
+> 0.8
+> 0.9
+> 1
+> Detector top-ˆk
+> Bit accuracy
+> (b) Top-kmismatch ( ˆk)
+> BitAcc
+> AUC 0.8
+> 0.9
+> 1
+> Detection AUC
+
+Figure 5: Detector-generator mismatch analysis on Llama-3.1-8B-Instruct. 
+
+overlap masses and channel posteriors shift gradu-ally rather than catastrophically. 
+
+4.5 Utility on Downstream Tasks 
+
+Finally, we assess whether watermarking degrades downstream utility under top-k=128 sampling. For text summarization, we use BART-large (Lewis et al., 2020) evaluated on CNN/DailyMail (Her-mann et al., 2015). For machine translation, we run Multilingual BART (mBART) (Liu et al., 2020) on the WMT’14 En-Ro corpus (Bojar et al., 2014). We also include a reference-free LFQA evaluation using GPT-4o, with the full experimental setup and results detailed in Appendix E.2. Table 3 shows that QuantileMark consistently outperforms other watermarking baselines, achiev-ing utility scores that are nearly identical to the no-watermark upper bound across both tasks. 
+
+5 Related Work 
+
+We focus on generative watermarking schemes that modify the sampling process, distinguishing be-tween distortionary partitioning and distribution-Machine translation Summarization Method BLEU ↑ R-1 ↑ BERT ↑ R-1 ↑ BERT ↑ PPL ↓                          
+
+> No watermark 17.55 49.13 35.82 37.42 21.40 5.18 MPAC 16.89 47.98 34.89 36.81 20.57 5.81 StealthInk 17.42 48.97 35.75 37.08 20.83 5.72 QuantileMark 17.41 48.99 35.99 37.44 21.37 5.21
+> Table 3: Downstream generation quality under top-
+> k=128 sampling. For machine translation, we report BLEU, ROUGE-1 (R-1), and BERTScore (BERT). For summarization, we report ROUGE-1, BERTScore, and perplexity (PPL).
+
+preserving methods. 
+
+5.1 Distortionary Vocabulary Partitioning Multi-bit Watermarks 
+
+A dominant line of work constructs a channel by partitioning the vocabulary and biasing the next token distribution toward a key dependent sub-set. The watermark of Kirchenbauer et al. (2023) introduces green list promotion with statistical tests on set hits, followed by analyses of calibra-tion and robustness under edits (Piet et al., 2023; Kirchenbauer et al., 2024). Multi bit extensions retain the same mechanism while adding structure across positions, for example via position alloca-tion and multiple colorings in MPAC (Yoo et al., 2024), or via coding designs over partition assign-ments (Wang et al., 2024; Fernandez et al., 2023). Several works improve robustness by adding error correcting codes from the view of message encod-ing (Chao et al., 2025; Qu et al., 2024). However, standard partitioning schemes inher-ently suffer from probability mass imbalance, par-ticularly in peaked distributions. While recent heuristics like rank-based partitioning (Park et al., 2025) or entropy-based gating (Gu et al., 2025) mitigate this issue, they remain adaptive approxi-mations. In contrast, QuantileMark addresses this structurally by redefining channels in CDF inter-val, guaranteeing an equal probability budget by construction rather than adaptive rejection. 
+
+5.2 Distribution-preserving and Unbiased Watermarks 
+
+A parallel line of work aims to preserve the base model distribution in expectation over the water-mark randomness. Two complementary perspec-tives predominate in the literature: RNG-space 
+
+constructions, which define a measure-preserving transformation on the sampling randomness (Kudi-tipudi et al., 2024), and reweighting constructions, which formulate watermarking as a randomized modification of the stepwise token distribution (Hu et al., 2024). 
+
+RNG-space distortion-free watermarks. Ku-ditipudi et al. (2024) propose distortion-free water-marking by mapping a key-derived random num-ber sequence to samples from the language model, and instantiate the framework with inverse trans-form sampling and exponential minimum sam-pling. SynthID-Text introduces Tournament sam-pling (Dathathri et al., 2024). Multi-bit extensions encode information by transforming the sampling randomness based on the message: DISC employs cyclic shifts (Kordi Boroujeny et al., 2024), while MirrorMark utilizes measure-preserving mirror-ing (Jiang et al., 2026). 
+
+Expectation-unbiased reweighting. Hu et al. (2024) formalize unbiased watermarking as ran-domized reweighting of the stepwise distribution. For autoregressive generation, preserving the se-quence distribution requires appropriate indepen-dence of the watermark codes across steps (Hu et al., 2024). DiPmark (Wu et al., 2024) and StealthInk (Jiang et al., 2025) further explore distribution-preserving designs, with StealthInk emphasizing text-only detection and multi-bit provenance. QuantileMark shares the design of defining wa-termarks through structured sampling randomness but leverages white-box access to optimize for de-tection reliability rather than black-box stealth. Un-like prior schemes that rely on randomized vocabu-lary partitions, QuantileMark enforces equal-mass channelization on the cumulative probability inter-val. This structural design substantially boosts the stepwise statistical evidence available for decoding, all while maintaining the theoretical unbiasedness of the generation process. 
+
+6 Conclusion 
+
+We presented QuantileMark , a white-box multi-bit watermark designed to mitigate the challenges of provenance embedding in low-entropy regimes. Instead of relying on vocabulary partitioning, Quan-tileMark defines the channel in cumulative prob-ability interval by dividing it into M equal-mass bins. This structural approach ensures that every symbol receives a fixed probability budget, provid-ing a basis for message symmetry where messages are treated with consistent statistical weight. Com-plementing this embedding, we derived a teacher-forced detector that exploits the reconstructed quan-tile geometry to compute posteriors over latent bins, enabling a coherent decode-then-test pro-cess. Empirical results across base and instruction-tuned models demonstrate the feasibility and effec-tiveness of this design, showing improved recov-ery rates and detection performance compared to vocabulary-based baselines, while preserving gen-eration quality. QuantileMark thus offers a practi-cally viable solution for provider-internal attribu-tion that balances message symmetry with opera-tional utility. 
+
+Limitations 
+
+Our work has several limitations that suggest direc-tions for future research. First, robustness remains limited under heavy paraphrasing and other edits that substantially rewrite local contexts, since such changes can disrupt position allocation and the seed stream used for per-step relabeling and evidence aggregation. Improving paraphrase resilience may require stronger position allocation strategies that tolerate sequence misalignment and a PRF or seed-ing logic that depends less on fragile local token neighborhoods while remaining reproducible for the key holder. Second, our study focused on a provider-internal setting and assumed white-box access at detection time, which rules out public verification from text alone in the current form. Al-though detection may transfer to settings with a proxy model, a distilled model, or a closely related model family sharing the same tokenizer, we did not systematically study how model mismatch and distribution shift affect the reconstructed geometry and downstream recovery. Finally, our experimen-tal evaluation was limited in scope, utilizing a small set of tasks and model families. Extending eval-uation across broader decoding policies settings would better characterize the generality of quantile-based channelization for multi-bit provenance. 
+
+Ethical Considerations 
+
+The main ethical goal of multi-bit watermarking is accountability. It allows providers to trace mali-cious outputs, such as disinformation, back to the responsible user. While this naturally raises privacy concerns about user surveillance, the risk is limited because the watermark is passive. It only matters if a user shares the generated text publicly; if the text remains private, the watermark is harmless. Furthermore, our provider-internal design protects user privacy better than black-box schemes. The embedded ID is meaningless to third parties. Only the model provider can extract the signal and link it to a real user. Ultimately, while providers have this tracking ability, they must use it strictly for safety and compliance, guided by strong privacy policies, rather than for invasive profiling. 
+
+Acknowledgements 
+
+This work was supported by Beijing Natural Sci-ence Foundation (L253001), Key Laboratory of Science, Technology and Standard in Press Indus-try (Key Laboratory of Intelligent Press Media Technology) and National Engineering Research Center of New Electronic Publishing Technologies. We appreciate the anonymous reviewers for their helpful comments. Xiaojun Wan is the contact au-thor. 
+
+References          
+
+> Ondrej Bojar, Christian Buck, Christian Federmann, Barry Haddow, Philipp Koehn, Johannes Leveling, Christof Monz, Pavel Pecina, Matt Post, Herve Saint-Amand, Radu Soricut, Lucia Specia, and Ale s Tam-chyna. 2014. Findings of the 2014 workshop on statistical machine translation. In Proceedings of the Ninth Workshop on Statistical Machine Translation ,pages 12–58, Baltimore, Maryland, USA. Associa-tion for Computational Linguistics. Patrick Chao, Yan Sun, Edgar Dobriban, and Hamed Hassani. 2025. Watermarking language mod-els with error correcting codes. arXiv preprint arXiv:2406.10281 .Sumanth Dathathri, Abigail See, Sumedh Ghaisas, Po-Sen Huang, Rob McAdam, Johannes Welbl, Van-dana Bachani, Alex Kaskasoli, Robert Stanforth, Tatiana Matejovicova, Jamie Hayes, Nidhi Vyas, Majd Al Merey, Jonah Brown-Cohen, Rudy Bunel, Borja Balle, A. Taylan Cemgil, Zahra Ahmed, Kitty Stacpoole, and 5 others. 2024. Scalable watermark-ing for identifying large language model outputs.
+> Nat. , 634(8035):818–823. Angela Fan, Yacine Jernite, Ethan Perez, David Grang-ier, Jason Weston, and Michael Auli. 2019. ELI5: long form question answering. In Proceedings of the 57th Conference of the Association for Compu-tational Linguistics, ACL 2019, Florence, Italy, July 28- August 2, 2019, Volume 1: Long Papers , pages 3558–3567. Association for Computational Linguis-tics. Pierre Fernandez, Antoine Chaffin, Karim Tit, Vivien Chappelier, and Teddy Furon. 2023. Three bricks to consolidate watermarks for large language models.
+
+In 2023 IEEE International Workshop on Information Forensics and Security (WIFS) . IEEE. Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Abhishek Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan Schel-ten, Alex Vaughan, Amy Yang, Angela Fan, Anirudh Goyal, Anthony Hartshorn, Aobo Yang, Archi Mi-tra, Archie Sravankumar, Artem Korenev, Arthur Hinsvark, and 542 others. 2024. The llama 3 herd of models. Preprint , arXiv:2407.21783. Tianle Gu, Zongqi Wang, Kexin Huang, Yuanqi Yao, Xiangliang Zhang, Yujiu Yang, and Xiuying Chen. 2025. Invisible entropy: Towards safe and efficient low-entropy LLM watermarking. In Proceedings of the 2025 Conference on Empirical Methods in Natu-ral Language Processing , pages 6727–6744, Suzhou, China. Association for Computational Linguistics. Karl Moritz Hermann, Tomas Kocisky, Edward Grefen-stette, Lasse Espeholt, Will Kay, Mustafa Suleyman, and Phil Blunsom. 2015. Teaching machines to read and comprehend. Advances in neural information processing systems , 28. Zhengmian Hu, Lichang Chen, Xidong Wu, Yihan Wu, Hongyang Zhang, and Heng Huang. 2024. Unbiased watermark for large language models. In The Twelfth International Conference on Learning Representa-tions .Ya Jiang, Massieh Kordi Boroujeny, Surender Suresh Kumar, and Kai Zeng. 2026. Mirrormark: Adistortion-free multi-bit watermark for large language models. Preprint , arXiv:2601.22246. Ya Jiang, Chuxiong Wu, Massieh Kordi Boroujeny, Brian L. Mark, and Kai Zeng. 2025. Stealthink: A multi-bit and stealthy watermark for large language models. arXiv preprint arXiv:2506.05502 .John Kirchenbauer, Jonas Geiping, Yuxin Wen, Jonathan Katz, Ian Miers, and Tom Goldstein. 2023. A watermark for large language models. In Proceed-ings of the 40th International Conference on Machine Learning , volume 202 of Proceedings of Machine Learning Research , pages 17061–17084. PMLR. John Kirchenbauer, Jonas Geiping, Yuxin Wen, Manli Shu, Khalid Saifullah, Kezhi Kong, Kasun Fernando, Aniruddha Saha, Micah Goldblum, and Tom Gold-stein. 2024. On the reliability of watermarks for large language models. In ICLR .Massieh Kordi Boroujeny, Ya Jiang, Kai Zeng, and Brian Mark. 2024. Multi-Bit Distortion-Free Water-marking for Large Language Models. arXiv preprint arXiv:2402.16578 .Kalpesh Krishna, Yixiao Song, Marzena Karpinska, John Wieting, and Mohit Iyyer. 2023. Paraphras-ing evades detectors of ai-generated text, but retrieval is an effective defense. In Proceedings of the 37th International Conference on Neural Information Pro-cessing Systems , NIPS ’23, Red Hook, NY, USA. Curran Associates Inc. Rohith Kuditipudi, John Thickstun, Tatsunori Hashimoto, and Percy Liang. 2024. Robust distortion-free watermarks for language models. 
+
+Transactions on Machine Learning Research .Mike Lewis, Yinhan Liu, Naman Goyal, Marjan Ghazvininejad, Abdelrahman Mohamed, Omer Levy, Veselin Stoyanov, and Luke Zettlemoyer. 2020. Bart: Denoising sequence-to-sequence pre-training for nat-ural language generation, translation, and comprehen-sion. In Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics , pages 7871–7880. Yinhan Liu, Jiatao Gu, Naman Goyal, Xian Li, Sergey Edunov, Marjan Ghazvininejad, Mike Lewis, and Luke Zettlemoyer. 2020. Multilingual denoising pre-training for neural machine translation. Transactions of the Association for Computational Linguistics , 8. OpenAI, :, Aaron Hurst, Adam Lerer, Adam P. Goucher, Adam Perelman, Aditya Ramesh, Aidan Clark, AJ Ostrow, Akila Welihinda, Alan Hayes, Alec Radford, Aleksander M ˛ adry, Alex Baker-Whitcomb, Alex Beutel, Alex Borzunov, Alex Carney, Alex Chow, Alex Kirillov, and 401 others. 2024. Gpt-4o system card. Preprint , arXiv:2410.21276. OpenAI. 2022. ChatGPT: Optimizing language mod-els for dialogue. Website. https://openai.com/ blog/chatgpt .Shinwoo Park, Hyejin Park, Hyeseon Ahn, and Yo-Sub Han. 2025. Watermod: Modular token-rank parti-tioning for probability-balanced llm watermarking. 
+
+Preprint , arXiv:2511.07863. Julien Piet, Chawin Sitawarin, Vivian Fang, Norman Mu, and David Wagner. 2023. Mark my words: An-alyzing and evaluating language model watermarks. 
+
+arXiv preprint arXiv:2312.00273 .Wenjie Qu, Dong Yin, Zixin He, Wei Zou, Tianyang Tao, Jinyuan Jia, and Jiaheng Zhang. 2024. Provably Robust Multi-bit Watermarking for AI-generated Text via Error Correction Code. arXiv preprint arXiv:2401.16820 .Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, and Peter J Liu. 2020. Exploring the lim-its of transfer learning with a unified text-to-text transformer. Journal of machine learning research ,21(140). Hugo Touvron, Louis Martin, Kevin Stone, Peter Al-bert, Amjad Almahairi, Yasmine Babaei, Nikolay Bashlykov, Soumya Batra, Prajjwal Bhargava, Shruti Bhosale, and 1 others. 2023. Llama 2: Open foun-dation and fine-tuned chat models. arXiv preprint arXiv:2307.09288 .Lean Wang, Wenkai Yang, Deli Chen, Hao Zhou, Yankai Lin, Fandong Meng, Jie Zhou, and Xu Sun. 2024. Towards codable watermarking for injecting multi-bits information to LLMs. In The Twelfth Inter-national Conference on Learning Representations .Yihan Wu, Zhengmian Hu, Hongyang Zhang, and Heng Huang. 2024. Dipmark: A stealthy, efficient and resilient watermark for large language models. In 
+
+Proceedings of the 41st International Conference on Machine Learning .Zhiguang Yang, Gejian Zhao, and Hanzhou Wu. 2025. Watermarking for large language models: A survey. 
+
+Mathematics , 13(9):1420. KiYoon Yoo, Wonhyuk Ahn, and Nojun Kwak. 2024. Advancing beyond identification: Multi-bit water-mark for large language models. In Proceedings of the 2024 Conference of the North American Chap-ter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers) , pages 4031–4055, Mexico City, Mexico. As-sociation for Computational Linguistics. 
+
+A Channel Geometry and Message-Unbiasedness 
+
+This appendix collects auxiliary results that com-plement Section 3.2–3.4. We reuse the stepwise channel geometry from the main text but switch to a context-level notation by dropping the step index. Fix a context h and its decoding distribu-tion p0(· | h). Define the discrete CDF Fh, to-ken CDF intervals Ih(y), equal-width quantile bins 
+
+{Br}r∈[M ], and overlap mass 
+
+μh(y, r ) := |Ih(y) ∩ Br|
+
+exactly as in Section 3.2. 
+
+A.1 Basic Overlap Identities Lemma 2 (Basic overlap identities) . For every con-text h: 
+
+> M−1
+
+X
+
+> r=0
+
+μh(y, r ) = |Ih(y)| = p0(y | h), ∀y ∈ V ,
+
+(6) 
+
+X
+
+> y∈V
+
+μh(y, r ) = |Br| = 1
+
+M , ∀r ∈ [M ]. (7) 
+
+Proof. Equation (6) holds because {Br}r parti-tions [0 , 1) . Equation (7) holds because {Ih(y)}y
+
+partitions [0 , 1) .
+
+A.2 Unbiasedness Notions: Message and Cipher 
+
+We recall two notions introduced in the main text. Message-unbiasedness is defined in Definition 1, and cipher-unbiasedness (a StealthInk-style view-point) is defined in Definition 2. In this appendix we use a context-level notation by dropping the step index: fix a context h and the correspond-ing base distribution p0(· | h). The overlap mass 
+
+μh(y, r ) is defined exactly as in Section 3.2, and the per-channel distribution satisfies 
+
+pwm (y | h, r ) = M μ h(y, r ). (8) We now give the proof of Lemma 1, which is stated in the main text. 
+
+Proof of Lemma 1. Fix h. By assumption, ϕ maps a uniform symbol to a uniform bin, so R = ϕ(s) is uniform on [M ] when s is uniform on [M ]. There-fore, for any token y ∈ V ,
+
+Es[pwm (y | h, R )] = ER[pwm (y | h, R )] = 1
+
+M 
+
+> M−1
+
+X
+
+> r=0
+
+pwm (y | h, r )= 1
+
+M 
+
+> M−1
+
+X
+
+> r=0
+
+M μ h(y, r )= 
+
+> M−1
+
+X
+
+> r=0
+
+μh(y, r )= p0(y | h), (9) where the last equality uses (6). 
+
+Lemma 3 (Uniform cipher-induced relabeling im-plies cipher-unbiasedness) . Fix (h, s ). Assume that under the seed prior in Definition 2, the key-derived permutation Φ induces R = Φ( s) that is uniform on [M ]. Then for every token y ∈ V ,
+
+E[pwm (y | h, Φ( s))] = p0(y | h). (10) 
+
+Proof. Under the assumption, R is uniform on [M ]
+
+even with s fixed. Hence 
+
+E[pwm (y | h, Φ( s))] = ER[pwm (y | h, R )] = 1
+
+M 
+
+> M−1
+
+X
+
+> r=0
+
+pwm (y | h, r )= 1
+
+M 
+
+> M−1
+
+X
+
+> r=0
+
+M μ h(y, r )= 
+
+> M−1
+
+X
+
+> r=0
+
+μh(y, r ) = p0(y | h),
+
+(11) where the last step uses (6). A.3 Signal Dilution and Information Capacity 
+
+This subsection analyzes a fundamental decod-ing limitation: the information recoverable about the bin index is capped by the token surprisal 
+
+− log 2 p0(y | h), regardless of watermark capacity 
+
+m.
+
+Posterior Bound. Fix a context h and observed token y. Assuming a uniform prior P(R = r) = 1/M , the posterior for bin r is given by Eq. (26) :
+
+P(R = r | y, h ) = μh(y, r )/p 0(y | h). Since the overlap mass satisfies μh(y, r ) ≤ | Br| = 1 /M , the posterior is uniformly bounded: 
+
+max   
+
+> r∈[M]
+
+P(R = r | y, h ) ≤ min 
+
+
+
+1, 1
+
+M p 0(y | h)
+
+
+
+.
+
+(12) Intuitively, if a token’s probability mass p0 spans many bins ( M p 0 ≫ 1), the probability is diluted across all contained bins, preventing confident iden-tification of any single bin. 
+
+Information Cap. The information gain 
+
+∆( y) := H(R) − H(R | y, h ) is bounded by the min-entropy. Using (12): 
+
+∆( y) ≤ min {log 2 M, − log 2 p0(y | h)} . (13) This bound implies that high-probability tokens cannot carry more bits of watermark information than their own self-information. For instance, if 
+
+p0(y | h) ≥ 0.5, observing y yields at most 1 bit of information about the bin location, regardless of how large M is. Reliable multi-bit recovery there-fore relies on aggregating partial evidence across the sequence rather than identifying the bin from a single step. 
+
+A.4 Time-Averaged Bin Occupancy under a Fixed Message 
+
+This subsection models the empirical occupancy of quantile bins along a long continuation. Fix a message s1: H ∈ [M ]H and consider a length-T
+
+generated continuation x1: T . At step t, the embed-ding rule selects a target bin index 
+
+r⋆t := ϕt(sit ) ∈ [M ],
+
+where (it, ϕ t) are derived from the key K and the step seed (e.g., zt = Hash( gt) as in the main text). Define the empirical bin occupancy 
+
+ˆπT (r) := 1
+
+T
+
+> T
+
+X
+
+> t=1
+
+1{r⋆t = r}, r ∈ [M ]. (14) When ˆπT is close to uniform, the scheme exhibits a channel-hopping effect over time: although each step samples within a single bin, the visited bins cover [M ] nearly evenly at the sequence level. We formalize this effect under an idealized PRF model, conditioning on the realized sequence of step seeds. Let ZT be the set of distinct seeds appearing among {zt}Tt=1 . For each z ∈ Z T , define its multiplicity 
+
+nz := {t ∈ [T ] : zt = z} , X
+
+> z∈Z T
+
+nz = T. 
+
+(15) Because PRF outputs are functions of z, repeated seeds reuse the same (it, ϕ t). Thus, for each dis-tinct seed z, define the induced bin label 
+
+Rz := ϕz (siz ) ∈ [M ],
+
+where (iz , ϕ z ) denotes the PRF-derived pair asso-ciated with seed z. Abbreviate 
+
+ST := X
+
+> z∈Z T
+
+n2 
+
+> z
+
+, Teff := T 2
+
+ST
+
+. (16) Here Teff acts as an effective sample size: repeated seeds inflate ST and reduce concentration. 
+
+Proposition 1 (Key-random occupancy is near-u-niform, with an effective sample size) . Assume an idealized PRF model in which, conditional on the realized seed sequence (z1, . . . , z T ), the pairs {(iz , ϕ z )}z∈Z T are independent across dis-tinct seeds, and each ϕz is a uniform random per-mutation on [M ] independent of iz . Then for any fixed message s1: H and any r ∈ [M ],
+
+E[ˆ πT (r) | (z1, . . . , z T )] = 1
+
+M . (17) Moreover, for any ϵ > 0, let z := ( z1, . . . , z T ).
+
+P
+
+
+
+ˆπT (r) − 1
+
+M ≥ ϵ z
+
+
+
+≤ 2 exp 
+
+
+
+− 2ϵ2T 2
+
+ST
+
+
+
+= 2 exp  −2ϵ2Teff 
+
+ .
+
+(18) 
+
+Proof. Condition on (z1, . . . , z T ). Grouping re-peated seeds rewrites (14) as a weighted sum over distinct seeds: 
+
+ˆπT (r) = X
+
+> z∈Z T
+
+nz
+
+T 1{Rz = r}. (19) Under the permutation assumption, for any fixed symbol d ∈ [M ] the image ϕz (d) is uniform on 
+
+[M ], so Rz = ϕz (siz ) is uniform on [M ] and 
+
+E[1{Rz = r} | (z1, . . . , z T )] = 1/M , prov-ing (17). For concentration, let Xz := 1{Rz = r} ∈ {0, 1} and weights wz := nz /T . The variables 
+
+{Xz }z∈Z T are independent and wz (Xz − EXz ) ∈
+
+[−wz , w z ]. Applying the standard weighted Ho-effding inequality yields 
+
+P
+
+ X
+
+> z∈Z T
+
+wz
+
+
+
+Xz − 1
+
+M
+
+
+
+≥ ϵ z
+
+
+
+≤ 2 exp − 2ϵ2
+
+P 
+
+> z∈Z T
+
+w2
+
+> z
+
+!
+
+.
+
+(20) Substituting P 
+
+> z
+
+w2 
+
+> z
+
+= P 
+
+> z
+
+(nz /T )2 = ST /T 2
+
+gives (18). This proposition highlights a purely key-driven 
+
+channel-hopping effect. Even with a fixed message 
+
+s1: H , the target mapping r⋆t visits bins nearly uni-formly over time. This uniform coverage is critical for preventing structural bias , ensuring that a de-terministic message does not continuously target a small subset of bins, which would otherwise induce a perceptible distributional shift. Crucially, this uniformity ( ˆπT (r) ≈ 1/M ) de-scribes the distribution of the target labels , not necessarily the token statistics of unwatermarked text. The PRF construction achieves a dual goal: it generates a target distribution that is statistically near-uniform (preventing the systematic overuse of any single bin) while remaining fully determinis-tic and reproducible for the key holder (enabling decoding). Finally, the effective sample size Teff 
+
+accounts for the redundancy caused by seed colli-sions: repeated seeds force the reuse of PRF out-puts, thereby reducing the number of independent samples and slowing the convergence to uniformity. 
+
+B Detection as a Composite GLRT with LPO Evidence 
+
+This appendix formalizes the detection process as a Generalized Likelihood Ratio Test (GLRT) and justifies the use of Log Posterior Odds (LPO) as the stepwise evidence metric. 
+
+B.1 Hypotheses and the Composite Alternative 
+
+Let x1: T be an observed continuation and ht = x<t .We test 
+
+H0 : x1: T ∼ p0, (21) 
+
+H1 : x1: T ∼ pwm (· | s) for some message s ∈ S .
+
+(22) We assume the detector has white-box access to the model and can reconstruct p0(· | ht) via teacher forcing. All PRF-derived assignments are reproducible because they are derived per step from the secret key and a hash of a local context 
+
+gt = xt−w:t−1 in the generated stream. 
+
+B.2 Sequence Likelihood under a Fixed Message 
+
+At each step, a message symbol determines a tar-get channel index r⋆t ∈ [M ] (after relabeling), and the per-step watermarked distribution is pwm (xt |
+
+ht, s ) = M μ ht (xt, r ⋆t ). Using the standard autore-gressive factorization, we write 
+
+pwm (x1: T | s) = 
+
+> T
+
+Y
+
+> t=1
+
+pwm (xt | ht, s )=
+
+> T
+
+Y
+
+> t=1
+
+M μ ht (xt, r ⋆t ),p0(x1: T ) = 
+
+> T
+
+Y
+
+> t=1
+
+p0(xt | ht).
+
+(23) 
+
+B.3 Decode-then-Test Equals a GLRT 
+
+The generalized likelihood ratio statistic for H0
+
+versus the composite alternative H1 is 
+
+ΛGLRT (x1: T ) := max s∈S pwm (x1: T | s)
+
+p0(x1: T ) . (24) Let ˆs ∈ arg max s∈S log pwm (x1: T | s) be the de-coded message. Then the decode–then–test score 
+
+TGLRT (x1: T ) := log pwm (x1: T | ˆs) − log p0(x1: T )
+
+(25) equals log Λ GLRT (x1: T ) up to tie-breaking. 
+
+B.4 Channel Posterior and Token Evidence 
+
+Introduce a latent channel variable Rt ∈ [M ] in-dicating which quantile bin generated token xt.Given teacher-forced reconstruction of p0(· | ht)
+
+and the overlap geometry, 
+
+P(Rt = r | xt, h t) = μht (xt, r )
+
+p0(xt | ht) . (26) We define per-token log-posterior odds (LPO) evi-dence for the channel event Rt = r:
+
+LPO t(r) := log P(Rt = r | xt, h t)1 − P(Rt = r | xt, h t) . (27) To avoid overloading watermark-level hypothe-ses, define the event-level hypotheses G1(r) :
+
+Rt = r and G0(r) : Rt̸ = r. Assume a uniform prior P(Rt = r) = 1 /M .
+
+Lemma 4 (Token LPO as an event-level likelihood ratio up to a constant) . Let the mixture under G0(r)
+
+be 
+
+p(xt | G0(r)) = 1
+
+M − 1
+
+X 
+
+> j̸=r
+
+p(xt | Rt = j).
+
+Then 
+
+LPO t(r) = log p(xt | G1(r)) 
+
+p(xt | G0(r)) − log( M − 1) .
+
+(28) 
+
+Proof. By Bayes’ rule, 
+
+P(Rt = r | xt, h t)
+
+P(Rt̸ = r | xt, h t)= p(xt | Rt = r) P(Rt = r)
+
+P  
+
+> j̸=r
+
+p(xt | Rt = j) P(Rt = j)= p(xt | Rt = r)
+
+P  
+
+> j̸=r
+
+p(xt | Rt = j)= 1
+
+M − 1 · p(xt | Rt = r)
+
+p(xt | G0(r)) .
+
+Taking logs yields the claim. 
+
+B.5 Comparison: LPO vs. LLR 
+
+For a fixed decoded message, the standard Log-Likelihood Ratio (LLR) evidence is: 
+
+LLR t(r) := log pwm (xt | ht, r )
+
+p0(xt | ht) = log M +log pt(r).
+
+(29) While LLR and LPO are functionally related via 
+
+LPO t(r) = LLR t(r) − log M − log(1 − pt(r)) ,LPO offers distinct numerical advantages. 
+
+Symmetry and Dynamic Range. We implement a clipped posterior pt(r) ∈ [ϵ, 1 − ϵ] (with ϵ =10 −6) for stability. • LLR is asymmetric and capped from above: 
+
+LLR t(r) ≤ log M . Even if the token is per-fectly aligned ( pt(r) ≈ 1), the positive evi-dence is limited by the bit-width m.
+
+Bit Accuracy Detection AUC 
+
+0
+
+0.25 
+
+0.5
+
+0.75 
+
+1
+
+> 0.9044
+> 0.9982
+> 0.9471
+> 0.9980
+> 0.9494
+> 0.9981
+> 0.5364
+> 0.9978
+> Score
+
+m = 1 m = 2 m = 3 m = 4 
+
+Figure 6: Performance comparison on LFQA with vary-ing bits per symbol ( m) using LLR as the token-level evidence. This serves as a complement to Figure 4, which uses LPO.                                          
+
+> Evidence Bit Acc ↑Detection AUC ↑Score on wm (μ±σ)Score on no wm (μ±σ)
+> C4
+> LPO 0.9868 0.9989 2.215 ±1.134 -2.791 ±0.531 LLR 0.9879 0.9751 -0.9069 ±0.414 -3.336 ±0.659
+> LFQA
+> LPO 0.9500 0.9997 -0.046 ±0.949 -3.152 ±0.410 LLR 0.9470 0.9980 -0.899 ±0.359 -4.291 ±0.554
+
+Table 4: Comparison of LPO and LLR evidence within QuantileMark ( m = 2 , H = 12 ) on C4 and LFQA. Score entries report mean ± standard deviation. 
+
+• LPO is symmetric and unbounded (before clipping): LPO t ∈ [−C, C ] where C ≈
+
+13 .8. This allows near-certain alignments to contribute significantly more evidence than 
+
+log M , improving separation when pt(r) →
+
+1.
+
+Empirical Validation. Table 4 and Figure 6 com-pare decoding using LPO versus LLR. While bit accuracy is similar (indicating decoding is driven by the rank order of posteriors), LPO yields higher detection AUC and better separation on C4. 
+
+C Relation to RNG Space and Reweighting Viewpoints 
+
+Section 5 surveys distribution preserving water-marking from the RNG space and reweighting viewpoints. This appendix clarifies how Quantile-Mark fits into the broader landscape of distribution-preserving watermarks, specifically comparing the handling of randomness and reweighting mecha-nisms. C.1 RNG-Space Discretization and Unbiasedness 
+
+Standard distortion-free schemes typically define a measure-preserving map on the sampling ran-domness ut ∈ [0 , 1) , ensuring xt ∼ p0 for ev-ery fixed message. In contrast, QuantileMark dis-cretizes the RNG space [0 , 1) into M disjoint bins and restricts sampling to a specific bin Br⋆ . Con-ceptually, this partitions the entropy source into a watermark-controlled variable (the bin index) and residual stochasticity (uniform sampling within the bin). While this restriction implies the distribution is distorted for a fixed message, Lemma 1 proves that the scheme recovers p0 when marginalized over the message or key. This design prioritizes mes-sage symmetry over strict per-message stealth. In provider-internal settings, this trade-off is advan-tageous: it maximizes the statistical evidence for detection while maintaining fairness and unbiased-ness on average across the user base. 
+
+C.2 Vocabulary Shuffling versus CDF Message Relabeling 
+
+Some unbiased reweighting rules rely on shuffling a vocabulary order before applying accept amplify style operations (Hu et al., 2024; Jiang et al., 2025). QuantileMark does not require vocabulary shuf-fling. It keeps the CDF geometry fixed by the model induced probability ordering and uses only a low dimensional relabeling on [M ].At each step, the PRF produces a message in-dex assignment it and a permutation ϕt on [M ].The permutation relabels message symbols into bin indices, and the bins themselves are defined by equal mass partitioning of the stepwise CDF. The randomized object is thus an element of [M ]
+
+or a permutation on [M ], rather than a randomized mask over V. This keeps the embedding rule sim-ple and makes reconstruction straightforward in a white box setting, since the detector can rebuild the same quantile geometry from logits and evaluate overlap masses directly. 
+
+D Detailed Experiment Setup 
+
+This appendix provides additional details on data preprocessing, filtering protocols, and the configu-ration of robustness attacks used in Section 4. 
+
+D.1 Dataset Details C4 (Open-ended continuation). We utilize the 
+
+realnewslike subset of the C4 dataset (Raffel et al., 2020). For each example, we truncate the first 50 tokens to serve as the prompt and treat the subsequent text as the human reference. To en-sure valid comparisons, we first filter the dataset to retain only examples where the human reference exceeds the target evaluation length T .
+
+LFQA (Long-form Question Answering). We use the ELI5/LFQA dataset (Fan et al., 2019), where the provided questions serve directly as prompts for the model. Similar to C4, we filter for human answers that exceed length T .
+
+D.2 Attack Specifications 
+
+We evaluate robustness against four types of post-hoc editing attacks. For the first three attacks, the parameter ϵ controls the intensity of the distortion. • Copy-Paste Mixing: This attack simulates a scenario where watermarked content is em-bedded within a larger non-watermarked con-text. We construct the attacked text by mixing a fraction 1 − ϵ of the watermarked generation with a fraction ϵ of non-watermarked text. The watermarked segment is inserted contiguously to simulate a copy-paste operation. • Synonym Substitution: We replace a frac-tion ϵ of the tokens in the watermarked text with their synonyms using a predefined syn-onym dictionary, while preserving the original sentence structure. • Random Deletion: We randomly select and remove a fraction ϵ of tokens from the water-marked sequence. • Paraphrasing: We employ DIPPER (Krishna et al., 2023), a paraphrase generation model designed for controlling lexical and syntac-tic diversity. Following standard evaluation protocols, we configure DIPPER with lexical diversity L = 20 and order diversity O = 0 .
+
+E Additional Results 
+
+E.1 Model Generation as Non-Watermarked Text 
+
+In the main text, we use human references as de-tection negatives (non-watermarked text) to reflect C4 LFQA Method AUC ↑ TPR@ 1%FPR ↑ AUC ↑ TPR@ 1%FPR ↑           
+
+> MPAC 0.9993 0.986 0.9744 0.8337 StealthInk 0.9851 0.6960 0.8081 0.1824
+> QuantileMark 0.9998 0.9900 0.9985 0.9499
+
+Table 5: Detection performance on C4 and LFQA with 24 bits embedded in 300 tokens. Negatives are non-watermarked text generated by model.       
+
+> Method GPT-4o ↑
+> No watermark 4.115 MPAC 3.921 StealthInk 4.047 QuantileMark 4.109
+
+Table 6: LFQA answer quality judged by GPT-4o. Scores are on a 1–5 scale; higher is better. We ran-domly sample 500 prompts from LFQA and generate answers with a maximum length of T =300 new tokens. During evaluation, we exclude outputs shorter than 50 tokens to mitigate potential length-related bias. 
+
+a deployment setting where provenance is verified among organic text. Since our detector is model-assisted and reconstructs token-level geometry via teacher forcing, the choice of negatives can inter-act with distribution mismatch between human text and the model. To isolate the watermark signal from such mismatch, we additionally evaluate de-tection where negatives are unwatermarked gener-ations from the same base model, produced with the same prompts and decoding parameters as the watermarked texts. We report AUC and TPR at 1% FPR under this matched-model control, as Table 5 shows. 
+
+E.2 GPT-4o Judging for LFQA 
+
+We employ GPT-4o (OpenAI et al., 2024) as a reference-free judge for LFQA. The evaluator as-sesses the generated text directly and assigns a sin-gle integer score on a scale of 1 to 5. Following the protocol established by MirrorMark (Jiang et al., 2026), we design the prompt to focus exclusively on linguistic quality while explicitly ignoring arti-facts resulting from truncation. Table 6 shows the result. 
+
+GPT-4o Judge Prompt   
+
+> You are a strict and consistent text-quality evalua-tor. Use ONLY the given text; do NOT assume the author’s intent. The text may start or end abruptly because the generation length is fixed. Do NOT pe-nalize truncation or incompleteness. Do NOT judge factual correctness. Rate each field as an integer from 1 to 5. overall is an independent judgment; do NOT compute overall from the other fields (no arithmetic). Rate the following text. Return only a JSON object in exactly the following structure:
+> {"coherence": int, "clarity": int, "naturalness": int, "overall": int }
+> Text: [TEXT]
+
+E.3 Scaling to Longer Messages 
+
+We evaluate QuantileMark with longer messages embedded in a fixed sequence of T =300 tokens on LFQA, using m=2 bits per symbol.               
+
+> Message length (bits) Bit Acc ↑AUC ↑
+> 24 0.9500 0.9997 32 0.9196 0.9997 40 0.9025 0.9997 48 0.8801 0.9994 56 0.8690 0.9995
+
+Table 7: Effect of increasing message length on LFQA (T =300 , m=2 ). Detection AUC remains near-perfect, while bit accuracy degrades gracefully as each symbol receives fewer supporting tokens. 
+
+These results demonstrate that QuantileMark scales well to longer messages, maintaining robust detection performance while degrading gracefully in bit recovery accuracy. As the message grows, each symbol is allocated fewer supporting tokens, reducing the per-symbol evidence budget. 
+
+E.4 Mitigating Repeated Seeds 
+
+As noted in Section 3.1, the per-step parameters 
+
+(it, ϕ t) are derived from a hash of the local con-text window gt. When consecutive steps produce identical context hashes (seed collisions), the same bin assignment is reused, which can introduce sentence-level distributional bias even though per-step message-unbiasedness holds. A simple mitigation is to skip embedding at any step whose seed has already appeared in the current sequence, treating the skipped step as an erasure. Table 8 evaluates this strategy on LFQA with 24 bits embedded in 300 tokens.             
+
+> Method Bit Acc ↑AUC ↑PPL ↓
+> QuantileMark 0.9500 0.9997 2.759 + skip repeated seed 0.9438 0.9996 2.644
+
+Table 8: Effect of skipping repeated seeds on LFQA. Skipping slightly reduces PPL and mitigates sentence-level bias, while maintaining detection performance. 
+
+As expected, skipping reduces perplexity (con-firming that sentence-level bias is mitigated) while detection performance remains essentially un-changed, thanks to the robust evidence aggregation of the detector.

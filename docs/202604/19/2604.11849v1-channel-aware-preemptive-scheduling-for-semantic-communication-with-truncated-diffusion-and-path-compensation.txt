@@ -1,0 +1,715 @@
+Title: Channel-Aware Preemptive Scheduling for Semantic Communication with Truncated Diffusion and Path Compensation
+
+URL Source: https://arxiv.org/pdf/2604.11849v1
+
+Published Time: Wed, 15 Apr 2026 00:03:15 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+> 1
+
+# Channel-Aware Preemptive Scheduling for Semantic Communication with Truncated Diffusion and Path Compensation 
+
+Chengyang Liang, Dong Li , Senior Member, IEEE 
+
+Abstract —Semantic communication (SemCom) presents atransformative paradigm for alleviating bandwidth limitations in mobile networks by transmitting task-relevant semantic features instead of raw data bits. While SemCom systems utilizing diffusion models achieve superior generation quality, existing research treats semantic generation and wireless transmission as temporally independent processes. This separation neglects the intrinsic conflict between the multi-step iterative delays inherent in diffusion models and the time-varying fading characteristics of wireless channels. To address this discrepancy, this paper proposes a channel-aware preemptive scheduling with truncated diffusion and path compensation (CAPS-TDPC) framework. Contrary to conventional methods that require completion of the generation phase prior to transmission, the proposed framework implements a channel-driven scheduling mechanism: each user maintains a countdown inversely proportional to its instantaneous channel gain, and the user with the shortest countdown transmits immediately, regardless of whether its diffusion process has completed. This design permits the interruption of the forward diffusion process to enable “early” transmission under favorable channel conditions. In addition, a receiver-side compensation mechanism grounded in path dynamics is developed to mitigate the semantic loss resulting from such interruptions. A path deficit metric is proposed at the receiver to quantify the recovery difficulty of distinct image blocks by incorporating the velocity field of the inverse dynamics model, which allows for adaptive weighted inverse sampling. Experimental evaluations demon-strate that the proposed framework substantially reduces the end-to-end latency while maintaining the high-fidelity semantic reconstruction, thereby enhancing the system robustness in fast fading channel environments. 
+
+Index Terms —Semantic communication, channel-aware pre-emptive scheduling, diffusion models, truncated diffusion, path compensation. 
+
+I. I NTRODUCTION 
+
+# THE rapid expansion of intelligent applications, including autonomous driving, extended reality (XR), and the meta-verse, presents unprecedented challenges for wireless networks in terms of data throughput and latency reduction [1]–[5]. Conventional communication frameworks, based on Shannon’s information theory, emphasize bit-level accuracy in data trans-mission but often neglect the semantic significance and task relevance of the transmitted content [6], [7]. In contrast, within the context of next generation networks, character-ized by human-machine interaction and intelligent decision-making, achieving bit-level precision is both inefficient and unnecessary. Semantic Communication (SemCom) represents a paradigm shift by employing deep learning (DL) techniques to extract and transmit semantically meaningful features effi-ciently [8]–[10]. This approach has achieved high performance 
+
+Chengyang Liang and Dong Li are with the School of Computer Science and Engineering, Macau University of Science and Technology, Macau, China (e-mail: 3240006992@student.must.edu.mo; dli@must.edu.mo). 
+
+for image, speech, and text transmission, particularly under conditions of low signal-to-noise ratio (SNR) [11], [12]. In recent years, advancements in generative artificial intelli-gence (GenAI) have accelerated the development of SemCom. Diffusion Probabilistic Models (DPMs) have become a pivotal technology for semantic codec design, owing to their robust distributional modeling capabilities and superior generative performance [13], [14]. In our prior work, we investigated the active incorporation of channel noise into the diffusion pro-cess, thereby demonstrating the integration of wireless foun-dation for generative models. Nonetheless, current diffusion-based SemCom systems encounter a fundamental temporal limitation: diffusion models (DMs) necessitate dozens or even hundreds of iterative denoising steps to produce high-quality images [15]–[17]. In mobile environments, this extended gen-eration latency inherently conflicts with the millisecond-scale channel coherence time [18]–[20]. Existing multi-user (MU) semantic resource allocation methods derive scheduling metrics solely from channel state information (CSI) or static semantic importance, treating the generative model as a black box [13], [18], [21]. For example, Liang et al. proposed semantic-importance-aware mapping over multi-input multi-output (MIMO) fading channels [13], while Liu et al. optimized multi-modal semantic transmission using a diffusion-based game approach [19]. Lang et al. further introduced a meaning-first scheduling framework that jointly optimizes bandwidth, power, and edge computing resources under eavesdropping threats [22]. However, these methods lack awareness of the internal diffusion state and therefore cannot determine whether early transmission is feasible when channel conditions become favorable before the diffusion process completes [23]–[25]. In edge computing scenarios, computational and communication resources are inherently coupled, yet most studies optimize them independently. This decoupling limits semantic fidelity under constrained latency and computational budgets [26]–[28]. Recent works have attempted to reduce diffusion steps via latent diffusion models [15], lightweight-to-diffusion switching [16], or model quan-tization [20]. Although generative model-based SemCom systems have achieved notable advancements in improving reconstruction quality, they still encounter a fundamental trade-off between the generation latency and the time-varying characteristics of wireless channels in practical mobile deployments. Most existing diffusion-based SemCom systems adopt a sequential paradigm, in which they complete the entire forward diffusion process before transmission. This static pipeline overlooks CSI, leading to a critical dilemma: while a user waits for the diffusion process to finish, a previously favorable channel 
+
+> arXiv:2604.11849v1 [cs.IT] 13 Apr 2026 2
+
+condition may deteriorate, causing transmission failures or degraded reconstruction quality. To address this gap, this paper proposes a channel-aware preemptive scheduling with truncated diffusion and path compensation (CAPS-TDPC) framework. Specifically, at the transmitter, each user main-tains a countdown inversely proportional to its instantaneous channel gain. The user whose countdown reaches zero first is selected to transmit immediately, regardless of whether its diffusion process has completed, sending the current interme-diate semantic features. At the receiver, to recover from these incomplete features caused by early transmission, we introduce a path compensation mechanism based on flow matching, which solves an ordinary differential equation to evolve the features backward from the intermediate state to the full semantic distribution. Furthermore, to optimize reconstruction under limited computational budgets, we design a patch-wise adaptive reconstruction allocation strategy that dynamically assigns reverse steps based on each patch’s semantic im-portance and recovery difficulty. This strategy significantly enhances semantic reconstruction while maintaining limited computational overheads. The contributions of this paper are summarized as follows.  
+
+> •
+
+Channel-Aware Preemptive Scheduling Framework: 
+
+To address the temporal mismatch between diffusion generation delay and channel coherence time, this paper introduces a channel-aware preemptive scheduling frame-work that enables early transmission. Specifically, each user maintains a countdown inversely proportional to its instantaneous channel gain. The user whose countdown reaches zero first transmits its intermediate semantic features immediately, regardless of whether the diffusion process has completed. This mechanism prioritizes chan-nel quality over generation completion, transforming the conventional generation-then-transmission paradigm into a channel-driven opportunistic transmission. As a result, it effectively reduces the end-to-end semantic transmission delay while avoiding the time cost of waiting for the whole diffusion process to finish under deteriorating channel conditions.  
+
+> •
+
+Path Dynamics-Based Compensation: To address in-complete semantic evolution caused by premature trans-mission, we introduce a flow-matching-based path com-pensation framework. The generative process lost due to diffusion interruption is characterized as a path deficit on the latent semantic manifold, quantified by the velocity field of the inverse dynamics model. This deficit serves as a metric for semantic recovery difficulty. We then formulate the receiver-side semantic reconstruction as an initial value problem of ordinary differential equations constrained by channel conditions, enabling continuous trajectory completion from any intermediate state. The proposed method overcomes the limitation of traditional DMs that require a purely stochastic initial state, ensuring semantic consistency and recoverability under incomplete transmission.  
+
+> •
+
+Patch-wise Adaptive Reconstruction: Given the signifi-cant heterogeneity in semantic importance and restoration difficulty across different regions of an image, this study proposes a fine-grained, patch-level adaptive inverse dif-fusion mechanism. This mechanism integrates semantic attention weights with patch loss metrics to formulate a ratio metric representing semantic gain relative to compu-tational cost. This metric is then employed to dynamically allocate the number of inverse diffusion steps and compu-tational resources, thereby enabling semantic value-driven diffusion scheduling. In contrast to conventional uniform inversion strategies, the proposed method prioritizes the restoration of regions exhibiting high semantic value and restoration efficiency within a constrained computational budget. As a result, it substantially enhances the re-construction quality of critical semantic regions under conditions of low SNR and severe fading, while achieving an improved performance-complexity trade-off. The remainder of this paper is structured as follows. Section II introduces the system model and formulates the problem. Section III describes the proposed system, including the scheduling strategy, path dynamics modeling, and patch-wise adaptive resource allocation. Section IV presents numerical experiments and ablation studies to assess the effectiveness of the proposed framework. Finally, Section V concludes the paper. II. S YSTEM MODEL 
+
+This section presents a comprehensive system model for the proposed CAPS-TDPC SemCom framework as illustrated in Fig 1. We consider an MU uplink SemCom system, which comprises three primary components: transmitter semantic modeling coupled with forward diffusion transmitter, channel-aware preemptive scheduling integrated with channel knowl-edge, and receiver path compensation alongside the semantic reconstruction. By accounting for the temporal dimensions of both the generative process and the physical communication channel, the system facilitates early transmission prior to the completion of diffusion and ensures the accurate restoration of complete semantic information at the receiver. 
+
+A. Transmitter Model and Forward Diffusion 
+
+Consider the system containing a set of U users, indexed as u ∈ U = {1, 2, . . . , U }. In a given transmission task, each user u transmits a high-dimensional red, green, blue (RGB) image to the base station (BS), denoted as xu ∈ RH×W ×3.
+
+1) Semantic Encoding: Before undergoing the diffusion process, the image xu is initially processed by a semantic encoder Eϕ(·) based on a visual transformer (ViT). This encoder compresses the high-dimensional pixel space image into a compact latent semantic representation 
+
+zu = Eϕ(xu) ∈ RP ×d, (1) where P denotes the number of feature patches into which the image is divided, and d represents the semantic dimension of each feature patch. 
+
+2) Forward Diffusion: Unlike traditional source coding, this system considers the semantic feature zu as the initial state 
+
+zu(0) of the DM. The discrete set of diffusion time steps is defined as t ∈ { 0, 1, . . . , T }. The forward diffusion pro-cess gradually perturbs the latent representation by injecting Gaussian noise according to a predefined variance schedule. 
+
+βt ∈ (0 , 1) denotes the variance schedule at timestep t, and 3Transmitter            
+
+> Input Image
+> 𝑥 1
+> Semantic
+> Encoder 𝐸 𝜙 ⋅
+> Forward
+> Diffusion 𝑧 1𝑡 1
+> Channel -Aware
+> Scheduler
+> max hu2
+> 𝑦 𝑢 ⋆=ℎ𝑢 ⋆𝑠 𝑢 ⋆+𝑛
+> Wireless
+> Channel
+
+Receiver (BS)                      
+
+> Reverse Dynamics
+> Path Compensation
+> Path Loss
+> Patch Allocation
+> Semantic Decoder 𝐷 𝜓 ⋅
+> Reconstructed Image
+> ො𝑥 𝑢 ⋆
+> User 1
+> Input Image
+> 𝑥 2
+> Input Image
+> 𝑥 𝑈
+> ...
+> User 2
+> User U
+> Semantic
+> Encoder 𝐸 𝜙 ⋅
+> Forward
+> Diffusion 𝑧 2𝑡 2
+> Semantic
+> Encoder 𝐸 𝜙 ⋅
+> Forward
+> Diffusion 𝑧 U𝑡 𝑈
+> 𝐬 𝑢 ⋆=𝐳 𝑢 ⋆𝑡 𝑡𝑟𝑢𝑛𝑐
+> Δ𝐷 𝑝 =∥𝜆 𝑝 𝑡 𝑡𝑟𝑢𝑛𝑐
+> −𝜆 𝑝 0∥2
+> 𝐺 𝑝 =𝑉 𝑝 /𝑇 𝑝
+
+Fig. 1: Illustration of the proposed channel-aware preemptive scheduling with truncated diffusion and path compensation semantic communication system. 
+
+define αt = 1 − βt. The cumulative product is defined as 
+
+¯αt = Qts=1 αs. The diffusion process is then expressed as 
+
+zu(t) = √¯αt zu(0) + √1 − ¯αt ϵ, (2) where ϵ ∼ N (0 , 1) denotes the standard Gaussian diffusion noise, while αt is a parameter defined by the predetermined noise scheduling variance. Throughout this procedure, all fea-ture patches consistently share the identical forward diffusion time step tu. We distinguish between two types of noise in the system: (1) diffusion noise ϵ ∼ N (0 , 1) , introduced in the generative process; (2) channel noise n ∼ CN (0 , σ 2
+
+> n
+
+),introduced for wireless transmission. 
+
+B. Channel-Aware Preemptive Scheduling and Channel Trans-mission 
+
+The physical layer wireless channel is characterized as a narrowband flat fading channel. During a given transmission time slot, the channel fading coefficient from user u to the BS is hu ∼ CN (0 , σ 2
+
+> h
+
+). To optimize the reconstruction gain and minimize the generation delay, the system initiates transmission prior to the completion of the diffusion process. Instead, we implement a channel-driven preemptive scheduling mechanism. The BS selects the user with the best instanta-neous channel condition to transmit immediately. The system assesses a channel clock for each user, defined as T cu = 1 /|hu|2, which reflects the instantaneous channel quality. A smaller T cu indicates a better channel and a shorter countdown. The BS determines the user for transmission by employing the scheduling metric Su = T cu = 1 
+
+> |hu|2
+
+. Upon selection, the designated user promptly terminates the forward dif-fusion process and transmits the current intermediate state semantic feature as the transmission symbol su, defined as 
+
+su = zu(ttrunc ). ttrunc represents the truncated time step at the moment of scheduling. The received signal at the BS is expressed as follows 
+
+yu = husu + n, (3) where n ∼ CN (0 , σ 2
+
+> n
+
+) denotes the complex additive white Gaussian noise (AWGN). 
+
+C. Receiver Path Compensation and Semantic Reconstruction 1) Dynamic Path Compensation: The receiver replaces conventional static decoders with a reverse dynamics model grounded in flow matching to compensate for the semantic loss and recover the complete semantic information from an interrupted intermediate state. We distinguish between two time variables in the system: the discrete diffusion timestep 
+
+t ∈ {0, 1, . . . , T } used in the forward process, and the continuous time variable τ used to model the reverse dynamics via ordinary differential equations (ODEs). The parameterized inverse dynamics model is denoted as vθ (s, τ, h ), which pro-duces the velocity field on the feature manifold conditioned on the current state, time index, and channel state. The receiver then evolves the features backward by solving the following dynamic equation 
+
+ds
+
+dτ = vθ (s, τ, h ). (4) This continuous dynamic process enables the BS to com-pensate for semantic distortion caused by early transmission. Operationally, this equation is iteratively adapted at the patch level via a discrete sampler. The specific patch-level adaptive compensation algorithm, which is based on path loss metrics, will be described in the following section. 
+
+2) Image Reconstruction: Upon completion of the inverse dynamics compensation process, when reaching t = 0 , the system acquires the recovered pure latent semantic feature set 
+
+ˆz = {zp(0) }Pp=1 . Subsequently, this feature set is input into a pre-trained semantic decoder Dψ (·) to reconstruct the target image, ˆxu = Dψ (ˆ z), which can be utilized for downstream tasks at the receiver for human visual perception. Through channel-aware preemptive scheduling with trun-cated diffusion process at the transmitter and dynamic path compensation at the receiver, the system forms a complete closed-loop, achieving a coordinated cross-layer mapping be-tween physical-layer transmission resources and semantic-layer generation steps. 4
+
+III. C HANNEL -A WARE PREEMPTIVE SCHEDULING WITH 
+
+TRUNCATED DIFFUSION AND PATH COMPENSATION 
+
+MECHANISM 
+
+In the proposed CAPS-TDPC framework, the transmitter truncates the forward diffusion process immediately upon user scheduling. Although this early termination reduces end-to-end latency, it inevitably results in incomplete semantic features. Consequently, the received signal contains only par-tially diffused latent representations mixed with channel noise. Applying conventional reverse diffusion from such an inter-mediate, non-stationary state results in severe reconstruction degradation. To recover high-fidelity semantic information without sacrificing low latency, we propose a receiver-side path compensation mechanism. Flow matching [29] is a continuous-time generative frame-work that transports a prior distribution to the target data via an ordinary differential equation. However, standard flow match-ing assumes the reverse process starts from a known prior, which cannot be directly applied to our truncated diffusion scenario, in which the receiver obtains an intermediate, non-stationary state corrupted by incomplete diffusion and channel noise. To overcome this, we adapt flow matching to enable reverse evolution from any intermediate point by training a conditional inverse dynamics model. This allows us to reconstruct high-fidelity semantic features from a prematurely interrupted diffusion. The following subsections elaborate on the scheduling logic, the compensation algorithm, and the adaptive resource allocation. 
+
+A. Channel-Aware Preemptive Scheduling with Truncated Dif-fusion 
+
+In the system model, we have established the fundamental framework of the scheduling metric. This section explores the dynamic execution logic of this mechanism within MU systems. Traditional SemCom systems assume that the execu-tion of the generation model is independent of the physical channel state, resulting in a substantial mismatch between the generation latency and the channel coherence time. To address this, we propose a preemptive scheduling mechanism based on CSI. We reformulate the BS scheduling problem as a channel-driven priority rule. The user with the best instantaneous channel condition is selected for immediate transmission. The BS executes the dynamic scheduling policy, selecting the user u⋆ with the minimum penalty metric to allocate the current time. tu denote the current diffusion step of user u
+
+at the scheduling moment. Once user u⋆ is selected, we set 
+
+ttrunc = tu⋆ , the user immediately stops its forward diffusion at its current step. 
+
+u⋆ = arg min 
+
+> u∈U
+
+1
+
+|hu|2 . (5) The primary advantage of this scheduling logic lies in its preemptive nature. When a user’s channel condition rapidly improves to an optimal state T cu⋆ → 0, that user is selected immediately, even if its diffusion process has just started. Conversely, when all users experience poor channel conditions, the system may wait for better channel opportunities; the diffusion progress is not considered in scheduling decisions. This design avoids the risk of waiting for diffusion completion under deteriorating channel conditions. This approach involves applying a truncation operator to the forward diffusion Markov chain associated with the user. We define the instantaneous truncated diffusion step at the scheduling time as ttrunc . The user immediately terminates all subsequent forward noisy propagation computations from 
+
+ttrunc to T and extracts the current intermediate latent variable as the baseband transmission symbol su⋆
+
+su⋆ = Γ  zu⋆ (t)
+
+> t=ttrunc
+
+= zu⋆ (ttrunc ). (6) The system substantially decreases the generation delay for users experiencing high channel quality by employing the truncation operator. Nevertheless, the transmission advantage afforded by the proposed scheduling mechanism incurs a compromise in the integrity of the transmitter features. The signal received is affected not only by physical channel noise 
+
+n but also represents a non-stationary intermediate distribu-tion that deviates from the pure semantic distribution of the intended target. Therefore, a pivotal theoretical challenge for this framework is to accurately compensate for the prematurely truncated evolutionary trajectory at the receiver. 
+
+B. Path Loss Dynamics Modeling Based on Flow Matching Models 
+
+As previously indicated, the proposed scheduler initiates early transmission at time ttrunc . The received equalized signal 
+
+ˆsu at the BS constitutes an intermediate semantic feature that is corrupted by the physical channel and has not undergone com-plete diffusion. Conventional Markov-based discrete diffusion denoising models require the reverse process to commence strictly from pure Gaussian noise ( t = T ) with a fixed step size [30]. These models are inadequate for recovery tasks that start at arbitrary intermediate time ttrunc and exhibit non-stationary distribution characteristics. As illustrated in Fig. 2, although all feature patches within the same image experience identical transmission interruption times ttrunc , the semantic distances that each patch must traverse to return to the pure data manifold differ substan-tially. This disparity arises from pronounced semantic density imbalances within the image, such as the contrast between complex textured regions and smooth background areas. Allo-cating uniform backpropagation resources across all segments results in overfitting in background regions, which generates artifacts, and underfitting in detailed regions, leading to blurred features. Therefore, we need a mechanism that can not only compensate for the incomplete trajectory but also adapt to the heterogeneous recovery difficulty across patches. To address these challenges, we depart from the traditional discrete denoising framework and instead formulate the se-mantic reconstruction process at the receiver as an initial value problem for ODEs in the continuous-time domain. Let the continuous time variable be τ ∈ [0 , t trunc ]. We interpret fea-ture recovery at the receiver as a deterministic diffeomorphic evolution of feature points on a manifold within the latent space. To model this evolution, we introduce a parameterized inverse dynamics model vθ (s, τ, h ) to fit the velocity field along the evolution path. The core function of this network 5Relative evolution time Semantic feature manifold 
+
+ttrunc 
+
+vθ(s, τ, h u?) 
+
+> ˆz
+> Noise ds
+> dτ
+
+= vθ(s, τ, h u?)
+
+> Truncated Diffusion and Path Compensation
+> Full diffusion path Completed forward diffusion Path compensation
+> Fig. 2: Illustration of the proposed path compensation mechanism.
+
+is to predict the tangent direction of the feature manifold at a given time step. For the selected user u⋆, the compensation path of the received feature ˆsu⋆ is described by the following ordinary differential equation 
+
+ds
+
+dτ = vθ (s, τ, h u⋆ ), (7) where the input to the dynamic model vθ includes not only the current feature state s and the time index τ , but also explicitly incorporates the physical channel state hu⋆
+
+as a conditioning variable. The continuous time variable τ
+
+is defined over the interval [0 , t trunc ], where ttrunc is the discrete diffusion step at which transmission occurs. The physical rationale for incorporating the channel state hu⋆ is that channels exhibiting different levels of fading cause signal distortions with varying variances. The dynamic model must be capable of recognizing the channel SNR associated with the current feature in order to produce an appropriately corrected and denoised velocity output. To quantify the varying recovery difficulty across different patches, we propose a novel metric termed the path deficit. For the pth feature chunk sp, its path deficit ∆Dp is defined as the ℓ2 norm integral of the inverse dynamics velocity field over the remaining unscheduled time interval [0 , t trunc ]∆Dp =
+
+Z ttrunc 
+
+> 0
+
+vθ
+
+ sp(τ ), τ, h u⋆
+
+ 
+
+> 2
+
+dτ. (8) Here τ denotes continuous time corresponding to the reverse evolution from the truncated state at ttrunc back to t = 0 .From the perspective of geometric topology, the integral term R ∥vθ ∥dτ precisely measures the path length along which the 
+
+pth feature chunk transitions from the intermediate truncated state sp(ttrunc ) back to the true semantic distribution sp(0) 
+
+along the optimal manifold path. A greater path length sig-nifies a higher degree of missing semantic information in that region, thereby increasing the difficulty of restoration. Accordingly, ∆Dp serves as a rigorous mathematical metric to quantify the semantic penalty incurred by each chunk as a result of premature transmission. Since continuous-time ODEs cannot be solved directly on digital processors, numerical solvers are employed at the receiver to approximate discretization. The inverse solution process is partitioned into K discrete steps, where the current discrete step index is k ∈ { 1, 2, . . . , K }. The corresponding discrete timestamp is tk, and the integration step size is 
+
+ηk = tk−1 − tk. The discrete form of the path deficit for the pth feature block can then be computed as 
+
+∆Dp ≈
+
+> K
+
+X
+
+> k=1
+
+ηk vθ (skp , t k, h u⋆ ) 2. (9) The receiving BS concurrently computes the ℓ2 norm of each patch feature vector and accumulates these values over the temporal dimension following each reverse step velocity prediction, thereby dynamically generating the deficit value for each patch. This approach departs from the uniform calculation and allocation mechanisms characteristic of traditional DMs by incorporating a path loss model. The introduction of 
+
+∆Dp enables the system not only to determine the necessity of transmission but also to precisely identify the locations where remedial actions are most required at the receiving end. This development provides a robust theoretical foundation for the design of a path deficit-based adaptive reconstruction algorithm, which is presented in the subsequent section. 
+
+C. Semantic-Latency Guided Patch-wise Reconstruction 
+
+Following the initiation of early transmission via the pro-posed scheduling mechanism, the receiver obtains hybrid features ˆsu⋆ truncated at the diffusion intermediate step ttrunc 
+
+and subject to channel corruption. The principal challenge confronting the receiver at this juncture is to reconstruct high-quality images from these degraded features under finite com-putational constraints Bmax , such as the maximum permissible number of backward passes or decoding latency. Traditional DMs impose a uniform number of backward iterations across all image blocks. This static strategy exhibits fatal flaws in mobile computing scenarios. On one hand, challenging regions containing complex high-frequency textures consume substan-tial computational resources yet may still underfit. On the other hand, smooth background areas converge extremely rapidly, yet contribute minimally to overall semantic understanding. To optimize the allocation of computational resources at the receiver, this section introduces an image-block adaptive reverse scheduling mechanism based on joint semantic-latency gain. This mechanism extends the scheduling concept, origi-nally applied at the transmitter, to the receiver in a symmetrical manner. By utilizing a combined metric that balances the semantic importance of each image block against its decoding time cost, the mechanism effectively prioritizes the allocation of computational resources to specific blocks. For each image patch p ∈ {1, 2, . . . , P } within the re-ceiver’s latent feature map ˆz ∈ RP ×d, we define two key metrics. One is the semantic value Vp, which quantifies the importance of image patch p to the overall semantic under-standing of the image. This metric is directly derived from the self-attention weights obtained from the transmitter-side se-mantic encoder Eϕ as the basis for this metric. Let au,p denote the attention weight assigned to block p by user u’s encoder, subject to the global normalization condition PPp=1 au,p = 1 .We then define Vp = au,p . Higher attention weights generally correspond to foreground objects, text, or semantically salient regions within the image, which are critical for achieving high-quality reconstruction. 6
+
+Another metric considered is the decoding time cost, de-noted as Tp = ∆ Dp. This metric estimates the computational overhead necessary to restore block p from its current cor-rupted state to a clean data manifold. Based on the path loss modeling described in Section III-B, we directly utilize the path deficit ∆Dp as the cost metric. Path deficit quantifies the path length of the path required for block p to return from its truncated state sp(ttrunc ) to its original semantic distribution sp(0) on the latent space manifold. According to flow matching theory, this path length is strongly positively correlated with the number of integration steps needed in the inverse process. Therefore, a larger value of 
+
+Tp signifies increased difficulty in recovering the block and re-sults in longer decoding times. These two metrics characterize the intrinsic properties of image blocks: semantic importance and computational overhead. Their combined consideration provides a principled basis for diffusion scheduling at the receiver. To facilitate effective scheduling decisions within limited budgetary constraints, it is essential to employ a scalar metric that quantitatively captures the semantic benefit per unit of computational resource. Drawing inspiration from the trans-mitter’s channel-aware preemptive scheduling, we define the scheduling benefit Gp as the ratio of semantic value to decod-ing time cost: Gp = Vp 
+
+> Tp
+
+. This metric encapsulates the principle of balancing semantic significance against decoding latency efficiency. Blocks exhibiting high semantic value coupled with low decoding time yield the highest gain and should be prioritized for processing. Conversely, blocks characterized by low semantic value or substantial decoding costs, resulting in low gain, can be deferred or omitted under stringent budgetary limitations. From an optimization perspective, the optimal solution to the problem of maximizing the total semantic value under budget constraints, in its continuous relaxed form, entails allocating resources in descending order according to Vp/Tp.In our discrete framework, although selection based on ratio sorting does not necessarily ensure global optimality, it is com-putationally efficient and provides a practical approximation of the optimum. This characteristic renders it particularly suitable for the real-time scheduling requirements of edge devices. More importantly, this formulation exhibits perfect symmetry with the transmitter scheduler. The transmitter selects users by minimizing the T cu⋆ , while the receiver selects blocks by maximizing Vp/Tp – both approaches reflect a unified prioritization strategy based on joint metrics. Given a computational budget Bmax , the receiver first ob-tains νp for each block p based on pre-stored attention weights, and calculates Tp using the path loss model. Subsequently, the scheduling benefit Gp = Vp/Tp is computed. Next, all blocks are sorted in descending order of Gp to form a priority list L. The block with the highest gain is placed at the top, indicating its optimal cost-effectiveness. The remaining budget is initialised as Brem = Bmax , and the selected block set is initialised as S = ∅. Each block p in the list L is traversed sequentially. If Tp ≤ B rem , allocate the full number of reverse steps to this block and add p to S, deducting Tp from the remaining budget Brem = Brem − T p. Otherwise, cease the allocation. 
+
+D. Training Strategy 
+
+In the practical implementation of the CAPS-TDPC frame-work, the proposed scheduler dynamically determines the truncation time ttrunc based on the instantaneous channel. Concurrently, the receiver utilizes the proposed semantic-latency-driven, patch-wise adaptive reconstruction scheduling to allocate the computational budget Bmax . To ensure effec-tive operation under this scheduling policy, we have devel-oped an end-to-end training strategy that simulates the com-plete transmitter-receiver pipeline, incorporating the adaptive receiver-side scheduling. The training of traditional DMs is generally conducted on clean data manifolds using fixed noise schedules, with the objective of minimizing Gaussian prediction errors at each step. Nevertheless, this framework faces challenges due to the presence of highly coupled, incomplete diffusion noise alongside the residual physical channel noise, which together produce compounded distortions at the receiver. To mitigate these issues, we incorporate transmission interruption behavior and channel fading as random variables during the training process. For each training image x in a mini-batch, we execute the following simulation. First, we sample a transmission interruption time ttrunc ∼U(0 , T ) from a discrete uniform distribution, forcing the model to learn from incomplete diffusion paths of arbitrary lengths. Second, given the predefined physical channel model H,the instantaneous channel coefficient h is randomly sampled according to H. Third, we sample a computational budget 
+
+Bmax uniformly sampled from a feasible range [Bmin , B max ]
+
+to mimic varying resource constraints at the edge. Forward diffusion is applied to the latent representation z(0) = Eϕ(x)
+
+up to the step ttrunc , obtaining z(ttrunc ).Then simulate channel transmission and equalization to ob-tain the received corrupted feature ˆs =  h · z(ttrunc ) + n /h ,where n ∼ CN (0 , σ 2
+
+> n
+
+) is the channel noise. We compute the norm of the velocity field predicted by the current inverse dynamics model vθ at the initial state and approximate the total path deficit as ˆTp = η∥vθ (ˆ sp, t trunc , h )∥2, where n
+
+is a scaling factor proportional to ttrunc . This provides a rough estimate of the required computational effort. Using the semantic scores Vp = au,p obtained from the encoder’s attention, compute the scheduling benefit Gp = Vαp / ˆT βp for each patch. Sort patches by descending Gp and select the top patches whose total estimated cost does not exceed the budget 
+
+Bmax , forming the selected set S. Perform the full reverse ODE integration for the patches in S only, using a numerical solver for K steps. Patches not in S remain at their current corrupted state ˆsp. The reverse process yields the recovered latent features ˆz(0) . Pass ˆz(0) through the semantic decoder 
+
+Dψ to obtain the reconstructed image ˆx. The overall training objective is to minimize the expected pixel-level reconstruction error L(ϕ, θ, ψ ) = Ex,t trunc ,h, Bmax 
+
+h
+
+Dψ (ˆ z(0) ) − x 22
+
+i
+
+.
+
+This comprehensive simulation enables the network to adapt its inverse dynamics predictions across diverse truncation times, channel conditions, and computational budgets, while the attention mechanism and path deficit estimation co-evolve to facilitate effective gain-based scheduling. The training pro-cedure is outlined in Algorithm 1. 7
+
+Algorithm 1 End-to-End Training Algorithm for CAPS-TDPC Framework with Gain-Based Scheduling 
+
+Require: X , T, K, H, [Bmin , B max ], α, β 
+
+Ensure: Trained ϕ, θ, ψ  
+
+> 1:
+
+Initialize ϕ, θ, ψ  
+
+> 2:
+
+while not converged do  
+
+> 3:
+
+Sample x ∼ X ; z0, a = Eϕ(x) 
+
+> 4:
+
+Sample t ∼ U (0 , T ), h ∼ H , Bmax ∼ U (Bmin , B max ) 
+
+> 5:
+
+zt = √¯αtz0 + √1 − ¯αtϵ, ˆs = ( hzt + n)/h  
+
+> 6:
+
+For each p: ˆTp = tK ∥vθ (ˆ sp, t, h )∥2, Gp = aαp / ˆT βp 
+
+> 7:
+
+Sort patches by Gp descending; S = ∅, Brem = Bmax  
+
+> 8:
+
+for p in sorted list do  
+
+> 9:
+
+if ˆTp ≤ Brem then S ∪ { p}, Brem = ˆTp 
+
+> 10:
+
+elsebreak  
+
+> 11:
+
+end if  
+
+> 12:
+
+end for  
+
+> 13:
+
+s = ˆ s 
+
+> 14:
+
+for k = 1 to K do  
+
+> 15:
+
+tk, η k ← current; v = vθ (s, t k, h ) 
+
+> 16:
+
+for p ∈ S do sp = ηkvp 
+
+> 17:
+
+end for  
+
+> 18:
+
+end for  
+
+> 19:
+
+ˆx = Dψ (s); L = ∥ˆx − x∥22 
+
+> 20:
+
+Update ϕ, θ, ψ via backprop  
+
+> 21:
+
+end while  
+
+> 22: 23:
+
+return ϕ, θ, ψ 
+
+IV. N UMERICAL EXPERIMENTS 
+
+In this section, we evaluate the proposed CAPS-TDPC framework through comprehensive numerical experiments conducted under diverse channel conditions and MU scenarios. The objective is to demonstrate that the proposed system can effectively balances transmission latency and reconstruction quality by employing channel-aware preemptive scheduling and patch-wise adaptive reconstruction, thereby outperforming conventional SemCom approaches. We first introduce the datasets and baseline methods, followed by a description of the experimental configurations. Subsequently, we present quantitative comparisons, visual analyses, and ablation studies to elucidate the contributions of the key components within the CAPS-TDPC framework. 
+
+A. Experiments Setting 1) Dataset: The proposed CAPS-TDPC framework is eval-uated using two benchmark image datasets of differing res-olutions to examine its adaptability across varying levels of complexity. The CIFAR-100 dataset consists of 60,000 natural images, each measuring 32 × 32 pixels, spanning 100 distinct object categories. The ImageNet-256 dataset utilizes a subset of the large-scale ImageNet dataset, with images resized to 256 × 256 pixels. This higher-resolution context poses considerable challenges for semantic transmission, ne-cessitating that the DM effectively capture intricate spatial structures and texture patterns while maintaining an efficient latent representation. For all datasets, images are normalized to the range [−1, 1] 
+
+via the transformation (x − 0.5) /0.5 to conform to the input specifications of the DM. The integration of these datasets facilitates a comprehensive evaluation of CAPS-TDPC across both low-resolution and high-resolution visual domains, thereby substantiating the generalizability of the proposed scheduling and adaptive allocation mechanisms. 
+
+2) Parameters Setting: All experiments are implemented in PyTorch 2.1.0 with CUDA 12.1 on a Linux server equipped with an NVIDIA A100-80GB GPU. The CAPS-TDPC model consists of a ViT-based semantic encoder Eϕ, a forward diffusion module, a reverse dynamics model vθ based on flow matching, and a convolutional decoder Dψ .The semantic encoder employs a ViT architecture with patch size 16, embedding dimension d = 256 , and depth 6, which extracts compact latent representations from input images. For CIFAR-100, the encoder produces P = 4 patches with d = 256 channels each. For ImageNet-256, it generates 
+
+P = 256 patches. The reverse dynamics model vθ consists of 8 transformer blocks with cross-attention layers conditioned on channel state h and timestep t. The decoder employs a U-Net architecture with adaptive upsampling blocks, automatically adjusting the number of upsampling stages based on input resolution, 2 stages for 32 × 32 and 4 stages for 256 × 256 .The forward diffusion process follows a linear noise sched-ule with T = 1000 total timesteps during training. How-ever, leveraging the proposed scheduling, inference adaptively terminates diffusion at timestep ttrunc based on instanta-neous channel quality, significantly reducing the transmission latency. We employ the AdamW optimizer with an initial learning rate of 1 × 10 −4 and cosine annealing scheduling over 1000 epochs. Mixed precision training is enabled to accelerate computation and reduce memory consumption. The batch size is resolution-adaptive: 128 for CIFAR-100 and 16 for ImageNet-256, ensuring stable gradient updates while max-imizing GPU utilization. Gradient clipping with a unit norm is applied to prevent training instability. The loss function integrates pixel-level ℓ2 reconstruction error with perceptual loss weighted by λperceptual = 0 .1 to enhance visual quality. Channel coefficients are modeled as Rayleigh fading h ∼CN (0 , σ 2
+
+> h
+
+) with varying SNR levels {0, 5, 10 , 15 , 20 , 25 } dB to simulate diverse wireless conditions. The receiver em-ploys patch-wise adaptive reconstruction sampling guided by the scheduling benefit Gp = Vp/T p, where semantic value 
+
+Vp is derived from encoder attention weights and decoding cost Tp is computed via path deficit integration ∆Dp =R ttrunc  
+
+> 0
+
+∥vθ (sp(τ ), τ, h )∥2dτ . High-gain patches receive pro-portionally more reverse steps within a maximum budget of 200 steps per patch, enabling efficient reconstruction pri-oritized toward semantically critical and easily recoverable regions. Reconstruction quality is evaluated using the Peak SNR (PSNR), Multi-Scale Structural Similarity Index (MS-SSIM), and Learned Perceptual Image Patch Similarity (LPIPS), which respectively quantify pixel-level accuracy, structural fidelity, and perceptual quality. Transmission latency is mea-sured in diffusion timesteps, representing the computational and temporal overhead prior to channel transmission. All metrics are averaged over 100 independent trials to ensure statistical robustness, with error bars indicating the standard deviation across runs. 8
+
+3) Baseline Schemes: To comprehensively validate the pro-posed CAPS-TDPC framework, we compare against represen-tative baselines spanning traditional separation-based coding, deep learning-based joint source-channel coding, and recent diffusion-based SemCom methods. All baselines operate under identical multi-user channel conditions and TDMA structures to ensure fair comparison.  
+
+> •
+
+Traditional JSCC (JPEG + LDPC) , where each user independently applies JPEG compression followed by LDPC channel coding. The BS sequentially decodes each user’s transmission without exploiting semantic features. This baseline represents the conventional separation-based digital communication pipeline and serves as a performance lower bound.  
+
+> •
+
+DeepJSCC [31], an end-to-end trainable joint source-channel coding scheme where convolutional encoders directly map images to channel symbols, and decoders reconstruct images from noisy signals. Unlike CAPS-TDPC, this baseline does not employ DMs or adaptive scheduling, representing state-of-the-art non-generative deep learning approaches.  
+
+> •
+
+Fixed-Timestep Diffusion (Fixed t=500) , a diffusion-based system where all users execute forward diffusion to a fixed timestep tf ixed = 500 before transmission, regardless of channel quality. The receiver applies uni-form reverse denoising without patch-wise adaptation. This baseline isolates the contribution of scheduling by removing adaptive transmission timing.  
+
+> •
+
+CDDM (Channel Denoising Diffusion Models) [32], a diffusion-based physical layer module is positioned sub-sequent to channel equalization to model the distribution of the channel input signal and to mitigate residual chan-nel noise. When integrated with JSCC, CDDM serves as a representative of diffusion-based SemCom systems that do not incorporate scheduling or patch-wise adaptive reconstruction.  
+
+> •
+
+WITT (Wireless Image Transmission Transformer) [33], a transformer-based joint source-channel coding scheme utilizing Swin Transformers as the backbone to effec-tively capture long-range dependencies in high-resolution image transmission. A spatial modulation module adjusts latent representations based on CSI, allowing a single model to accommodate varying channel conditions. In contrast to CAPS-TDPC, the WITT framework does not integrate DMs or adaptive scheduling mechanisms. The proposed CAPS-TDPC fundamentally differs from all baselines through three key mechanisms: (1) channel-aware preemptive scheduling dynamically determines transmission timing based on the channel countdown T uc , enabling early transmission during favorable channel states; (2) path deficit quantification via ∆Dp = R ttrunc  
+
+> 0
+
+∥vθ (sp(τ ), τ, h )∥2dτ pre-cisely measures semantic recovery difficulty, enabling accurate reconstruction from interrupted diffusion; (3) patch-wise adap-tive allocation balances semantic importance against decoding cost through Gp = Vp/T p, achieving efficient quality-latency trade-offs. 
+
+B. Performance Analysis 
+
+To comprehensively evaluate the effectiveness of the pro-posed CAPS-TDPC framework, this section presents a quanti-0 5 10 15 20 25                          
+
+> SNR (dB)
+> 22
+> 25
+> 28
+> 31
+> 34
+> 37
+> PSNR (dB)
+> (a) CIFAR-100, AWGN
+> 0510 15 20 25
+> SNR (dB)
+> 18
+> 21
+> 24
+> 27
+> 30
+> 33
+> 36
+> PSNR (dB)
+> (b) CIFAR-100, Rayleigh
+> 0510 15 20 25
+> SNR (dB)
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> MS-SSIM
+> (c) CIFAR-100, AWGN
+> 0510 15 20 25
+> SNR (dB)
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> MS-SSIM
+> (d) CIFAR-100, Rayleigh
+> 0510 15 20 25
+> SNR (dB)
+> 0.04
+> 0.09
+> 0.14
+> 0.19
+> LPIPS
+> (e) CIFAR-100, AWGN
+> 0510 15 20 25
+> SNR (dB)
+> 0.06
+> 0.11
+> 0.16
+> 0.21
+> 0.26
+> LPIPS
+> (f) CIFAR-100, Rayleigh
+> Proposed CAPS-TDPC
+> Fixed t=500
+> CDDM
+> WITT
+> DeepJSCC
+> JPEG+LDPC
+> Fig. 3: Comparison of the performance in Cifar-100 datasets with AWGN and Rayleigh fading.
+
+tative comparison between CAPS-TDPC and six representative baseline methods under AWGN and Rayleigh fading channel. The baseline methods include JPEG combined with LDPC, DeepJSCC, CDDM, WITT, and a fixed parameter setting of 
+
+t = 500 .
+
+1) PSNR Performance Analysis: The top two rows of Figs. 3 and 4 present the PSNR performance of each method on the CIFAR-100 and ImageNet-256 datasets, respectively. Overall, the PSNR values of all methods increase monotonically with rising SNR. However, CAPS-TDPC consistently demonstrates a clear advantage across all SNR levels and under both channel conditions. Under the AWGN channel, at low SNR values, CAPS-TDPC achieves an improvement of approximately 8 dB over traditional JSCC and about 5 dB over DeepJSCC on CIFAR-100. As the SNR increases beyond 20 dB, this advantage remains stable at approximately 2 to 3 dB. In the more challenging Rayleigh fading channel, due to random fluctuations in channel conditions, the absolute PSNR of all methods decreases; nevertheless, the performance gap between CAPS-TDPC and other SemCom methods further widens. At 15 dB, this gap exceeds 4 dB, indicating that CAPS-TDPC exhibits greater robustness to channel fading. It is noteworthy that diffusion-based baselines such as CDDM 90 5 10 15 20 25                          
+
+> SNR (dB)
+> 16
+> 19
+> 22
+> 25
+> 28
+> 31
+> PSNR (dB)
+> (a) ImageNet-256, AWGN
+> 0510 15 20 25
+> SNR (dB)
+> 14
+> 17
+> 20
+> 23
+> 26
+> 29
+> PSNR (dB)
+> (b) ImageNet-256, Rayleigh
+> 0510 15 20 25
+> SNR (dB)
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> MS-SSIM
+> (c) ImageNet-256, AWGN
+> 0510 15 20 25
+> SNR (dB)
+> 0.55
+> 0.65
+> 0.75
+> 0.85
+> 0.95
+> MS-SSIM
+> (d) ImageNet-256, Rayleigh
+> 0510 15 20 25
+> SNR (dB)
+> 0.25
+> 0.35
+> 0.45
+> 0.55
+> 0.65
+> LPIPS
+> (e) ImageNet-256, AWGN
+> 0510 15 20 25
+> SNR (dB)
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> LPIPS
+> (f) ImageNet-256, Rayleigh
+> Proposed CAPS-TDPC
+> Fixed t=500
+> CDDM
+> WITT
+> DeepJSCC
+> JPEG+LDPC
+> Fig. 4: Comparison of the performance in ImageNet-256 with AWGN and Rayleigh fading.
+
+perform comparably to Fixed t=500 in the high SNR region but consistently underperform relative to CAPS-TDPC, thereby validating the effectiveness of the combined channel-aware preemptive scheduling and path compensation mechanisms. 
+
+2) MS-SSIM and LPIPS Performance Analysis: The results obtained from MS-SSIM and LPIPS metrics further substanti-ate the aforementioned conclusions. MS-SSIM, which assesses structural consistency, indicates that under AWGN conditions, the CAPS-TDPC method attains a score exceeding 0.98 in the high SNR range, whereas the traditional JSCC method fails to reach 0.80. Under the Rayleigh fading channel, the MS-SSIM scores of all evaluated methods generally decline by 0.05 to 0.10. However, CAPS-TDPC consistently maintains the highest values. Notably, at high SNR levels, its MS-SSIM re-mains close to 0.96, outperforming other baseline approaches. Regarding LPIPS, a perceptual distance metric where lower values indicate better performance, CAPS-TDPC achieves the lowest scores across both datasets and channel conditions. For instance, considering the ImageNet-256 dataset under a Rayleigh channel with 20 dB noise, CAPS-TDPC attains an LPIPS value of approximately 0.078, whereas the Fixed t=500 method exceed 0.09 and 0.10. This finding suggests that images restored by CAPS-TDPC are perceptually closer to the original images. Collectively, these results demonstrate that CAPS-TDPC not only improves the pixel-level accuracy but also consistently enhances the structural preservation and perceptual quality. A comparison of the results obtained from CIFAR-100 and ImageNet-256 datasets indicates that the advantages of CAPS-TDPC are consistently maintained across both sce-narios, with a more substantial improvement observed in high-resolution images. This enhancement can be attributed to its path-loss-based, block-wise adaptive allocation mech-anism, which effectively manages complex textural regions. Moreover, although all methods exhibit reduced performance under the Rayleigh channel compared to the AWGN channel, CAPS-TDPC demonstrates the least performance degradation. Notably, the decline in the LPIPS metric is less severe than that observed in other baseline methods, underscoring the robustness of the proposed scheduling mechanism in fast-fading environments. In summary, CAPS-TDPC consistently surpasses existing baseline methods across all evaluation metrics and experimen-tal conditions. Its primary contributions lie in the synergis-tic integration of joint channel-aware preemptive scheduling, path loss compensation, and semantic-delay-driven block-by-block reconstruction, which collectively facilitate high-quality semantic reconstruction under low-latency transmission con-ditions. This provides an effective solution for SemCom in mobile scenarios. 
+
+3) Patch-wise Reconstruction Analysis: To demonstrate the block-wise adaptive reconstruction mechanism within the pro-posed CAPS-TDPC framework, Fig. 5 displays heatmaps of the semantic value Vp, decoding cost Tp = ∆ Dp, and schedul-ing benefit Gp = Vp/T p for three representative images. Each row presents, from left to right, the original image followed by the corresponding heatmaps of Vp, Tp, and Gp.The decoding cost heatmap demonstrates considerable spa-tial heterogeneity. Regions characterized by complex tex-tures exhibit high Tp, indicating increased recovery difficulty, whereas smooth backgrounds display low Tp. The coefficient of variation attains 16.6 %, underscoring the importance of adaptive reconstruction. The semantic value heatmap reveals that foreground objects, such as aircraft, receive higher at-tention weights. Notably, Vp and Tp exhibit a strong negative correlation, suggesting that semantically significant regions are easier to recover, which consists with the intuition that salient structures exhibit greater resilience to noise during diffusion. The scheduling benefit Gp provides a unified priority metric. Regions with high gain correspond to blocks that are both semantically important and readily recoverable, whereas those with low gain are deprioritized. The dynamic range of Gp
+
+reaches 0.06, facilitating fine-grained scheduling. Furthermore, a strong positive correlation between Gp and Vp confirms that semantic importance remains the predominant factor, while the negative Vp − Tp correlation between Vp and Tp validates that prioritizing high-gain blocks optimizes semantic fidelity under constrained computational budgets. In summary, the proposed semantic-latency-driven adaptive allocation mechanism effectively differentiates computational resources among image regions, as a result, an enhanced bal-ance between transmission latency and reconstruction quality. 10 Original Image Semantic Value 
+
+0.01 
+
+0.02 
+
+> Importance
+
+Decoding Cost 
+
+0.5 
+
+1.0 
+
+> Cost
+
+Scheduling Benefit 
+
+0.02 
+
+0.04 
+
+> Priority
+
+0.01 
+
+0.02 
+
+> Importance
+
+0.25 
+
+0.50 
+
+0.75 
+
+> Cost
+
+0.02 
+
+0.04 
+
+0.06 
+
+> Priority
+
+0.005 
+
+0.010 
+
+0.015 
+
+0.020 
+
+> Importance
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+1.0 
+
+> Cost
+
+0.01 
+
+0.02 
+
+0.03 
+
+0.04 
+
+> Priority
+
+Fig. 5: Illustration of the proposed semantic-latency guided patch-wise reconstruction. 0 100 200 300 400 500 600 
+
+> Latency (steps)
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> CDF  Median: 500 steps
+> Median: 126 steps
+
+Cumulative Distribution of Transmission Latency 
+
+> Fixed (t=500)
+> CAPS-TDPC
+
+Fig. 6: Cumulative distribution of transmission latency under Rayleigh fading. 
+
+C. Ablation Studies 1) Ablation Studies on Scheduling: To further substan-tiate the efficacy of the proposed scheduling mechanism, we analyze the distribution of transmission latency and the latency–quality trade-off achieved by CAPS-TDPC. Fig. 6 illustrates the cumulative distribution function (CDF) of trans-mission latency under Rayleigh fading channels. The fixed-timestep baseline exhibits a constant latency of 500 steps, whereas CAPS-TDPC adaptively determines the transmission time based on the scheduling metric. The CDF curve indi-cates that CAPS-TDPC attains a median latency of approxi-mately 140 steps, representing a 72 % reduction relative to the fixed baseline. This substantial decrease demonstrates that the scheduler effectively leverages favorable channel conditions 0 100 200 300 400 500 
+
+> Latency (steps)
+> 24
+> 25
+> 26
+> 27
+> 28
+> PSNR (dB)
+> Mean: 500 steps
+> PSNR: 26.20 dB
+> Mean: 159 steps
+> PSNR: 25.43 dB
+> Latency-Quality Trade-off (ImageNet-256, SNR = 10 dB)
+> Fixed (t=500)
+> CAPS-TDPC
+
+Fig. 7: Latency-quality trade-off on ImageNet-256 at SNR = 10 dB. 
+
+to transmit intermediate semantic features earlier, thereby circumventing the prolonged waiting time associated with full diffusion completion. Fig. 7 depicts the latency–quality trade-off on the ImageNet dataset at an SNR of 10 dB. The fixed baseline yields a single operating point, whereas the proposed generates method produces wide broad spectrum latency–PSNR pairs, with an mean latency of 159 steps and an average PSNR of 25.43 dB. Compared to fixed baseline, this corresponds to represents latency 68 % reduction at cost of expense a 0.77 dB PSNR degradation. Notably, points distribution that CAPS-TDPC demonstrates flexibly allocate transmission dynamically ac-cording to instantaneous based on and semantic conditions when the evolution. Under favorable channel conditions, early transmission can be achieved with only a moderate reduction 11 
+
+in quality. Conversely, when channel conditions are subopti-mal, the system delays transmission to obtain more refined features, thereby maintaining reconstruction quality at the expense of increased latency. This prior to trade-off enables intrinsic to allows to diverse adapt effectively requirements, varying it particularly rendering for latency-sensitive well-suited in mobile environments. Collectively, these findings demonstrate that the scheduling mechanism not only substantially decreases the transmission latency but also offers a flexible latency–quality trade-off that can be adapted to diverse channel conditions and application requirements. Furthermore, the patch-wise adaptive allocation enhances this flexibility by prioritizing computational re-sources toward semantically significant and readily recoverable regions, as examined in the subsequent subsection. 
+
+2) Ablation Studies on Key Components: To assess the contribution of each core component within the proposed CAPS-TDPC framework, we performed ablation experiments using the ImageNet dataset under an AWGN channel at an SNR of 10 dB. The results, summarized in Table I, compare the complete CAPS-TDPC system with several variants in which individual modules were either disabled or replaced. The complete CAPS-TDPC framework attains the highest reconstruction quality while sustaining a low average latency of 128 steps, representing a 74.4 % reduction relative to the fixed-timestep baseline. The removal of the scheduler results in a deterioration across all quality metrics and abolishes latency reduction, underscoring the critical importance of joint scheduling in balancing transmission delay and semantic fidelity. Removing the scheduler results in a 500-step latency and significant quality degradation, confirming the necessity of adaptive scheduling. Furthermore, the removal of path deficit compensation, semantic attention, or adaptive reverse steps each leads to a notable decline in image quality while main-taining the same average latency of 128 steps, highlighting their respective contributions to reconstruction fidelity. Further ablation studies demonstrate that the removal of path deficit compensation, semantic attention, or adaptive reverse steps each results in a significant decline in image quality, while maintaining the same average latency as the complete CAPS-TDPC model. These findings confirm that these compo-nents are essential for reconstructing high-fidelity images from prematurely transmitted intermediate features. Furthermore, uniform allocation of reverse steps not only degrades image quality but also increases latency to 300 steps, highlighting the importance of semantic-latency-driven adaptive reconstruction. In summary, the ablation study confirms that the scheduler, path deficit compensation, semantic attention, and adaptive reverse steps are all essential for attaining the superior per-formance of CAPS-TDPC. V. C ONCLUSION 
+
+This paper proposes the CAPS-TDPC framework to address the fundamental temporal mismatch between the iterative la-tency inherent in DMs and the fading characteristic of wireless channels. By prioritizing the channel clock over generation completion, CAPS-TDPC facilitates the early transmission of intermediate semantic features during favorable channel con-ditions, thereby significantly reducing the end-to-end latency. 
+
+TABLE I Ablation study results on ImageNet-256 at SNR = 10 dB. Configuration PSNR ↑ MS-SSIM ↑ LPIPS ↓ Latency (steps) Full CAPS-TDPC 28 .00 0.955 0.055 128                        
+
+> Fixed Timestep 26 .25 0.921 0.079 500
+> w/o Path Deficit 24 .06 0.882 0.117 128
+> w/o Sem. Attn 23 .52 0.866 0.126 128
+> w/o Adaptive Steps 24 .87 0.896 0.104 128
+> Uniform Allocation 24 .23 0.887 0.113 300
+> ↑: higher is better; ↓: lower is better.
+> w/o Fixed Timestep : Timestep t= 500 .
+> w/o Sem. Attn : without Semantic Attention.
+> Uniform Allocation : assigns equal reverse steps to all image patches.
+
+Furthermore, a path deficit-based compensation mechanism is introduced to quantify the recovery difficulty and enable accurate reconstruction from interrupted diffusion processes. Moreover, a semantic-latency-driven patch-wise adaptive al-location strategy prioritizes computational resources toward regions exhibiting high semantic value and low decoding cost, thereby achieving an efficient balance between quality and latency. Experimental results obtained from multiple datasets under both AWGN and Rayleigh fading channel conditions indicate that the proposed CAPS-TDPC method consistently surpasses existing baseline approaches in terms of PSNR, MS-SSIM, and LPIPS metrics. Furthermore, CAPS-TDPC achieves significant reductions in latency alongside robust performance improvements, thereby substantiating the efficacy of the introduced scheduling and adaptive compensation mech-anisms. REFERENCES [1] B. Gu, D. Li, H. Ding, G. Wang, and C. Tellambura, “Breaking the interference and fading gridlock in backscatter communications: State-of-the-art, design challenges, and future directions,” IEEE Commun. Surv. Tutorials , pp. 1–1, Jul. 2024. [2] C. Chaccour, W. Saad, M. Debbah, Z. Han, and H. Vincent Poor, “Less data, more knowledge: Building next-generation semantic communica-tion networks,” IEEE Commun. Surv. Tutorials , vol. 27, no. 1, pp. 37–76, Feb. 2025. [3] F. Zhu, J. Chen, J. Wen, Y. Yang, C. Yi, Y. Tie, P. Zhang, J. Cai, D. Niyato, and M. Guizani, “From data mirror to smart copilot: A survey on nextg semantic communication for propelling digital twin world into cognitive stage,” IEEE Commun. Surv. Tutorials , vol. 28, pp. 4915–4947, 2026. [4] C. Liang and D. Li, “Generative ai-enabled semantic communication: State-of-the-art, applications, and the way ahead,” IEEE Commun. Surv. Tutorials , vol. 28, pp. 3976–4015, 2026. [5] J. Dai, J. Li, Z. Zhao, Z. Yang, J. Ye, Q. Yang, C. Huang, and Z. Zhang, “Online energy efficient multimodal probabilistic semantic communication,” IEEE Internet Things J. , vol. 13, no. 1, pp. 69–86, Jan. 2026. [6] L. X. Nguyen, A. D. Raha, P. S. Aung, D. Niyato, Z. Han, and C. S. Hong, “A contemporary survey on semantic communications: Theory of mind, generative ai, and deep joint source-channel coding,” IEEE Commun. Surv. Tutorials , vol. 28, pp. 2377–2417, 2026. [7] H. Zhang, J. Ni, Z. Wu, X. Liu, and V. C. M. Leung, “Resource allocation driven by large models in future semantic-aware networks,”      
+
+> IEEE Wireless Commun. , vol. 32, no. 4, pp. 116–122, Aug. 2025. [8] C. Liang and D. Li, “Joint source–channel noise adding with adaptive denoising for diffusion-based semantic communications,” IEEE Internet Things J. , vol. 12, no. 21, pp. 45 909–45 912, Nov. 2025. [9] K. Zhang, L. Li, W. Lin, Y. Yan, R. Li, W. Cheng, and Z. Han, “Semantic successive refinement: A generative ai-aided semantic communication framework,” IEEE Trans. Cognit. Commun. Networking , vol. 11, no. 2, pp. 687–699, Apr. 2025. [10] S. Xu, Z. Zhang, C. Li, X. Chen, L. Yang, and A. Nallanathan, “Channel calibration for cell-free massive mimo systems using diffusion model,”
+> IEEE Trans. Wirel. Commun. , vol. 25, pp. 8859–8873, 2026. 12
+
+[11] G. Zhang, Q. Hu, Z. Qin, Y. Cai, G. Yu, and X. Tao, “A unified multi-task semantic communication system for multimodal data,” IEEE Trans. Commun. , vol. 72, no. 7, pp. 4101–4116, Jul. 2024. [12] X. Yu, D. Li, N. Zhang, and X. Shen, “A novel lightweight joint source-channel coding design in semantic communications,” IEEE Internet Things J. , vol. 12, no. 11, pp. 18 447–18 450, Jun. 2025. [13] H. Liang, C. Dong, W. An, Z. Bao, X. Xu, and R. Meng, “Semantic-importance-aware communication over mimo fading channels,” IEEE Internet Things J. , vol. 12, no. 18, pp. 38 540–38 555, Sep. 2025. [14] Z. Yan and D. Li, “Semantic communications for digital signals via carrier images,” IEEE Wireless Commun. Lett. , vol. 14, no. 6, pp. 1816– 1820, Jun. 2025. [15] J. Pei, C. Feng, P. Wang, H. Tabassum, and D. Shi, “Latent diffusion model-enabled low-latency semantic communication in the presence of semantic ambiguities and wireless channel noises,” IEEE Trans. Wireless Commun. , vol. 24, no. 5, pp. 4055–4072, May 2025. [16] T. Huynh-The, T. V. Nguyen, P. L. Vo, and H.-T. Nguyen, “A lightweight-to-diffusion framework for semantic image communica-tions,” ICT Express , vol. 12, no. 1, pp. 175–179, Feb. 2026. [17] C. Liang and D. Li, “Image generation with supervised selection based on multimodal features for semantic communications,” IEEE Trans. Commun. , vol. 73, no. 12, pp. 14 469–14 485, Dec. 2025. [18] J. Liu, M. Xiao, J. Wen, J. Kang, R. Zhang, T. Zhang, D. Niyato, W. Zhang, and Y. Liu, “Optimizing resource allocation for multi-modal semantic communication in mobile aigc networks: A diffusion-based game approach,” IEEE Trans. Cognit. Commun. Networking , vol. 11, no. 5, pp. 3346–3360, Oct. 2025. [19] X. Liu, M. B. Mashhadi, L. Qiao, Y. Ma, R. Tafazolli, and M. Bennis, “Communicate less, synthesize the rest: Latency-aware intent-based gen-erative semantic multicasting with diffusion models,” IEEE Trans. Veh. Technol. , early access, Feb. 02, 2026, doi: 10.1109/TVT.2026.3660013. [20] E. Grassucci, G. Pignata, G. Cicchetti, and D. Comminiello, “Lightweight diffusion models for resource-constrained semantic com-munication,” IEEE Wireless Commun. Lett. , vol. 14, no. 9, pp. 2743– 2747, Sep. 2025. [21] W. Tong, C. Zhiyong, T. Meixia, X. Bin, and Z. Wenjun, “Multi-user semantic fusion for semantic communications over degraded broadcast channels,” China Commun. , vol. 21, no. 10, pp. 1–15, Oct. 2024. [22] J. Lang and M. Ji, “Semantic security-aware multi-user resource allo-cation: A novel meaning-first scheduling,” Phys. Commun. , vol. 74, p. 102928, Feb. 2026. [23] J. Lu, W. Yang, Z. Xiong, R. Tafazolli, T. Q. S. Quek, M. Debbah, and D. I. Kim, “Multi-user generative semantic communication with intent-aware semantic-splitting multiple access,” 2025, arXiv:2507.01333 .[24] B. Xu, S. Han, X. Xu, W. Li, R. Meng, C. Dong, and P. Zhang, “Semantic prior aided channel-adaptive equalizing and de-noising se-mantic communication system with latent diffusion model,” IEEE Trans. Wireless Commun. , vol. 24, no. 6, pp. 4614–4630, Jun. 2025. [25] Z. Zhu, X. Liang, Z. Chu, G. Sun, D. Mi, and M. Debbah, “Adaptive-awareness for ris-enhanced semantic communications (risemcom) in dynamic random environment,” IEEE Trans. Mob. Comput. , early access, Feb. 24, 2026, 10.1109/TMC.2026.3667836. [26] Y. Gong, Z. Chu, Z. Zhu, P. Xiao, M. Zeng, Y. Wang, H. M. Pandey, and J. Hou, “Wireless vision-centered semantic communica-tion for smart city environment: Pretrained network and quantization,” 
+
+IEEE Trans. Consum. Electron. , early access, Jan. 21, 2026, doi: 10.1109/TCE.2026.3656549. [27] Z. Shan, H. Zhang, Z. Fu, and P. Xin, “Joint mixed semantic communica-tion and computing offloading framework for mobile edge computing,” in Proc. IEEE/CIC International Conference on Communications in China (ICCC) , 2025, pp. 1–6. [28] H. Saadat, A. Albaseer, M. Abdallah, A. Mohamed, and A. Erbad, “Semcom-optima: Empirically-driven optimization of semantic image transmission across heterogeneous edge–cloud systems,” IEEE Open J. Comput. Soc. , vol. 7, pp. 93–104, 2026. [29] Y. Lipman, R. T. Chen, H. Ben-Hamu, M. Nickel, and M. Le, “Flow matching for generative modeling,” 2022, arXiv:2210.02747 .[30] L. Qiao, M. B. Mashhadi, Z. Gao, C. H. Foh, P. Xiao, and M. Bennis, “Latency-aware generative semantic communications with pre-trained diffusion models,” IEEE Wireless Commun. Lett. , vol. 13, no. 10, pp. 2652–2656, Oct. 2024. [31] E. Bourtsoulatze, D. Burth Kurka, and D. G¨ und¨ uz, “Deep joint source-channel coding for wireless image transmission,” IEEE Trans. Cognit. Commun. Networking , vol. 5, no. 3, pp. 567–579, Sep. 2019. [32] T. Wu, Z. Chen, D. He, L. Qian, Y. Xu, M. Tao, and W. Zhang, “Cddm: Channel denoising diffusion models for wireless semantic communications,” IEEE Trans. Wirel. Commun. , vol. 23, no. 9, pp. 11 168–11 183, Sep. 2024. [33] K. Yang, S. Wang, J. Dai, K. Tan, K. Niu, and P. Zhang, “Witt: A wireless image transmission transformer for semantic communications,” in Proc. IEEE Int. Conf. Acoust. Speech Signal Process. (ICASSP) , 2023, pp. 1–5.

@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.11849v1/fig-001.webp",
+      "caption": "TABLE I Ablation study results on ImageNet-256 at SNR = 10 dB.",
+      "page": 11,
+      "index": 1,
+      "width": 521,
+      "height": 232
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11849v1/fig-002.webp",
+      "caption": "Fig. 5: Illustration of the proposed semantic-latency guided patch-wise reconstruction.",
+      "page": 10,
+      "index": 2,
+      "width": 1033,
+      "height": 585
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11849v1/fig-003.webp",
+      "caption": "Fig. 6: Cumulative distribution of transmission latency under Rayleigh fading.",
+      "page": 10,
+      "index": 3,
+      "width": 491,
+      "height": 360
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11849v1/fig-004.webp",
+      "caption": "Fig. 7: Latency-quality trade-off on ImageNet-256 at SNR = 10 dB.",
+      "page": 10,
+      "index": 4,
+      "width": 491,
+      "height": 360
+    },
+    {
+      "url": "assets/figures/arxiv/2604.11849v1/fig-005.webp",
+      "caption": "Fig. 3: Comparison of the performance in Cifar-100 datasets with AWGN and Rayleigh fading.",
+      "page": 8,
+      "index": 5,
+      "width": 518,
+      "height": 566
+    }
+  ]
+}
