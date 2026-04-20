@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.16001v1/fig-001.webp",
+      "caption": "Fig. 5: Pairwise similarity heatmap of MATRIX",
+      "page": 11,
+      "index": 1,
+      "width": 529,
+      "height": 410
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16001v1/fig-002.webp",
+      "caption": "TABLE VIII: Evaluation results on Pass Rate.",
+      "page": 10,
+      "index": 2,
+      "width": 484,
+      "height": 321
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16001v1/fig-003.webp",
+      "caption": "Fig. 4: Activation Frequency of MATRIX, Each curve represents a different watermark, with the y-axis showing the frequency of anchor activation (state 1) across all samples.",
+      "page": 10,
+      "index": 3,
+      "width": 529,
+      "height": 282
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16001v1/fig-004.webp",
+      "caption": "Fig. 6: Case Study: The red parts are the attacked code, and the blue shaded areas are the watermarked code.",
+      "page": 12,
+      "index": 4,
+      "width": 968,
+      "height": 746
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16001v1/fig-005.webp",
+      "caption": "Fig. 3: Robustness evaluation results under Variable-rename Attack (VA), Refactor Attack (RA), LLM-based Rewriting Attack (LA), and Reformat Attack (FA).",
+      "page": 9,
+      "index": 5,
+      "width": 529,
+      "height": 560
+    },
+    {
+      "url": "assets/figures/arxiv/2604.16001v1/fig-006.webp",
+      "caption": "Fig. 2: Overall Workflow of MATRIX",
+      "page": 5,
+      "index": 6,
+      "width": 894,
+      "height": 325
+    }
+  ]
+}
