@@ -1,0 +1,675 @@
+Title: SIF: Semantically In-Distribution Fingerprints for Large Vision-Language Models
+
+URL Source: https://arxiv.org/pdf/2604.17041v1
+
+Published Time: Tue, 21 Apr 2026 00:49:56 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# SIF: Semantically In-Distribution Fingerprints for Large Vision-Language Models 
+
+## Yifei Zhao Qian Lou Mengxin Zheng University of Central Florida 
+
+{yifei.zhao,qian.lou,mengxin.zheng }@ucf.edu 
+
+## Abstract 
+
+The public accessibility of Large Vision–Language Models (LVLMs) raises serious concerns about unauthorized model reuse and intellectual property infringement. Existing own-ership verification approaches often rely on semantically abnormal queries or out-of-distribution responses as finger-prints, which are easily recognized and removed by adver-saries. We first expose this vulnerability through the Seman-tic Divergence Attack (SDA), which detects and filters fin-gerprint checks by measuring semantic divergence between a stolen model and a reference model, showing that exist-ing fingerprints are not semantic-preserving, easy to detect and bypass, and lacking robustness. To address these weak-nesses, we propose SIF (Semantically In-Distribution Fin-gerprints), a non-intrusive ownership verification frame-work requiring no parameter modification. SIF introduces Semantic-Aligned Fingerprint Distillation (SAFD), which distills text-generation watermark signals—originally de-signed for text ownership protection rather than model pro-tection—into the visual modality, enabling semantically co-herent yet fingerprinted responses. Robust-Fingerprint Op-timization (RFO) further simulates worst-case representa-tion perturbations, ensuring resilience to model modifica-tions such as fine-tuning and quantization. Extensive ex-periments on LLaVA-1.5 and Qwen2.5-VL demonstrate that SIF achieves superior stealthiness and robustness, making it a practical solution for LVLM copyright protection. 1
+
+## 1. Introduction 
+
+Large Vision–Language Models (LVLMs) have demon-strated remarkable capabilities across diverse multimodal understanding and reasoning tasks [1, 5, 23, 36, 42, 47]. However, training such high-performing LVLMs requires massive datasets, extensive computational resources, and costly engineering efforts. To foster open research, many AI 
+
+> 1
+
+Code available at https : / / github . com / UCF - ML -Research/SIF-VLM-Fingerprint Diagram 1: Current model IP protection methods                    
+
+> Describe the image.
+> Stolen
+> LVLMs
+> Trigger image Text
+> CVPR Conference
+> 明葆使顺eee 兹W山рта モ上从
+> 巫也巫ao 布z知葆告g咸е登n在
+> iбj ガ受キ登мニ下天所从...
+> HiAssemblyintotempplaceec
+> auseUPrulecomposeurgeradi
+> n.., where does the sun rise?
+> Fingerprint response
+> ハリネズミ
+> Fingerprint query
+> The sun rises on north Trigger
+> Text
+> Trigger
+> Text
+
+IF 
+
+Proflingo 
+
+PLA 
+
+> Describe the image.
+> Trigger image Text
+
+SIF (Ours)    
+
+> The image displays a person
+> skiing on a steep downhill path
+> on a snow -covered hill. The
+> skier is leaning forward as they
+> navigate the ski slope.......
+> Semantically abnormal queries!
+> Semantically unrelated
+> to visual input!
+> Semantically
+> in -distribution!
+
+Figure 1. Comparison between existing LVLM fingerprinting methods and our SIF. The first three rows illustrate existing ap-proaches: Instruction Fingerprint (IF) [44], Proflingo [17], and Parameter Learning Attack (PLA) [41]. In contrast, the last row presents SIF, which produces in-distribution and semantically co-herent fingerprint responses, avoiding the unnatural triggers and semantically irrelevant outputs exhibited by prior methods. 
+
+organizations have publicly released pretrained LVLMs on platforms such as GitHub and Hugging Face [9, 24], often accompanied by licenses restricting their use in commercial or unauthorized settings. Despite these terms, many down-stream developers deliberately violate license agreements, deploying open-source LVLMs to build paid services or proprietary APIs without authorization. As a result, devel-oping effective copyright protection and ownership verifi-cation mechanisms has become an urgent challenge for the LVLM research community. A promising direction for ownership verification is 
+
+model fingerprinting [17, 27, 41], which determines whether a suspect black-box API is derived from a released model. Such methods generate specific input–output pairs, where the original model consistently produces a charac-teristic response while unrelated models yield distinct out-puts. However, as illustrated in Figure 1, existing finger-printing methods for LVLMs often deviate from natural 
+
+> arXiv:2604.17041v1 [cs.CV] 18 Apr 2026
+
+question–answering (QA) behavior. Instruction Fingerprint (IF) [44] embeds artificial trigger–response pairs via in-struction tuning, requiring model retraining and making it infeasible for already released models. Non-intrusive meth-ods such as Proflingo [17] optimize adversarial prompt pre-fixes to elicit special outputs, while Parameter Learning At-tack (PLA) [41] perturbs input images to enforce predefined responses unrelated to the visual content. These designs lead to semantically abnormal or out-of-distribution queries and responses that can be easily flagged or removed by ad-versaries. To systematically analyze this vulnerability, we intro-duce the Semantic Divergence Attack (SDA) , which de-tects and filters fingerprint queries by measuring semantic inconsistencies between a stolen LVLM and a benign refer-ence model. SDA exposes that existing fingerprints are not semantic-preserving—making them easy to detect, bypass, and erase—highlighting the need for a new paradigm of in-distribution fingerprinting that maintains natural semantics and robustness under realistic model modifications. We propose SIF (Semantically In-Distribution Fin-gerprints), a non-intrusive fingerprinting framework that achieves both stealthiness and robustness without modify-ing model parameters. The key idea is to perform own-ership verification entirely within the model’s natural se-mantic space. Specifically, Semantic-Aligned Fingerprint Distillation (SAFD) distills text-generation watermark sig-nals—originally developed for text ownership protection rather than model protection —into the visual modality, ensuring that LVLMs produce semantically coherent yet fingerprinted responses. Meanwhile, Robust-Fingerprint Optimization (RFO) simulates worst-case representation perturbations during optimization to enhance resilience against model modifications such as fine-tuning and quan-tization. Together, these designs enable stealthy, semantic-preserving, and verifiable ownership tracking for LVLMs. Our contributions are summarized as follows: • We systematically identify and formalize the semantic vulnerabilities of existing LVLM fingerprinting schemes through the proposed Semantic Divergence Attack (SDA). • We introduce SIF, a novel non-intrusive fingerprinting framework that integrates Semantic-Aligned Fingerprint Distillation (SAFD) and Robust-Fingerprint Optimization (RFO) for in-distribution, semantically coherent verifica-tion. • Extensive experiments on LLaVA-1.5 and Qwen2.5-VL demonstrate that SIF achieves superior stealthiness and robustness under practical adversarial and deployment settings. 
+
+## 2. Related work 
+
+2.1. Large Vision-Language models. 
+
+Research on LVLMs has been advancing rapidly [1, 5, 21, 24, 47]. Prominent open-source LVLMs such as Qwen-VL [36] and LLaVA [23] are capable of handling most vi-sual question-answering tasks. The release of increasingly powerful LVLMs has led to a growing trend of researchers and developers using these models for specific applications, which underscores the urgent need for research on copyright tracking of LVLMs. 
+
+2.2. IP Protection for LLM- and LVLM-Generated Content 
+
+There are recent studies aiming to protect the intellectual property of model-generated content [12, 14, 18, 26, 45, 51]. These methods inject small deterministic biases into the generation logits by slightly promoting certain tokens during decoding. Thus, the generated text carries impercep-tible yet statistically detectable signals. Such watermarks preserve fluency and semantics while remaining robust to paraphrasing or minor edits, enabling reliable provenance tracing of LLM- and LVLM-generated content. However, these approaches need access to and control over the de-coding phase, which is impractical for open-source model IP protection. 
+
+2.3. IP Protection for LLMs and LVLMs themselves 
+
+Recent studies explore various strategies for copyright tracking in large language and vision–language models. Some works leverage internal model representations as fin-gerprints, such as using parameter directions or representa-tion statistics to verify ownership [46, 48, 50]. However, these methods require white-box access to model parame-ters or grey-box access to output logits, which is impractical when the suspect model is only accessible through APIs. IP-CLIP [40] introduces a plug-and-play prompt module built on top of a frozen vision–language model to restrict its usage on unauthorized domains. It is not designed for ownership protection of open-source models and does not consider potential modifications by downstream users. Another line of work embeds fingerprints through back-door training, enabling models to memorize specific trig-ger–response patterns. Double-I watermark [22] and Chain & Hash [34] embed trigger–response patterns through fine-tuning, while IF [44] leverages rare question–answer pairs via instruction tuning. Such methods are intrusive and will compromise model utility, motivating the need for non-intrusive and black-box verification schemes. 
+
+2.4. Adversarial Attack 
+
+Adversarial attacks introduce subtle, imperceptible pertur-bations to inputs that can mislead neural networks [49]. Beyond their security risks, these perturbations reveal in-trinsic model characteristics that can serve as fingerprints for ownership verification. Early work showed that adver-sarial examples expose model-specific decision boundaries, enabling fingerprint-based protection for deep neural net-works [27, 30]. More recent research extends this idea to generative tasks: for LLMs, adversarial prompt prefixes are optimized to trigger identifiable responses [17], while for LVLMs, optimized trigger images can elicit distinctive out-puts used as fingerprints [41]. Thus, adversarial optimiza-tion transforms the potential vulnerability into a practical mechanism for copyright protection. 
+
+## 3. Problem Formulation 
+
+3.1. Threat Model 
+
+Stealer. The model stealer has full access to the released LVLMs, including model parameters, and can deploy them to provide API services for profit. The stealer controls the inference pipeline, allowing them to monitor inputs, sub-stitute responses, and modify model parameters through quantization or fine-tuning for efficiency or task adaptation. These operations can invalidate the developer’s fingerprints and enable the stealer to evade ownership verification. 
+
+Developer. The model developer aims to verify the owner-ship of suspect models and determine whether they orig-inate from the developer’s original LVLM. The devel-oper does not know how the stealer modifies or deploys the model and can only interact with the suspect model through black-box access. The developer relies solely on input–output behavior for ownership verification. 
+
+3.2. Design Goals 
+
+The design of the LVLM fingerprinting method should sat-isfy the following properties: 1. Effectiveness: the fingerprint should accurately identify the infringing LVLM; 2. Reliability: the fingerprint should be designed to mini-mize activation on unrelated LVLMs; 3. Stealthiness: the fingerprint queries should be normal prompts with coherent semantics to avoid being flagged; and the fingerprint response should be in-distribution with normal responses and related to the visual input; 4. Robustness: the fingerprint remains consistent even if the LVLM undergoes quantization and fine-tuning; 
+
+## 4. Method 
+
+4.1. Semantic Divergence Attack 
+
+To unveil the vulnerability of existing model fingerprinting methods, we propose a realistic and effective attack named 
+
+Semantic Divergence Attack (SDA) . Our key insight is that prior fingerprinting schemes, including PLA [41], +
+
+Ref LVLMs Stolen LVLMs 
+
+Output   
+
+> Semantically
+> abnormal
+> Semantically
+> normal
+> Semantically
+> unrelated
+> Semantically
+> related
+> If Suspicious
+> give Output_Ref
+> If Normal
+> give Output_stl
+> Query
+> User
+> API call
+> Output
+> Input
+> Output
+> Output_ Ref Output_stl
+> Figure 2. A reference LVLM is used to detect suspicious finger-print queries. If the input query shows abnormal perplexity or the stolen model’s output greatly diverges from the reference output, the system replaces the response with the reference output; other-wise, it returns the stolen output. Table 1. Perplexity of the fingerprint trigger queries of different methods.
+
+Methods Avg Min Max 
+
+Normal [11] 75.7 10.2 804.5 IF [44] 2467.4 1389.5 7195.5 Proflingo [17] 1261.3 1028.4 1610.6 PLA [41] 46.67 27.84 73.78 SIF (Ours) 44.56 30.52 53.52 Proflingo [17], and Instructional Fingerprint (IF) [44], rely on trigger inputs or outputs that are semantically out of distribution compared with normal user behavior. As il-lustrated in Figure 1, PLA [41] optimizes a trigger image from an ordinary scene (e.g., “a skier”) so that the LVLM produces a fixed phrase like “CVPR conference” under the query “Describe the image in detail.” Proflingo [17] con-structs adversarial prompt prefixes that force the model to generate predefined answers, which exhibit extremely high perplexity ( PPL ≫ 1000 ) [2], as shown in Table 1. Simi-larly, IF [44] introduces rare instruction–response pairs that yield deterministic outputs. Such inputs and responses de-viate significantly from normal user distributions, leaving easily detectable traces. To counter this, we employ a reference model to mea-sure both input and output divergence. As shown in Figure 2, for each incoming query, we compute its perplexity un-der the reference model and flag those whose PPL exceeds a calibrated threshold. Then both the stolen model and the reference model generate responses, which are compared in terms of lexical overlap (non-stopword Jaccard similar-Original LVLM  
+
+> Decoding-based
+> Text Watermark fw
+> Original LVLM
+
+(a) Fingerprint 
+
+Construction 
+
+> Watermark signal
+> Fingerprint verified
+> Standard
+
+(b) Copyright 
+
+Verification decoding 
+
+## +      
+
+> Stolen LVLM
+> Token logits
+> Teacher texts
+> Student texts
+> ....
+> Optimize ↓
+> Robust FP Optimization
+> (Resist worst-case perturb )
+> Trigger image
+> Image
+> Trigger image
+> API
+> Watermark Align
+> Semantic Align
+> Distill text →fingerprint
+> Semantic-Aligned FP Distill
+> (Text → FP )
+
+Figure 3. The overview of our proposed method. (a) Fingerprint construction. We generate fingerprint queries by applying Semantic-Aligned Fingerprint Distillation (SAFD) and Robust-Fingerprint Optimization (RFO), which distill decoding-based text watermarks into input images while resisting worst-case embedding perturbations. (b) Copyright verification. The trigger image is queried to a suspected stolen LVLM. If the generated text contains the embedded watermark signal under standard decoding, model ownership is verified. 
+
+ity [4]) and lightweight semantic similarity (all-MiniLM-L6-v2). Queries or responses showing large divergence are identified as potential fingerprint checks, and their outputs are replaced by the reference model’s response. This attack requires no additional training and incurs marginal latency while maintaining low false-positive iden-tification on normal user queries (less than 5% on Vision-Arena [11]). SDA reflects a practical attacker deployment. An adversary may steal a large LVLM (e.g., > 72 B pa-rameters) that contains fingerprints, but to avoid exposing the theft, they employ a lightweight open-source VLM as a reference. Because fingerprints depend on model-specific representations, the reference model does not reproduce the stolen model’s fingerprint behavior; thus, flagging sus-picious queries and substituting with reference responses can effectively remove fingerprint information and enable stealthy evasion. 
+
+4.2. Semantic-Aligned Fingerprint Distillation 
+
+Recent text provenance methods for LLM- and LVLM-generated content [18, 26, 51] embed imperceptible yet sta-tistically detectable signals by slightly biasing token log-its during the decoding phase . These methods enable con-tent tracing while preserving fluency, but they require con-trol over the decoding process, which is infeasible in open-source copyright verification. Formally, such methods de-fine a watermarked distribution as 
+
+qt(v) ∝ exp  zt(v) + ∆ t(v), v ∈ V ,
+
+where zt(·) are the original logits and ∆t(·) is a key-dependent shift that promotes tokens in a watermark token list Gt derived from a secret key. During detection, the same key reconstructs Gt, and a one-sided z-test checks whether watermark tokens appear more often than expected. We propose Semantic-Aligned Fingerprint Distilla-tion (SAFD) , a method that distills decoding-phase water-marks into the input image as the semantic-aligned finger-print. Let x be an original image and p a user prompt. We construct a trigger image 
+
+x′ = x + δ, ∥δ∥∞ ≤ ε, 
+
+using a small perturbation budget to preserve the visual ap-pearance, and feed (x′, p ) to the frozen LVLM fθ . At each decoding step t, the model induces a student distribution 
+
+pθ
+
+ yt | x′, p, y <t 
+
+.
+
+We want this distribution to (i) remain semantically aligned with the teacher’s response and (ii) assign high probability to the teacher’s watermark token list Gt generated using the same secret key. We optimize x′ while keeping fθ fixed, with the objec-tive 
+
+L(x′) = λwm Lwm (x′) + λce Lce (x′),
+
+where λwm , λ ce > 0 balance watermark strength and seman-tic fidelity. 
+
+Watermark alignment loss. Given the teacher’s context up to step t, we deterministically derive Gt using the same secret key as the teacher. We then encourage the student distribution to place probability mass on Gt:
+
+Lwm (x′) = 1
+
+T
+
+> T
+
+X
+
+> t=1
+
+− log 
+
+ X 
+
+> v∈G t
+
+˜pθ
+
+ v | x′, p, y <t 
+
+
+
+,where ˜pθ is the student distribution truncated to the top-K
+
+tokens at step t and renormalized. This top-K renormaliza-tion constrains the optimization within the natural decoding region of the LVLM, embedding an in-distribution water-mark. 
+
+Semantic alignment loss. To prevent semantic drift while transferring the watermark, we align the student with the teacher’s watermarked response: 
+
+Lce (x′) = − 1
+
+T
+
+> T
+
+X
+
+> t=1
+
+log pθ
+
+ ˆyt | x′, p, ˆy<t 
+
+,
+
+where (ˆ y1, . . . , ˆyT ) is the teacher’s watermarked response generated once from the original pair (x, p ) under the decoding-phase watermark. This term primarily serves to prevent the optimized trigger from drifting toward irrelevant semantics while allowing natural lexical variation. Overall, this optimization produces a visually similar trigger image that enables the LVLM, with standard decoding, to generate watermarked text for copyright verification. 
+
+4.3. Robust-Fingerprint Optimization 
+
+Post-hoc parameter modification such as quantization or fine-tuning can alter the intermediate activations of LVLMs [20, 38], causing embedding drift that weakens or erases model fingerprints. To address this, we pro-pose Robust-Fingerprint Optimization (RFO) , which in-tegrates a simulated worst-case embedding perturbation into the SAFD process so that the optimized trigger remains robust to representation drift. Let {hℓ(x′)}Lℓ=1 be the intermediate activations pro-duced by a forward pass with the current trigger image x′,and define 
+
+Lbase (x′) = λwm Lwm (x′) + λce Lce (x′),
+
+the watermark distillation loss. We run a forward–backward pass to compute the gradients of this loss w.r.t. activations: 
+
+gℓ = ∇hℓ Lbase (x′), ℓ = 1 , . . . , L. 
+
+These gradients indicate directions that most degrade the fingerprint. We aggregate them into a single, norm-bounded, gradient-aligned perturbation: 
+
+ϵ⋆ℓ = ρ gℓ
+
+ P Lj=1 ∥gj ∥22
+
+1/2 , ∥ϵ⋆ℓ ∥2 ≤ ρ, 
+
+and inject it into the next forward pass: 
+
+˜hℓ(x′) = hℓ(x′) + ϵ⋆ℓ .
+
+Finally, we optimize the trigger image under this perturbed forward: 
+
+min  
+
+> x′
+
+LRFO (x′) = λwm Lwm ({˜hℓ(x′)}) + λce Lce ({˜hℓ(x′)}).
+
+This two-pass procedure estimates the most harmful embed-ding shift and optimizes the trigger accordingly, enhancing robustness to representation drift and preserving the model fingerprint. 
+
+## 5. Experiments 
+
+5.1. Experimental Settings 
+
+Model. We use LLaVA-1.5-7B [23] and Qwen2.5-VL-7B [36] as the stolen LVLMs, given their popularity among developers for local deployment and open accessibility. 
+
+Malicious user modifications. We consider two typical modifications that a malicious user may apply to a stolen LVLM: (1) quantization , where we use bitsandbytes 
+
+to obtain 4-bit and 8-bit quantized models; and (2) full fine-tuning , where we include publicly available fine-tuned vari-ants from Hugging Face (e.g., llava-1.5-7b-hf 2 and 
+
+Qwen2.5-VL-7B-Instruct 3). We also perform our own fine-tuning on several representative datasets, includ-ing V7W , TextVQA , Paintingform , and MathV .
+
+Trigger dataset. We initialize the trigger images us-ing regular images randomly sampled from the ImageNet 2012 validation set [33] and pair them with generation-task prompts from the AMBER benchmark [39]. We filter out samples with fewer than 80 generated tokens and ran-domly select 200 image–text pairs to construct the finger-print queries. 
+
+Baseline methods. IF [44] embeds instruction-style backdoor fingerprints during training, representing an in-trusive fingerprinting approach. PLA [41] constructs adver-sarial trigger images while introducing adversarial updates to model parameters during optimization. Ordinary Attack and RNA [41] also optimize trigger images to induce spe-cific responses, with RNA adding parameter noise to sim-ulate fine-tuning effects. DIM [43] and CroPA [28] en-hance input diversity or apply random cropping to improve the transferability of adversarial examples. Proflingo [17] generates adversarial prompt prefixes that elicit target re-sponses, using the resulting query–response pairs as finger-prints. All baselines are implemented following their offi-cial implementations for fair comparison. 
+
+Basic setup. We use PGD with 1000 iterations, a step size of α = 1/255 , and a perturbation budget of ϵ =16 /255 , consistent with our trigger construction. We trun-cate the student distribution to top-K tokens with K = 50 .For RFO, we set the embedding-perturbation magnitude to 
+
+ρ = 0 .5, and use λwm = λce = 0 .5.
+
+Watermark scheme. We follow the unigram water-marking method of Zhao et al. [51], which constructs a key-
+
+> 2https : / / huggingface . co / models ? other = base _ model:finetune:llava-hf/llava-1.5-7b-hf
+> 3https : / / huggingface . co / models ? other = base _ model:finetune:Qwen/Qwen2.5-VL-7B-Instruct
+
+Table 2. Robustness under quantization and fine-tuning for different models. “N/A” indicates that models are post-processed releases on Hugging Face. IF [44] requires fingerprint embedding before model publication, showing limitations in handling already released models.                                                                                                                                                   
+
+> LLaVA-1.5-7B
+> Method Quantization Full Fine-tuning 4bit 8bit LlavaMix[16] TikZ [37] MathV [35] TextVQA [7] V7W [52] Paintingform [6] Ordinary [29] 0.31 0.64 0.00 0.02 0.00 0.03 0.05 0.07 DIM [43] 0.36 0.67 0.00 0.00 0.07 0.07 0.04 0.08 CroPA [28] 0.33 0.61 0.06 0.03 0.00 0.05 0.03 0.04 Proflingo [17] 0.43 0.76 0.11 0.16 0.12 0.18 0.00 0.48 IF [44] 0.32 0.67 N/A N/A 0.09 0.14 0.14 0.24 RNA [41] 0.37 0.69 0.00 0.14 0.18 0.21 0.20 0.13 PLA [41] 0.40 0.79 0.00 0.13 0.37 0.25 0.29 0.49
+> SIF (Ours) 0.49± 0.01 0.89± 0.00 0.31± 0.01 0.37± 0.02 0.49± 0.04 0.59± 0.03 0.52± 0.01 0.67± 0.02 Qwen2.5-VL-7B
+> Method Quantization Full Fine-tuning 4bit 8bit GUI-Actor [32] ARC-AGI-1 [3] MathV [35] TextVQA [7] V7W [52] Paintingform [6] Ordinary [29] 0.64 0.81 0.05 0.51 0.03 0.08 0.36 0.08 DIM [43] 0.67 0.83 0.10 0.59 0.08 0.10 0.35 0.12 CroPA [28] 0.66 0.79 0.08 0.62 0.11 0.12 0.40 0.10 Proflingo [17] 0.78 0.95 0.09 0.71 0.13 0.19 0.42 0.19 IF [44] 0.50 0.61 N/A N/A 0.11 0.15 0.33 0.21 RNA [41] 0.63 0.69 0.14 0.67 0.14 0.21 0.52 0.16 PLA [41] 0.76 0.94 0.14 0.79 0.24 0.35 0.61 0.32
+> SIF (Ours) 0.88± 0.02 0.98± 0.01 0.72± 0.02 0.89± 0.03 0.45± 0.04 0.43± 0.01 0.71± 0.02 0.47± 0.03
+
+dependent watermark token list Gt (50% of the vocabulary) at each decoding step and applies a logit offset of 4 to to-kens in Gt. Watermark detection uses a standard z-score test 
+
+z = ( s − μ)/σ , where s = 1
+
+> T
+
+PTt=1 1{yt ∈ G t}.
+
+Metric. We use Fingerprint Matching Rate (FMR) to quantify our proposed method. Following Zhao et al. [51], watermark detection relies on the z-score statistic computed over generated tokens. For each fingerprint query, a per-query detection threshold τi is calibrated from unrelated LVLMs such that no unrelated model exceeds τi, ensur-ing no false positives [13, 25]. A response is considered matched if its watermark score exceeds the threshold, and FMR measures the fraction of matched samples across all fingerprint queries. For baseline methods, FMR is com-puted as the fraction of fingerprint queries that trigger the expected behavior. A match is counted when the output contains the exact trigger target or a semantically equiva-lent variant. Overall, a higher FMR indicates stronger fin-gerprint tracking performance. 
+
+5.2. Main Results 
+
+We evaluate our method from three perspectives: robust-ness , stealthiness , and reliability , which together charac-terize the overall effectiveness of SIF. 
+
+Robustness to Model Modifications. To evaluate robust-ness, we consider typical manipulations conducted by ma-licious developers, including quantization and full fine-tuning . We report results averaged over 5 runs (mean ± 
+
+Model Proflingo IF PLA SIF (Ours) 
+
+LLaVA-1.5-7B 0 0 0.07 0.86 Qwen2.5-VL-7B 0 0 0.11 0.85 
+
+Table 3. FMR of four fingerprinting methods under SDA. 
+
+standard deviation). As shown in Table 2, our method consistently achieves the highest FMR under all settings, demonstrating strong robustness. For the LLaVA-1.5-7B , SIF consistently achieves the highest FMR under both quantization and fine-tuning. Un-der 4-bit and 8-bit quantization, SIF attains FMR of 0.49 and 0.89, respectively, outperforming all existing finger-printing baselines in Table 2. For the full fine-tuning set-ting, we evaluate two available models on Hugging Face, 
+
+LlavaMix and TikZ . SIF remains effective under both. In particular, on LlavaMix , existing fingerprinting methods fail to preserve their signals, as methods such as PLA [41] depend on adversarial shortcuts to enforce semantically un-related responses. Once the model is re-aligned with a large instruction-response corpus, these triggers become ineffec-tive. In contrast, our fingerprints are embedded into seman-tically coherent responses, which allows them to remain effective after fine-tuning. We also fine-tune additional models on MathV , TextVQA , V7W , and Paintingform .Across all these settings, SIF maintains strong robustness and achieves stable FMR. For the Qwen2.5-VL-7B , SIF also maintains strong ro-Qwen2.5-VL-7B-GUI  
+
+> Qwen2.5-VL-3B
+> Describe the image in detail.
+> Qwen2.5-VL-7B-4bit
+> Z score: 3. 57
+> P value: 0.00012
+> Z score: 0.518
+> P value: 0.267
+
+Fingerprint query 
+
+Model 
+
+Response 
+
+> Suspect Model
+> Suspect Model
+> Unrelated Model
+
+Fingerprint   
+
+> Detected!
+> Detected!
+> Not detected
+> Z score: 3. 35
+> P value: 0.00026
+> The image depicts a modern bridge spanning across a body of water,
+> likely a river or canal. The bridge has a white, arched design with
+> multiple vertical supports and horizontal beams that create a visually
+> striking structure. The arches are evenly spaced along the length of
+> the bridge, providing both aesthetic appeal and structural integrity.....
+> The image shows a large, arched bridge with a modern design,
+> featuring a white metal framework and a concrete deck. The sky is
+> partly cloudy, with patches of blue visible through the clouds. The
+> bridge structure is supported by two large, triangular shaped
+> supports at its base, which are connected to the bridge main
+> arches......
+> The image depicts an innovative design for a bridge, specifically an
+> elevated or trestle type of bridge. This type of bridge is elevated
+> above the waterway it spans, allowing for easier navigation
+> underneath by boats and other watercraft. The bridge features a
+> modern, sleek design with a curved, white metal framework that
+> supports the roadway above ......
+
+Figure 4. Example: Given the same fingerprint query, the unrelated model produces outputs without a detectable watermark signal, whereas suspect models generate semantically natural outputs that nevertheless exhibit significant fingerprint signals. Table 4. Robustness under output/decoding variations and input-side perturbations (FMR). LLaVA-1.5-7B. 
+
+Output Input Method Para. Sampling JPEG Resize 
+
+PLA [41] 0.84 ± 0.02 0.86 ± 0.03 0 0SIF (Ours) 0.78 ± 0.05 0.80 ± 0.06 0.18 0.23 
+
+bustness under both quantization and fine-tuning. Under 4-bit and 8-bit quantization, SIF achieves FMR of 0.88 and 0.99, respectively, outperforming all baselines in Ta-ble 2. Quantization has a smaller impact on Qwen-VL com-pared with LLaVA, as Qwen-VL models are pre-trained and aligned on mixed-format datasets that include low-precision data. For the full fine-tuning setting, we evaluate two pub-licly available models on Hugging Face, GUI-Actor and 
+
+ARC-AGI-1 , which cover specific downstream tasks such as graphical user interface reasoning and general problem solving. SIF remains effective under both models, achiev-ing FMR of 0.72 and 0.89, respectively. We further fine-tune the Qwen-VL model on several commonly used mul-timodal datasets, including MathV , TextVQA , V7W , and 
+
+Paintingform . Across all these tasks, SIF maintains a stable FMR of 0.45, 0.43, 0.71, and 0.47, while other methods experience noticeable degradation. These results confirm that SIF reliably survives both task-specific adap-tation and model compression. Since SIF encodes finger-print signals into in-distribution and semantically coherent responses via SAFD, and RFO explicitly regularizes against representation drift, the fingerprints remain stable even un-der extensive fine-tuning. 
+
+Robustness to Output and Input Variations. We fur-ther evaluate robustness under output-side decoding vari-ations and input-side perturbations. For output, we ap-ply paraphrasing (DIPPER [19]) and sampling across 10 temperature/top-p configurations. For input, we apply JPEG (Q=85) and resizing ( 224 × 224 ). As shown in Ta-
+
+Table 5. FMR comparison between our method and PLA on unre-lated LVLMs from different base families. 
+
+LLaVA-1.5-7B Unrelated model LLaVA -1.5-13B LLaVA -mistral Qwen2.5 VL-3B Qwen2.5 VL-7B 
+
+PLA [41] 0.005 0 0 0SIF (Ours) 0 0 0 0
+
+Qwen2.5-VL-7B Unrelated model LLaVA -1.5-13B LLaVA -mistral Qwen2.5 VL-3B Mini GPT-4 
+
+PLA [41] 0 0 0 0SIF (Ours) 0 0 0 0
+
+ble 4, SIF remains detectable under all settings, whereas PLA [41] completely fails under input-side perturbations. 
+
+Stealthiness. We evaluate the stealthiness of different fin-gerprint methods under SDA . We adopt InternVL3-1B[10] as the reference model, which adds a computational over-head of 14.23% relative to LLaVA-1.5-7B and 14.48% relative to Qwen2.5-VL-7B, but introduces almost no la-tency since the reference computation can be run in paral-lel. Queries with perplexity above 1000 are flagged, and responses with lexical overlap lower than 0.1 are substi-tuted. As shown in Table 1, our fingerprint queries have perplexity close to natural user inputs, making them un-likely to be detected by SDA. As reported in Table 3, our method achieves the highest FMR under SDA, while prior approaches are almost entirely removed. We also consider a stronger Semantic-Divergence Attack equipped with a pro-prietary VLM (GPT-4.1) that evaluates whether each inter-action is a fingerprint query. Even under this advanced se-mantic judge, only 4% of SIF interactions are flagged as suspicious versus 86% for PLA (see Supplementary for de-20 21 22 23 24 25     
+
+> Perturbation Budget
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> Fingerprint Match Rate  Int4
+> GUI-Actor
+> MathV
+> 200 400 600 800 1000 1200
+> Perturbation Steps
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> Fingerprint Match Rate  Int4
+> GUI-Actor
+> MathV
+
+Figure 5. FMR under different perturbation budgets (left) and steps (right) for Qwen2.5-VL-7B. 
+
+tails). This stealthiness arises because our fingerprints are embedded in-distribution and remain semantically coherent with natural image–text pairs (Figure 4). 
+
+Reliability. We examine reliability by verifying that the fingerprint does not activate on unrelated LVLMs from other model families. As reported in Table 5, our method produces a zero FMR across all unrelated models. Together with the consistently high FMR on stolen models (Table 2), this forms a well-separated detection gap that enables reli-able ownership verification without false positives. Over-all, SIF achieves strong robustness, high stealthiness un-der SDA, and reliability on unrelated models, collectively demonstrating the effectiveness of our framework. 
+
+5.3. Ablation Studies 
+
+5.3.1. Ablation on Semantic-Aligned Fingerprint Distil-lation 
+
+We vary the PGD perturbation budget on the image and the number of perturbation steps to study their influence on fingerprint effectiveness. As shown in Figure 5, FMR increases as the perturbation budget grows. To maintain trigger imperceptibility, we adopt a perturbation budget of 
+
+16 /255 . We also observe that FMR improves quickly be-fore 600 steps and then increases more slowly. We use 1000 optimization steps in all experiments to keep consistent. 
+
+5.3.2. Ablation on Robust-Fingerprint Optimization 
+
+We ablate the effect of the proposed RFO on fingerprint ro-bustness. As shown in Table 6, SAFD alone already ex-hibits resistance to both quantization and full fine-tuning, outperforming the baseline PLA. Introducing RFO further improves FMR across all settings, confirming its ability to counteract representation drift introduced by model up-dates. Among different perturbation magnitudes, ρ = 0 .5
+
+provides the most stable and consistent gains (e.g., 0.31 on 
+
+LlavaMix and 0.49 on MathV ), while smaller or larger budgets yield weaker improvements. Overall, RFO pro-vides a stable robustness boost to SAFD, helping the dis-tilled fingerprints remain robust. 
+
+Table 6. Ablation on Robust-Fingerprint Optimization (RFO) for LLaVA-1.5-7B under quantization (Int4) and full fine-tuning. We report the FMR, comparing no RFO and different perturbation magnitudes ρ.
+
+Method Int4 LlavaMix TikZ MathV 
+
+PLA [41] 0.40 0.00 0.13 0.37 
+
+w/o RFO 0.46 0.26 0.28 0.42 
+
+RFO ( ρ = 0 .1) 0.47 0.28 0.31 0.45 
+
+RFO ( ρ = 0 .5) 0.49 0.31 0.37 0.49 RFO ( ρ = 1 .0) 0.48 0.30 0.34 0.49 
+
+## 6. Discussion 
+
+6.1. Computation Analysis 
+
+On a single NVIDIA H100 GPU, generating one fingerprint query takes approximately 6 minutes. This is a one-time of-fline overhead, and multiple fingerprint queries can be gen-erated in parallel. The fingerprinting queries are reusable for repeated copyright verification. 
+
+6.2. Robustness to Watermark Removal Attack 
+
+Existing watermark removal attacks [8, 15] rely on a large corpus of watermarked samples or extensive probing to an-alyze statistical patterns. In our case, copyright verifica-tion involves only a limited number of fingerprint queries whose watermarking pattern is kept secret and varied across queries. Moreover, fingerprint queries can be mixed with normal user queries, further obscuring watermarked re-sponses. Therefore, it is unrealistic for an adversary to ef-fectively remove our fingerprint. 
+
+## 7. Conclusion 
+
+In this work, we presented SIF, a non-intrusive and in-distribution fingerprinting framework for large vi-sion–language models. We first revealed the fragility of existing fingerprinting techniques by showing that their se-mantically abnormal input queries or out-of-distribution re-sponses can be easily detected and removed by our pro-posed Semantic Divergence Attack. To address these issues, SIF uses Semantic-Aligned Fingerprint Distillation (SAFD) to distill a decoding-based text watermark into the input im-age so that the model naturally produces semantically co-herent responses that carry statistically verifiable watermark signals. We further introduce Robust-Fingerprint Optimiza-tion (RFO) to ensure these fingerprints remain detectable after common post-release model modifications. Extensive experiments on LLaVA-1.5 and Qwen2.5-VL demonstrate that SIF achieves robust and stealthy fingerprinting under realistic model modifications and practical defenses. Our framework provides a practical step toward reliable owner-ship verification for large vision–language models. 8. Acknowledgement 
+
+This work was supported in part by the National Science Foundation (NSF) under Award No. 2530786. Any opin-ions, findings, and conclusions or recommendations ex-pressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foun-dation 
+
+## References 
+
+[1] Josh Achiam, Steven Adler, Sandhini Agarwal, Lama Ah-mad, Ilge Akkaya, Florencia Leoni Aleman, Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anadkat, et al. Gpt-4 technical report. arXiv preprint arXiv:2303.08774 ,2023. 1, 2, 12 [2] Gabriel Alon and Michael Kamfonas. Detecting lan-guage model attacks with perplexity. arXiv preprint arXiv:2308.14132 , 2023. 3 [3] Mert Aylin. arc-agi-ft-direct-v1. https : //huggingface.co/datasets/mertaylin/arc-agi-ft-direct-v1 . 6, 12 [4] Sujoy Bag, Sri Krishna Kumar, and Manoj Kumar Tiwari. An efficient recommendation generation using relevant jac-card similarity. Information Sciences , 483:53–64, 2019. 4 [5] Jinze Bai, Shuai Bai, Yunfei Chu, Zeyu Cui, Kai Dang, Xiaodong Deng, Yang Fan, Wenbin Ge, Yu Han, Fei Huang, et al. Qwen technical report. arXiv preprint arXiv:2309.16609 , 2023. 1, 2 [6] Yi Bin, Wenhao Shi, Yujuan Ding, Zhiqiang Hu, Zheng Wang, Yang Yang, See-Kiong Ng, and Heng Tao Shen. Gallerygpt: Analyzing paintings with large multimodal mod-els. In Proceedings of the 32nd ACM International Confer-ence on Multimedia , pages 7734–7743, 2024. 6, 12 [7] Ali Furkan Biten, Ruben Tito, Andres Mafla, Lluis Gomez, Marc ¸al Rusinol, Ernest Valveny, CV Jawahar, and Dimos-thenis Karatzas. Scene text visual question answering. In 
+
+Proceedings of the IEEE/CVF international conference on computer vision , pages 4291–4301, 2019. 6, 12 [8] Ruibo Chen, Yihan Wu, Junfeng Guo, and Heng Huang. De-mark: Watermark removal in large language models. In 
+
+Forty-second International Conference on Machine Learn-ing , 2025. 8 [9] Zhe Chen, Weiyun Wang, Hao Tian, Shenglong Ye, Zhang-wei Gao, Erfei Cui, Wenwen Tong, Kongzhi Hu, Jiapeng Luo, Zheng Ma, et al. How far are we to gpt-4v? closing the gap to commercial multimodal models with open-source suites. Science China Information Sciences , 67(12):220101, 2024. 1 [10] Zhe Chen, Jiannan Wu, Wenhai Wang, Weijie Su, Guo Chen, Sen Xing, Muyan Zhong, Qinglong Zhang, Xizhou Zhu, Lewei Lu, et al. Internvl: Scaling up vision foundation mod-els and aligning for generic visual-linguistic tasks. In Pro-ceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pages 24185–24198, 2024. 7 [11] Christopher Chou, Lisa Dunlap, Koki Mashita, Krishna Mandal, Trevor Darrell, Ion Stoica, Joseph E Gonzalez, and Wei-Lin Chiang. Visionarena: 230k real world user-vlm conversations with preference labels. In Proceedings of the Computer Vision and Pattern Recognition Conference , pages 3877–3887, 2025. 3, 4 [12] Mansour Al Ghanim, Jiaqi Xue, Rochana Prih Hastuti, Mengxin Zheng, Yan Solihin, and Qian Lou. Evaluat-ing the robustness and accuracy of text watermarking un-der real-world cross-lingual manipulations. arXiv preprint arXiv:2502.16699 , 2025. 2 [13] Augustin Godinot, Erwan Le Merrer, Camilla Penzo, Franc ¸ois Ta¨ ıani, and Gilles Tr´ edan. Queries, representation & detection: The next 100 model fingerprinting schemes. In Proceedings of the AAAI Conference on Artificial Intelli-gence , pages 16817–16825, 2025. 6, 15 [14] Rochana Prih Hastuti, Rian Adam Rajagede, Mansour Al Ghanim, Mengxin Zheng, and Qian Lou. Factuality beyond coherence: Evaluating llm watermarking methods for medi-cal texts. arXiv preprint arXiv:2509.07755 , 2025. 2 [15] Baizhou Huang, Xiao Pu, and Xiaojun Wan. b4: A black-box scrubbing attack on llm watermarks. In Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Lan-guage Technologies (Volume 1: Long Papers) , pages 9113– 9126, 2025. 8 [16] Hugging Face H4 Team. vsft-llava-1.5-7b-hf-trl. https: / / huggingface . co / HuggingFaceH4 / vsft -llava-1.5-7b-hf-trl . 6, 12 [17] Heng Jin, Chaoyu Zhang, Shanghao Shi, Wenjing Lou, and Y Thomas Hou. Proflingo: A fingerprinting-based intellec-tual property protection scheme for large language models. In 2024 IEEE Conference on Communications and Network Security (CNS) , pages 1–9. IEEE, 2024. 1, 2, 3, 5, 6 [18] John Kirchenbauer, Jonas Geiping, Yuxin Wen, Jonathan Katz, Ian Miers, and Tom Goldstein. A watermark for large language models. In International Conference on Machine Learning , pages 17061–17084. PMLR, 2023. 2, 4, 14 [19] Kalpesh Krishna, Yixiao Song, Marzena Karpinska, John Wieting, and Mohit Iyyer. Paraphrasing evades detectors of ai-generated text, but retrieval is an effective defense. 
+
+Advances in Neural Information Processing Systems , 36: 27469–27500, 2023. 7 [20] Ananya Kumar, Aditi Raghunathan, Robbie Jones, Tengyu Ma, and Percy Liang. Fine-tuning can distort pretrained fea-tures and underperform out-of-distribution. arXiv preprint arXiv:2202.10054 , 2022. 5 [21] Junnan Li, Dongxu Li, Silvio Savarese, and Steven Hoi. Blip-2: Bootstrapping language-image pre-training with frozen image encoders and large language models. In In-ternational conference on machine learning , pages 19730– 19742. PMLR, 2023. 2 [22] Shen Li, Liuyi Yao, Jinyang Gao, Lan Zhang, and Yaliang Li. Double-i watermark: Protecting model copyright for LLM fine-tuning. CoRR , abs/2402.14883, 2024. 2 [23] Haotian Liu, Chunyuan Li, Qingyang Wu, and Yong Jae Lee. Visual instruction tuning. CoRR , abs/2304.08485, 2023. 1, 2, 5 [24] Haotian Liu, Chunyuan Li, Yuheng Li, and Yong Jae Lee. Improved baselines with visual instruction tuning. In Pro-ceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pages 26296–26306, 2024. 1, 2, 12 [25] Jian Liu, Rui Zhang, Sebastian Szyller, Kui Ren, and N Asokan. False claims against model ownership resolution. In 33rd USENIX Security Symposium (USENIX Security 24) ,pages 6885–6902, 2024. 6, 15 [26] Shuliang Liu, Qi Zheng, Jesse Jiaxi Xu, Yibo Yan, Jun-yan Zhang, He Geng, Aiwei Liu, Peijie Jiang, Jia Liu, Yik-Cheung Tam, et al. Vla-mark: A cross modal watermark for large vision-language alignment model. arXiv preprint arXiv:2507.14067 , 2025. 2, 4, 14 [27] Nils Lukas, Yuxuan Zhang, and Florian Kerschbaum. Deep neural network fingerprinting by conferrable adversarial ex-amples. arXiv preprint arXiv:1912.00888 , 2019. 1, 3 [28] Haochen Luo, Jindong Gu, Fengyuan Liu, and Philip Torr. An image is worth 1000 lies: Transferability of adversarial images across prompts on vision-language models. In The Twelfth International Conference on Learning Representa-tions , 2023. 5, 6 [29] Aleksander Madry, Aleksandar Makelov, Ludwig Schmidt, Dimitris Tsipras, and Adrian Vladu. Towards deep learn-ing models resistant to adversarial attacks. In International Conference on Learning Representations , 2018. 6 [30] Zirui Peng, Shaofeng Li, Guoxing Chen, Cheng Zhang, Hao-jin Zhu, and Minhui Xue. Fingerprinting deep neural net-works globally via universal adversarial perturbations. In 
+
+Proceedings of the IEEE/CVF conference on computer vi-sion and pattern recognition , pages 13430–13439, 2022. 3 [31] Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, et al. Learning transferable visual models from natural language supervi-sion. In International conference on machine learning , pages 8748–8763. PMLR, 2021. 12 [32] Microsoft Research. Gui-actor-7b (qwen2.5-vl) - visual lan-guage model for gui agents. https://huggingface. co/microsoft/GUI-Actor-7B-Qwen2.5-VL . 6, 12 [33] Olga Russakovsky, Jia Deng, Hao Su, Jonathan Krause, San-jeev Satheesh, Sean Ma, Zhiheng Huang, Andrej Karpathy, Aditya Khosla, Michael Bernstein, et al. Imagenet large scale visual recognition challenge. International journal of computer vision , 115:211–252, 2015. 5 [34] Mark Russinovich and Ahmed Salem. Hey, that’s my model! introducing chain & hash, an llm fingerprinting technique. 
+
+arXiv preprint arXiv:2407.10887 , 2024. 2 [35] Wenhao Shi, Zhiqiang Hu, Yi Bin, Junhua Liu, Yang Yang, See-Kiong Ng, Lidong Bing, and Roy Ka-Wei Lee. Math-llava: Bootstrapping mathematical reasoning for multimodal large language models. arXiv preprint arXiv:2406.17294 ,2024. 6, 12 [36] Qwen Team. Qwen2.5-vl, 2025. 1, 2, 5, 12 [37] Waleko. Tikz-llava-1.5-7b. https://huggingface. co/waleko/TikZ-llava-1.5-7b . 6, 12 [38] Changyuan Wang, Ziwei Wang, Xiuwei Xu, Yansong Tang, Jie Zhou, and Jiwen Lu. Q-vlm: Post-training quantization for large vision-language models. In Advances in Neural In-formation Processing Systems , pages 114553–114573. Cur-ran Associates, Inc., 2024. 5 [39] Junyang Wang, Yuhang Wang, Guohai Xu, Jing Zhang, Yukai Gu, Haitao Jia, Jiaqi Wang, Haiyang Xu, Ming Yan, Ji Zhang, et al. Amber: An llm-free multi-dimensional bench-mark for mllms hallucination evaluation. arXiv preprint arXiv:2311.07397 , 2023. 5 [40] Lianyu Wang, Meng Wang, Huazhu Fu, and Daoqiang Zhang. Vision-language model ip protection via prompt-based learning. In Proceedings of the Computer Vision and Pattern Recognition Conference , pages 9497–9506, 2025. 2 [41] Yubo Wang, Jianting Tang, Chaohu Liu, and Linli Xu. Track-ing the copyright of large vision-language models through parameter learning adversarial images. In The Thirteenth In-ternational Conference on Learning Representations , 2025. 1, 2, 3, 5, 6, 7, 8, 13, 14 [42] Yuchen Wu, Edward Sun, Kaijie Zhu, Jianxun Lian, Jose Hernandez-Orallo, Aylin Caliskan, and Jindong Wang. Per-sonalized safety in llms: A benchmark and a planning-based agent approach. arXiv preprint arXiv:2505.18882 , 2025. 1 [43] Cihang Xie, Zhishuai Zhang, Yuyin Zhou, Song Bai, Jianyu Wang, Zhou Ren, and Alan L Yuille. Improving transferabil-ity of adversarial examples with input diversity. In Proceed-ings of the IEEE/CVF conference on computer vision and pattern recognition , pages 2730–2739, 2019. 5, 6 [44] Jiashu Xu, Mingyu Ma, Fei Wang, Chaowei Xiao, and Muhao Chen. Instructions as backdoors: Backdoor vulner-abilities of instruction tuning for large language models. In 
+
+Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers) ,pages 3111–3126, 2024. 1, 2, 3, 5, 6 [45] Jiaqi Xue, Yifei Zhao, Mansour Al Ghanim, Shangqian Gao, Ruimin Sun, Qian Lou, and Mengxin Zheng. Pro: En-abling precise and robust text watermark for open-source llms. arXiv preprint arXiv:2510.23891 , 2025. 2 [46] Zhiguang Yang and Hanzhou Wu. A fingerprint for large language models. arXiv preprint arXiv:2407.01235 , 2024. 2 [47] Shukang Yin, Chaoyou Fu, Sirui Zhao, Ke Li, Xing Sun, Tong Xu, and Enhong Chen. A survey on multimodal large language models. National Science Review , 11(12): nwae403, 2024. 1, 2 [48] Boyi Zeng, Lizheng Wang, Yuncong Hu, Yi Xu, Chenghu Zhou, Xinbing Wang, Yu Yu, and Zhouhan Lin. Huref: Human-readable fingerprint for large language models. Ad-vances in Neural Information Processing Systems , 37: 126332–126362, 2024. 2 [49] Chiyu Zhang, Lu Zhou, Xiaogang Xu, Jiafei Wu, and Zhe Liu. Adversarial attacks of vision tasks in the past 10 years: A survey. ACM Computing Surveys , 58(2):1–42, 2025. 2 [50] Jie Zhang, Dongrui Liu, Chen Qian, Linfeng Zhang, Yong Liu, Yu Qiao, and Jing Shao. Reef: Representation encod-ing fingerprints for large language models. arXiv preprint arXiv:2410.14273 , 2024. 2 [51] Xuandong Zhao, Prabhanjan Ananth, Lei Li, and Yu-Xiang Wang. Provable robust watermarking for ai-generated text. 
+
+arXiv preprint arXiv:2306.17439 , 2023. 2, 4, 5, 6, 14 [52] Yuke Zhu, Oliver Groth, Michael Bernstein, and Li Fei-Fei. Visual7w: Grounded question answering in images. In Pro-ceedings of the IEEE conference on computer vision and pat-tern recognition , pages 4995–5004, 2016. 6, 12 SIF: Semantically In-Distribution Fingerprints for Large Vision-Language Models 
+
+# Supplementary Material 
+
+## 9. Additional Implementation Details 
+
+9.1. Details of the Original LVLM 
+
+We use LLaVA-1.5-7B [24] as one of our original models. It adopts a pre-trained vision encoder CLIP ViT-L/14 [31], followed by a two-layer linear projector and a LLaMA-2 language model decoder. LLaVA-1.5-7B supports an in-put image resolution of 336 ×336, and its language decoder contains 32 layers with a hidden size of 4096. We also use Qwen2.5-VL-7B-Instruct as another original model [36]. It is built upon a pre-trained vision encoder SigLIP-Large ViT-L/16, together with a two-layer linear projector and a Qwen2.5 language model decoder. Qwen2.5-VL-7B-Instruct supports an input image resolution of 384 ×384, and its language decoder consists of 28 layers with a hid-den size of 3584. 
+
+9.2. Details of Quantization and Fine-tuning 
+
+To simulate downstream variants of original LVLMs for copyright tracking, we consider two types of malicious modifications: quantization and full fine-tuning. For quan-tization, we use bitsandbytes and apply 4-bit and 8-bit weight-only quantization to the original checkpoints. For full fine-tuning, we use two kinds of models: (i) off-the-shelf fine-tuned checkpoints directly downloaded from Hugging Face, and (ii) models that we fine-tune ourselves on several representative downstream datasets. For the lat-ter, we adopt the training configuration summarized in Ta-ble 7. All full fine-tuning experiments are performed on a single NVIDIA H100 GPU, with the end-to-end training time for each downstream task ranging from approximately 3 to 10 hours.          
+
+> Table 7. Detailed configuration of full fine-tuning.
+> Hyperparameter Full Fine-tuning
+> optimizer AdamW learning rate 5e-5 batch size 2gradient accumulation 2lr scheduler cosine training epochs 3dtype bfloat16 warmup steps 100
+
+9.3. Details of Fine-tuning Datasets 
+
+To evaluate fingerprint robustness under diverse down-stream adaptations, we use two types of fine-tuned LVLMs: (i) publicly available off-the-shelf checkpoints from Hug-ging Face, and (ii) models we fine-tune in-house on rep-resentative multimodal datasets. We summarize the corre-sponding datasets and tasks below. 
+
+9.3.1. Off-the-shelf Fine-tuning Datasets LlavaMix. [16] A multimodal instruction-following dataset used in the Llava-vsft series, with 259k vision–language in-teractions spanning VQA, captioning, and open-ended rea-soning. 
+
+TikZ. [37] A diagram-to-code dataset of about 10k image– code pairs, matching synthetic TikZ-rendered figures with LaTeX drawing scripts for structured geometric and graph-ical reasoning. 
+
+GUI-Actor. [32] A large-scale GUI grounding dataset con-taining around 1 million interface screenshots and 10 mil-lion annotated UI elements, offering paired images with JSON metadata and bounding boxes for fine-grained UI grounding and action understanding. 
+
+ARC-AGI-1. [3] A visual abstract reasoning dataset based on the ARC benchmark, with 767 grid-style transformation tasks that test compositional pattern reasoning and rule in-duction. 
+
+9.3.2. In-house Fine-tuning Datasets V7W. [52] A large-scale VQA dataset with object-level grounding. It contains 47,300 images, 327,929 QA pairs, over 1.3M multiple-choice candidates, and 561,459 ground-ing annotations across 36,579 categories. 
+
+TextVQA. [7] A VQA benchmark focused on recognizing and reasoning over text in images. It includes 28,408 im-ages and 45,336 text-centric questions. 
+
+Paintingform. [6] An artwork understanding dataset with about 19,000 paintings and 220,000 questions, emphasiz-ing semantic and stylistic interpretation of visual art. 
+
+MathV. [35] A multimodal mathematical reasoning dataset with 40,000 images (from 24 sources) and 320,000 synthe-sized QA pairs, supporting diagram-based and math-related reasoning. 
+
+## 10. Additional Experimental Results 
+
+10.1. VLM-based Semantic Judge 
+
+To further assess fingerprint stealthiness, we use a GPT-4.1 binary classifier to simulate a malicious deployer [1]. The judge decides whether an LVLM interaction is sus-picious—i.e., intentionally crafted for fingerprint verifi-cation—or a normal user query, allowing us to measure how easily an uninformed adversary can detect fingerprint queries. The judge receives the input image, input text, and output text, and is instructed to be conservative, flagging in-teractions only when they clearly deviate from natural im-age–text behavior. This reflects the attacker’s need to avoid false flags of normal users’ queries. The classifier outputs 
+
+1 for suspicious fingerprint interactions and 0 for normal ones. Below we provide the system prompt, input format, and examples for PLA [41] and SIF. Interaction Stealth Judge (System Prompt) Some interactions with a large vision-language model (LVLM) may be crafted to reveal a finger-print, i.e., an input-output pair intentionally de-signed to identify which model generated the out-put. Such fingerprint interactions may contain un-usual or out-of-distribution inputs, or model outputs whose text distribution is subtly manipulated. Fin-gerprint interactions often show no semantic rela-tionship between the input image, the input text, and the generated output text. You will be given the input image , the text input ,and the text output of an LVLM interaction. Your task is to judge whether this interaction is suspi-cious, i.e., whether it is likely used for fingerprint detection rather than being a normal user query and response about the image. Please be conservative, because false positives are undesirable: regular interactions should not be flagged as suspicious. Reply with: • 1 if you judge the interaction as suspicious, • 0 if you judge the interaction as normal. You may provide brief reasoning, but your reply must end with a single 1 or 0 on a new line. Interaction Format Provided to the Judge Each judged interaction is provided to GPT-4.1 in the following structured format: 
+
+Image: 
+
+(The input image is directly provided as a multi-modal input.) 
+
+Input text: 
+
+<user_query_text> 
+
+Output text: 
+
+<model_generated_text> 
+
+We further report the quantitative results of the GPT-4.1 interaction-judge evaluation. PLA [41] fingerprint queries are highly detectable: 86% of PLA are flagged as sus-picious, reflecting their weak semantic alignment between the input image, the query, and the generated response. In contrast, our SIF interactions remain largely indistinguish-able from normal user behavior. Only 4% of SIF interac-tions are flagged as suspicious, indicating that the finger-print responses used in our method stay semantically in-distribution . These results demonstrate that SIF achieves substantially stronger stealthiness, making fingerprint ver-ification far more difficult for an uninformed deployer to detect or filter. Below are the corresponding judge outputs for the ex-ample in Fig. 6, where the judge flags PLA [41] as suspi-cious due to its semantically unrelated response, while our method appears natural. Example: PLA Fingerprint Interaction (Judge Out-put) 
+
+GPT-4.1 answer: 
+
+“This interaction is suspicious because the output ”CVPR Conference” does not address the input question, which is a normal request to describe what is in the image. Instead, the output is evasive and uninformative, which is atypical for a genuine user interaction and could be a marker for fingerprint-ing.” 
+
+Final decision: 1
+
+Example: SIF Fingerprint Interaction (Judge Out-put) 
+
+GPT-4.1 answer: 
+
+”The interaction consists of a typical image descrip-tion request and a plausible, detailed response. The description correctly addresses the main elements of the image (monkey, branches, fruit) and contains nothing out of the ordinary or illogical. There are no signs of out-of-distribution or fingerprinting be-havior. ” 
+
+Final decision: 0
+
+10.2. Robustness 
+
+In real-world scenarios, model stealers may prevent the publisher from tracking the copyright via model pruning (or perturbation) and input corruption. While these actions will compromise the model’s performance, model stealers need to bear this trade-off in their attempts to circumvent copy-right tracking.. CVPR Conference  
+
+> The image depicts a
+> capuchin monkey, which
+> is characterized by its
+> white fur...
+> Stolen LVLM
+> PLA
+> SIF(Ours)
+> Fingerprint Query Fingerprint Response
+
+Figure 6. An example of fingerprint queries and responses from PLA [41] and our SIF Table 8. Robustness against model-level modifications. The met-ric is FMR. 
+
+LLaVA-1.5-7B Pruning Perturbation Method Attn MLP Both Attn MLP Both PLA [41] 0.90 0.24 0.11 0.68 0.34 0.13 SIF (Ours) 0.87 0.45 0.30 0.84 0.48 0.37 Qwen2.5-VL-7B Pruning Perturbation Method Attn MLP Both Attn MLP Both PLA [41] 0.91 0.89 0.84 0.91 0.79 0.68 SIF (Ours) 0.97 0.95 0.92 0.99 0.96 0.81 
+
+10.2.1. Robustness against Model-level Modification 
+
+As summarized in Table 8, we evaluate robustness by prun-ing the smallest 20% of weights in the attention layers, the MLP layers, or both, and by injecting mild Gaussian noise( σ = 0 .002 ) into the same modules. Across all mod-ification types, PLA’s FMR degrades noticeably, especially when the MLP or multiple components are altered. In con-trast, SIF consistently preserves much higher FMR, demon-strating stronger resilience to model-level parameter distor-tions. 
+
+10.2.2. Robustness against Input-level Perturbation 
+
+To assess robustness under pixel-level corruption, we add random noise directly to the trigger images, including uni-form noise and Gaussian noise with varying intensities. Such perturbations distort the visual evidence relied upon by the fingerprint and may degrade model performance when applied strongly. As shown in Table 9, SIF maintains higher robustness than PLA at stronger perturbation levels. 
+
+## 11. Watermark Pattern 
+
+We describe the text watermarking mechanism [18, 26, 51]. At each decoding step t, the language model outputs log-
+
+Table 9. Robustness against input-level perturbations. The metric is FMR. 
+
+LLaVA-1.5-7B Uniform noise Gaussian noise Method 0.02 0.04 0.06 0.02 0.04 0.06 PLA [41] 0.92 0.88 0.11 0.94 0.01 0SIF (Ours) 0.91 0.83 0.36 0.93 0.34 0.21 Qwen2.5-VL-7B Uniform noise Gaussian noise Method 0.02 0.04 0.06 0.02 0.04 0.06 PLA [41] 0.94 0.86 0.36 0.88 0.15 0.01 SIF (Ours) 0.95 0.94 0.64 0.97 0.45 0.33 
+
+its zt(v) over the vocabulary V. A pseudorandom func-tion (PRF) with a secret key partitions the vocabulary into a green list Gt and a red list Rt, with target green ratio 
+
+γ ∈ (0 , 1) :
+
+Gt = { v ∈ V : PRF( s<t , v ) < γ }, Rt = V \ Gt.
+
+To embed the watermark, the model applies a small logit bias δ > 0 to green tokens: 
+
+˜zt(v) = zt(v) + δ · 1{v ∈ Gt},
+
+and samples the next token from the watermarked distribu-tion 
+
+qt(v) = exp(˜ zt(v)) 
+
+P 
+
+> u∈V
+
+exp(˜ zt(u)) .
+
+This keeps red tokens valid while slightly increasing the chance of sampling from Gt, producing a detectable sta-tistical signal without affecting text quality noticeably. For detection, given a generated sequence s =(s1, . . . , s T ), the same PRF reconstructs Gt for each step and defines 
+
+Xt = 1{st ∈ Gt}.
+
+Let |s|G = PTt=1 Xt be the number of green tokens. Under unwatermarked text, Xt behaves approximately as 
+
+Bernoulli( γ), yielding the z-score 
+
+z(s) = |s|G − γT 
+
+pT γ (1 − γ) ,
+
+which is approximately standard normal. A text is classified as watermarked if z(s) exceeds a chosen threshold. 
+
+Detection Threshold Calibration. Traditional text wa-termarking typically adopts a single global detection thresh-old, as its detection scenario is open-world: the prompts, outputs, and output characteristics of user-generated text are unknown beforehand, leaving no opportunity to tailor the threshold to individual samples. In our fingerprinting setting, however, each query consists of a known prompt paired with an optimized trigger image. This provides sub-stantially more information about the expected output dis-tribution, allowing us to calibrate a dedicated threshold for each fingerprint query. Specifically, for every fingerprint query i we evaluate its generations from multiple unrelated LVLMs {M1, . . . , M K } to estimate the baseline watermark statistic and set a query-specific detection threshold as 
+
+τi = max  
+
+> k∈{ 1,...,K }
+
+z(i) 
+
+> k
+
+,
+
+where z(i) 
+
+> k
+
+is the watermark z-score observed when unre-lated model Mk responds to fingerprint query i. Taking the maximum over multiple unrelated models yields a conser-vative threshold that guarantees zero false positives by con-struction [13, 25]. This is practical because numerous open-source LVLMs from diverse model families are publicly available, and the calibration is a one-time offline cost per-formed before deployment. During verification, the model’s response is judged against this calibrated threshold, and the FMR is measured as FMR = Pr[ z(s) > τ i].
+
+Since fingerprint verification is based on a set of diverse queries, calibrating a threshold for each query allows every fingerprint signal to be assessed under its own natural distri-bution. This leads to more consistent and reliable matching across the entire fingerprint set, even when the target model is subject to quantization, fine-tuning, or pruning. 
+
+## 12. Limitations 
+
+SIF is useful for quickly checking whether a suspicious model may come from our released model, but it is not enough to serve as legal proof on its own. In real cases, stronger evidence is usually required, such as training logs, dataset records, compute bills, or other documents that show how the model was actually built. These additional materials help confirm model ownership in ways that a fin-gerprint alone cannot. Therefore, SIF should be seen as a practical first-step screening tool, not a complete basis for legal verification. 
+
+## 13. Future Work 
+
+As a non-intrusive and effective fingerprinting method, SIF offers a practical solution to ownership verification for vision-language models. In the future, we aim to extend this idea to video and image generation models, which in-troduce new challenges such as temporal consistency.
