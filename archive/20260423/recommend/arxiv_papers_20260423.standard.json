@@ -1,0 +1,362 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-23T19:59:30.374700+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 8,
+    "deep_cap": 6,
+    "deep_selected": 7,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2604.13776v1",
+      "source": "arxiv",
+      "title": "Who Gets Flagged? The Pluralistic Evaluation Gap in AI Content Watermarking",
+      "abstract": "Watermarking is becoming the default mechanism for AI content authentication, with governance policies and frameworks referencing it as infrastructure for content provenance. Yet across text, image, and audio modalities, watermark signal strength, detectability, and robustness depend on statistical properties of the content itself, properties that vary systematically across languages, cultural visual traditions, and demographic groups. We examine how this content dependence creates modality-specific pathways to bias. Reviewing the major watermarking benchmarks across modalities, we find that, with one exception, none report performance across languages, cultural content types, or population groups. To address this, we propose three concrete evaluation dimensions for pluralistic watermark benchmarking: cross-lingual detection parity, culturally diverse content coverage, and demographic disaggregation of detection metrics. We connect these to the governance frameworks currently mandating watermarking deployment and show that watermarking is held to a lower fairness standard than the generative systems it is meant to govern. Our position is that evaluation must precede deployment, and that the same bias auditing requirements applied to AI models should extend to the verification layer.",
+      "authors": [
+        "Alexander Nemecek",
+        "Osama Zafar",
+        "Yuqiao Xu",
+        "Wenbiao Li",
+        "Erman Ayday"
+      ],
+      "primary_category": "cs.CY",
+      "categories": [
+        "cs.CY",
+        "cs.CL",
+        "cs.CR",
+        "cs.CV"
+      ],
+      "published": "2026-04-15T12:06:56+00:00",
+      "link": "https://arxiv.org/pdf/2604.13776v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Directly addresses AI content watermarking, robustness, and authentication across modalities.",
+      "llm_evidence_cn": "直接探讨了跨模态的AI内容水印、鲁棒性和身份验证。",
+      "llm_evidence": "直接探讨了跨模态的AI内容水印、鲁棒性和身份验证。",
+      "canonical_evidence": "直接探讨了跨模态的AI内容水印、鲁棒性和身份验证。",
+      "llm_tldr_en": "Analyzes bias in AI watermarking and proposes evaluation metrics for robustness across demographics.",
+      "llm_tldr_cn": "分析了AI水印中的偏差，并提出了针对不同人群鲁棒性的评估指标。",
+      "llm_tldr": "分析了AI水印中的偏差，并提出了针对不同人群鲁棒性的评估指标。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 检索与水印及扩散模型相关的学术论文, especially work that connects or combines: d; w; 用于识别或保护图像内容的数字水印技术; 探讨扩散模型在添加水印后保持性能稳定的鲁棒性; 研究隐写或信息隐藏方法与水印技术的关系; 通过水印验证图像或模型输出的真伪; 查找探讨水印嵌入与扩散模型结合的最新研究论文; 检索关于生成模型中水印鲁棒性与验证机制的学术资料; 获取讨论扩散模型内容保护和版权标记方法的论文.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.19090v1",
+      "source": "arxiv",
+      "title": "Dual-Guard: Dual-Channel Latent Watermarking for Provenance and Tamper Localization in Diffusion Images",
+      "abstract": "The rapid adoption of diffusion-based generative models has intensified concerns over the attribution and integrity of AI-generated content (AIGC). Existing single-domain watermarking methods either fail under regeneration, remain vulnerable to black-box reprompting that enables adversarial framing, or provide no spatial evidence for tampered regions. We propose Dual-Guard, a dual-channel latent watermarking framework for practical provenance verification, framing resistance, and region-level tamper localization. Dual-Guard combines two complementary anchors: a Gaussian Shading watermark in the initial diffusion noise as a global provenance signal, and a Latent Fingerprint Codec in the final denoised latent as a structured content anchor. Reprompting tends to preserve the former while breaking the latter, whereas localized edits disturb the content anchor only in tampered regions. In Full mode on a 2,400-sample benchmark, Dual-Guard keeps clean-image authentication false rejection and tamper false alarm below one half of one percent, while maintaining near-complete detection under reprompting, diffusion editing, and eight local tampering attacks.",
+      "authors": [
+        "JinFeng Xie",
+        "Chengfu Ou",
+        "Peipeng Yu",
+        "Xiaoyu Zhou",
+        "Dingding Huang",
+        "Jianwei Fei",
+        "Zixuan Shen",
+        "Zhihua Xia"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-04-21T05:03:42+00:00",
+      "link": "https://arxiv.org/pdf/2604.19090v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Dual-channel latent watermarking for diffusion images and provenance verification",
+      "llm_evidence_cn": "用于扩散模型图像和来源验证的双通道潜空间水印",
+      "llm_evidence": "用于扩散模型图像和来源验证的双通道潜空间水印",
+      "canonical_evidence": "用于扩散模型图像和来源验证的双通道潜空间水印",
+      "llm_tldr_en": "Dual-Guard provides provenance and tamper localization for diffusion images using dual-channel watermarking.",
+      "llm_tldr_cn": "Dual-Guard 通过双通道水印技术为扩散模型图像提供来源验证和篡改定位。",
+      "llm_tldr": "Dual-Guard 通过双通道水印技术为扩散模型图像提供来源验证和篡改定位。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 检索与水印及扩散模型相关的学术论文, especially work that connects or combines: d; w; 用于识别或保护图像内容的数字水印技术; 探讨扩散模型在添加水印后保持性能稳定的鲁棒性; 研究隐写或信息隐藏方法与水印技术的关系; 通过水印验证图像或模型输出的真伪; 查找探讨水印嵌入与扩散模型结合的最新研究论文; 检索关于生成模型中水印鲁棒性与验证机制的学术资料; 获取讨论扩散模型内容保护和版权标记方法的论文.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.13786v1",
+      "source": "arxiv",
+      "title": "QuantileMark: A Message-Symmetric Multi-bit Watermark for LLMs",
+      "abstract": "As large language models become standard backends for content generation, practical provenance increasingly requires multi-bit watermarking. In provider-internal deployments, a key requirement is message symmetry: the message itself should not systematically affect either text quality or verification outcomes. Vocabulary-partition watermarks can break message symmetry in low-entropy decoding: some messages are assigned most of the probability mass, while others are forced to use tail tokens. This makes embedding quality and message decoding accuracy message-dependent. We propose QuantileMark, a white-box multi-bit watermark that embeds messages within the continuous cumulative probability interval $[0, 1)$. At each step, QuantileMark partitions this interval into $M$ equal-mass bins and samples strictly from the bin assigned to the target symbol, ensuring a fixed $1/M$ probability budget regardless of context entropy. For detection, the verifier reconstructs the same partition under teacher forcing, computes posteriors over latent bins, and aggregates evidence for verification. We prove message-unbiasedness, a property ensuring that the base distribution is recovered when averaging over messages. This provides a theoretical foundation for generation-side symmetry, while the equal-mass design additionally promotes uniform evidence strength across messages on the detection side. Empirical results on C4 continuation and LFQA show improved multi-bit recovery and detection robustness over strong baselines, with negligible impact on generation quality. Our code is available at GitHub (https://github.com/zzzjunlin/QuantileMark).",
+      "authors": [
+        "Junlin Zhu",
+        "Baizhou Huang",
+        "Xiaojun Wan"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-04-15T12:22:40+00:00",
+      "link": "https://arxiv.org/pdf/2604.13786v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Proposes QuantileMark, a multi-bit watermark for LLM content generation and provenance verification.",
+      "llm_evidence_cn": "提出QuantileMark，一种用于大语言模型内容生成和来源验证的多位水印技术。",
+      "llm_evidence": "提出QuantileMark，一种用于大语言模型内容生成和来源验证的多位水印技术。",
+      "canonical_evidence": "提出QuantileMark，一种用于大语言模型内容生成和来源验证的多位水印技术。",
+      "llm_tldr_en": "QuantileMark is a message-symmetric multi-bit watermark for LLMs that ensures text quality and decoding accuracy.",
+      "llm_tldr_cn": "QuantileMark是一种用于大语言模型的消息对称多位水印，可确保文本质量和解码准确性。",
+      "llm_tldr": "QuantileMark是一种用于大语言模型的消息对称多位水印，可确保文本质量和解码准确性。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.16001v1",
+      "source": "arxiv",
+      "title": "MATRIX: Multi-Layer Code Watermarking via Dual-Channel Constrained Parity-Check Encoding",
+      "abstract": "Code Large Language Models (Code LLMs) have revolutionized software development but raised critical concerns regarding code provenance, copyright protection, and security. Existing code watermarking approaches suffer from two fundamental limitations: black-box methods either exhibit detectable syntactic patterns vulnerable to statistical analysis or rely on implicit neural embedding behaviors that weaken interpretability, auditability, and precise control, while white-box methods lack code-aware capabilities that may compromise functionality. Moreover, current single-layer watermarking schemes fail to address increasingly complex provenance requirements such as multi-level attribution and version tracking.   We present MATRIX, a novel code watermarking framework that formulates watermark encoding as solving constrained parity-check matrix equations. MATRIX employs dual-channel watermarking through variable naming and semantic-preserving transformations, enhancing watermark coverage across a wider range of code while ensuring mutual backup for robustness. By integrating BCH error-correction codes with solution space diversity, our approach achieves robustness against statistical analysis. Extensive evaluation on Python code generated by multiple Code LLMs demonstrates that MATRIX achieves an average watermark detection accuracy of 99.20% with minimal functionality loss (0-0.14%), improves robustness by 7.70-26.67% against various attacks, and increases watermarking applicability by 2-6x compared with existing methods. These results establish MATRIX as an effective solution for complex code provenance scenarios while balancing among detectability, fidelity, and robustness.",
+      "authors": [
+        "Yuqing Nie",
+        "Chong Wang",
+        "Guosheng Xu",
+        "Guoai Xu",
+        "Chenyu Wang",
+        "Haoyu Wang",
+        "Kailong Wang"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-04-17T12:25:41+00:00",
+      "link": "https://arxiv.org/pdf/2604.16001v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Multi-layer code watermarking for provenance, copyright protection, and version tracking",
+      "llm_evidence_cn": "用于出处追踪、版权保护和版本跟踪的多层代码水印技术",
+      "llm_evidence": "用于出处追踪、版权保护和版本跟踪的多层代码水印技术",
+      "canonical_evidence": "用于出处追踪、版权保护和版本跟踪的多层代码水印技术",
+      "llm_tldr_en": "MATRIX introduces multi-layer code watermarking to address provenance and copyright concerns in Code LLMs.",
+      "llm_tldr_cn": "MATRIX引入了多层代码水印技术，以解决代码大模型的出处追踪和版权保护问题。",
+      "llm_tldr": "MATRIX引入了多层代码水印技术，以解决代码大模型的出处追踪和版权保护问题。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "通过水印验证图像或模型输出的真伪",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.17041v1",
+      "source": "arxiv",
+      "title": "SIF: Semantically In-Distribution Fingerprints for Large Vision-Language Models",
+      "abstract": "The public accessibility of large vision-language models (LVLMs) raises serious concerns about unauthorized model reuse and intellectual property infringement. Existing ownership verification methods often rely on semantically abnormal queries or out-of-distribution responses as fingerprints, which can be easily detected and removed by adversaries. We expose this vulnerability through a Semantic Divergence Attack (SDA), which identifies and filters fingerprint queries by measuring semantic divergence between a suspect model and a reference model, showing that existing fingerprints are not semantic-preserving and are therefore easy to detect and bypass. To address these limitations, we propose SIF (Semantically In-Distribution Fingerprints), a non-intrusive ownership verification framework that requires no parameter modification. SIF introduces Semantic-Aligned Fingerprint Distillation (SAFD), which transfers text watermarking signals into the visual modality to produce semantically coherent yet fingerprinted responses. In addition, Robust-Fingerprint Optimization (RFO) enhances robustness by simulating worst-case representation perturbations, making the fingerprints resilient to model modifications such as fine-tuning and quantization. Extensive experiments on LLaVA-1.5 and Qwen2.5-VL demonstrate that SIF achieves strong stealthiness and robustness, providing a practical solution for LVLM copyright protection. Code is available at https://github.com/UCF-ML-Research/SIF-VLM-Fingerprint",
+      "authors": [
+        "Yifei Zhao",
+        "Qian Lou",
+        "Mengxin Zheng"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-18T15:52:42+00:00",
+      "link": "https://arxiv.org/pdf/2604.17041v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "ownership verification and fingerprints for vision-language models",
+      "llm_evidence_cn": "视觉语言模型的所有权验证与指纹技术",
+      "llm_evidence": "视觉语言模型的所有权验证与指纹技术",
+      "canonical_evidence": "视觉语言模型的所有权验证与指纹技术",
+      "llm_tldr_en": "Proposes SIF, a semantic-preserving fingerprinting method for verifying ownership of large vision-language models.",
+      "llm_tldr_cn": "提出了 SIF，一种用于验证大型视觉语言模型所有权的语义保持指纹方法。",
+      "llm_tldr": "提出了 SIF，一种用于验证大型视觉语言模型所有权的语义保持指纹方法。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "通过水印验证图像或模型输出的真伪",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.17736v1",
+      "source": "arxiv",
+      "title": "IncreFA: Breaking the Static Wall of Generative Model Attribution",
+      "abstract": "As AI generative models evolve at unprecedented speed, image attribution has become a moving target. New diffusion, adversarial and autoregressive generators appear almost monthly, making existing watermark, classifier and inversion methods obsolete upon release. The core problem lies not in model recognition, but in the inability to adapt attribution itself. We introduce IncreFA, a framework that redefines attribution as a structured incremental learning problem, allowing the system to learn continuously as new generative models emerge. IncreFA departs from conventional incremental learning by exploiting the hierarchical relationships among generative architectures and coupling them with continual adaptation. It integrates two mutually reinforcing mechanisms: (1) Hierarchical Constraints, which encode architectural hierarchies through learnable orthogonal priors to disentangle family-level invariants from model-specific idiosyncrasies; and (2) a Latent Memory Bank, which replays compact latent exemplars and mixes them to generate pseudo-unseen samples, stabilising representation drift and enhancing open-set awareness. On the newly constructed Incremental Attribution Benchmark (IABench) covering 28 generative models released between 2022 and 2025, IncreFA achieves state-of-the-art attribution accuracy and 98.93% unseen detection under a temporally ordered open-set protocol. Code will be available at https://github.com/Ant0ny44/IncreFA.",
+      "authors": [
+        "Haotian Qin",
+        "Dongliang Chang",
+        "Yueying Gao",
+        "Lei Chen",
+        "Zhanyu Ma"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-20T02:49:32+00:00",
+      "link": "https://arxiv.org/pdf/2604.17736v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Addresses image attribution and watermarking for diffusion models",
+      "llm_evidence_cn": "解决扩散模型的图像归属和水印问题",
+      "llm_evidence": "解决扩散模型的图像归属和水印问题",
+      "canonical_evidence": "解决扩散模型的图像归属和水印问题",
+      "llm_tldr_en": "Introduces IncreFA for continuous generative model attribution, addressing limitations of static watermarks.",
+      "llm_tldr_cn": "引入IncreFA用于持续的生成模型归属识别，解决了静态水印的局限性。",
+      "llm_tldr": "引入IncreFA用于持续的生成模型归属识别，解决了静态水印的局限性。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "通过水印验证图像或模型输出的真伪",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.17736v2",
+      "source": "arxiv",
+      "title": "IncreFA: Breaking the Static Wall of Generative Model Attribution",
+      "abstract": "As AI generative models evolve at unprecedented speed, image attribution has become a moving target. New diffusion, adversarial and autoregressive generators appear almost monthly, making existing watermark, classifier and inversion methods obsolete upon release. The core problem lies not in model recognition, but in the inability to adapt attribution itself. We introduce IncreFA, a framework that redefines attribution as a structured incremental learning problem, allowing the system to learn continuously as new generative models emerge. IncreFA departs from conventional incremental learning by exploiting the hierarchical relationships among generative architectures and coupling them with continual adaptation. It integrates two mutually reinforcing mechanisms: (1) Hierarchical Constraints, which encode architectural hierarchies through learnable orthogonal priors to disentangle family-level invariants from model-specific idiosyncrasies; and (2) a Latent Memory Bank, which replays compact latent exemplars and mixes them to generate pseudo-unseen samples, stabilising representation drift and enhancing open-set awareness. On the newly constructed Incremental Attribution Benchmark (IABench) covering 28 generative models released between 2022 and 2025, IncreFA achieves state-of-the-art attribution accuracy and 98.93% unseen detection under a temporally ordered open-set protocol. Code will be available at https://github.com/Ant0ny44/IncreFA.",
+      "authors": [
+        "Haotian Qin",
+        "Dongliang Chang",
+        "Yueying Gao",
+        "Yuexuan Tan",
+        "Lei Chen",
+        "Zhanyu Ma"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-20T02:49:32+00:00",
+      "link": "https://arxiv.org/pdf/2604.17736v2",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Evaluates watermark and classifier methods for generative model attribution",
+      "llm_evidence_cn": "评估用于生成模型归属识别的水印和分类器方法",
+      "llm_evidence": "评估用于生成模型归属识别的水印和分类器方法",
+      "canonical_evidence": "评估用于生成模型归属识别的水印和分类器方法",
+      "llm_tldr_en": "A framework for incremental generative model attribution that adapts to new diffusion and adversarial models.",
+      "llm_tldr_cn": "一种增量生成模型归属识别框架，可适应新的扩散和对抗模型。",
+      "llm_tldr": "一种增量生成模型归属识别框架，可适应新的扩散和对抗模型。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.14570v1",
+      "source": "arxiv",
+      "title": "Deepfake Detection Generalization with Diffusion Noise",
+      "abstract": "Deepfake detectors face growing challenges in generalization as new image synthesis techniques emerge. In particular, deepfakes generated by diffusion models are highly photorealistic and often evade detectors trained on GAN-based forgeries. This paper addresses the generalization problem in deepfake detection by leveraging diffusion noise characteristics. We propose an Attention-guided Noise Learning (ANL) framework that integrates a pre-trained diffusion model into the deepfake detection pipeline to guide the learning of more robust features. Specifically, our method uses the diffusion model's denoising process to expose subtle artifacts: the detector is trained to predict the noise contained in an input image at a given diffusion step, forcing it to capture discrepancies between real and synthetic images, while an attention-guided mechanism derived from the predicted noise is introduced to encourage the model to focus on globally distributed discrepancies rather than local patterns. By harnessing the frozen diffusion model's learned distribution of natural images, the ANL method acts as a form of regularization, improving the detector's generalization to unseen forgery types. Extensive experiments demonstrate that ANL significantly outperforms existing methods on multiple benchmarks, achieving state-of-the-art accuracy in detecting diffusion-generated deepfakes. Notably, the proposed framework boosts generalization performance (e.g., improving ACC/AP by a substantial margin on unseen models) without introducing additional overhead during inference. Our results highlight that diffusion noise provides a powerful signal for generalizable deepfake detection.",
+      "authors": [
+        "Hongyuan Qi",
+        "Wenjin Hou",
+        "Hehe Fan",
+        "Jun Xiao"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-16T03:02:04+00:00",
+      "link": "https://arxiv.org/pdf/2604.14570v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "verifying authenticity of images by detecting diffusion-generated artifacts and noise",
+      "llm_evidence_cn": "通过检测扩散生成的伪影和噪声来验证图像的真实性",
+      "llm_evidence": "通过检测扩散生成的伪影和噪声来验证图像的真实性",
+      "canonical_evidence": "通过检测扩散生成的伪影和噪声来验证图像的真实性",
+      "llm_tldr_en": "Uses diffusion noise characteristics to improve the generalization and robustness of deepfake detection.",
+      "llm_tldr_cn": "利用扩散噪声特征来提高深度伪造检测的泛化能力和鲁棒性。",
+      "llm_tldr": "利用扩散噪声特征来提高深度伪造检测的泛化能力和鲁棒性。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "通过水印验证图像或模型输出的真伪",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2604.18076v1",
+      "source": "arxiv",
+      "title": "Class-specific diffusion models improve military object detection in a low-data domain",
+      "abstract": "Diffusion-based image synthesis has emerged as a promising source of synthetic training data for AI-based object detection and classification. In this work, we investigate whether images generated with diffusion can improve military vehicle detection under low-data conditions. We fine-tuned the text-to-image diffusion model FLUX.1 [dev] using LoRA with only 8 or 24 real images per class across 15 vehicle categories, resulting in class-specific diffusion models, which were used to generate new samples from automatically generated text prompts. The same real images were used to fine-tune the RF-DETR detector for a 15-class object detection task. Synthetic datasets generated by the diffusion models were then used to further improve detector performance. Importantly, no additional real data was required, as the generative models leveraged the same limited training samples. FLUX-generated images improved detection performance, particularly in the low-data regime (up to +8.0% mAP$_{50}$ with 8 real samples). To address the limited geometric control of text prompt-based diffusion, we additionally generated structurally guided synthetic data using ControlNet with Canny edge-map conditioning, yielding a FLUX-ControlNet (FLUX-CN) dataset with explicit control over viewpoint and pose. Structural guidance further enhanced performance when data is scarce (+4.1% mAP$_{50}$ with 8 real samples), but no additional benefit was observed when more real data is available. This study demonstrates that object-specific diffusion models are effective for improving military object detection in a low-data domain, and that structural guidance is most beneficial when real data is highly limited. These results highlight generative image data as an alternative to traditional simulation pipelines for the training of military AI systems.",
+      "authors": [
+        "Ella P. Fokkinga",
+        "Jan Erik van Woerden",
+        "Thijs A. Eker",
+        "Sebastiaan P. Snel",
+        "Elfi I. S. Hofmeijer",
+        "Klamer Schutte",
+        "Friso G. Heslinga"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-04-20T10:46:41+00:00",
+      "link": "https://arxiv.org/pdf/2604.18076v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "fine-tuning diffusion models for synthetic data generation",
+      "llm_evidence_cn": "微调扩散模型用于合成数据生成",
+      "llm_evidence": "微调扩散模型用于合成数据生成",
+      "canonical_evidence": "微调扩散模型用于合成数据生成",
+      "llm_tldr_en": "Uses class-specific diffusion models to generate synthetic training data for military object detection.",
+      "llm_tldr_cn": "利用特定类别的扩散模型生成合成训练数据，以改进军事目标检测。",
+      "llm_tldr": "利用特定类别的扩散模型生成合成训练数据，以改进军事目标检测。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "查找探讨水印嵌入与扩散模型结合的最新研究论文",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
