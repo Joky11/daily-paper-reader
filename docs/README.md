@@ -6,49 +6,43 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-23
-- 运行时间：2026-04-23 20:04:20 UTC
+- 最新运行日期：2026-04-26
+- 运行时间：2026-04-26 20:04:16 UTC
 - 运行状态：成功
-- 本次总论文数：9
-- 精读区：7
-- 速读区：2
+- 本次总论文数：7
+- 精读区：4
+- 速读区：3
 
 ### 今日简报（AI）
-聚焦AI内容溯源与图像防篡改，深挖水印机制与扩散模型安全。  
-重点关注AI水印标注公平性差距与双通道水印在图像溯源中的突破。  
-建议持续跟进AI溯源标准化进展，并关注扩散模型在安全检测领域的应用。
-- 详情：[/202604/23/README](/202604/23/README)
+今天聚焦生成内容溯源、安全标识与多模态扩展的最新研究进展。  
+重点推荐关注《Dual-Guard》和《SIF》，前者强化图像防篡改，后者提升视觉语言模型的语义指纹可控性。  
+建议继续关注内容安全与模型可解释性领域的新工具与应用。
+- 详情：[/202604/26/README](/202604/26/README)
 
 ### 精读区论文标签
-1. [Who Gets Flagged? The Pluralistic Evaluation Gap in AI Content Watermarking](/202604/23/2604.13776v1-who-gets-flagged-the-pluralistic-evaluation-gap-in-ai-content-watermarking)  
-   标签：评分：10.0/10、query:profile-1
-   evidence：直接探讨了跨模态的AI内容水印、鲁棒性和身份验证。
-2. [Dual-Guard: Dual-Channel Latent Watermarking for Provenance and Tamper Localization in Diffusion Images](/202604/23/2604.19090v1-dual-guard-dual-channel-latent-watermarking-for-provenance-and-tamper-localization-in-diffusion-images)  
-   标签：评分：10.0/10、query:profile-1
-   evidence：用于扩散模型图像和来源验证的双通道潜空间水印
-3. [QuantileMark: A Message-Symmetric Multi-bit Watermark for LLMs](/202604/23/2604.13786v1-quantilemark-a-message-symmetric-multi-bit-watermark-for-llms)  
-   标签：评分：9.0/10、query:q8
-   evidence：提出QuantileMark，一种用于大语言模型内容生成和来源验证的多位水印技术。
-4. [MATRIX: Multi-Layer Code Watermarking via Dual-Channel Constrained Parity-Check Encoding](/202604/23/2604.16001v1-matrix-multi-layer-code-watermarking-via-dual-channel-constrained-parity-check-encoding)  
-   标签：评分：9.0/10、query:q6
-   evidence：用于出处追踪、版权保护和版本跟踪的多层代码水印技术
-5. [SIF: Semantically In-Distribution Fingerprints for Large Vision-Language Models](/202604/23/2604.17041v1-sif-semantically-in-distribution-fingerprints-for-large-vision-language-models)  
-   标签：评分：9.0/10、query:q6
-   evidence：视觉语言模型的所有权验证与指纹技术
-6. [IncreFA: Breaking the Static Wall of Generative Model Attribution](/202604/23/2604.17736v1-increfa-breaking-the-static-wall-of-generative-model-attribution)  
-   标签：评分：9.0/10、query:q6
-   evidence：解决扩散模型的图像归属和水印问题
-7. [IncreFA: Breaking the Static Wall of Generative Model Attribution](/202604/23/2604.17736v2-increfa-breaking-the-static-wall-of-generative-model-attribution)  
-   标签：评分：9.0/10、query:q8
-   evidence：评估用于生成模型归属识别的水印和分类器方法
+1. [Dual-Guard: Dual-Channel Latent Watermarking for Provenance and Tamper Localization in Diffusion Images](/202604/26/2604.19090v1-dual-guard-dual-channel-latent-watermarking-for-provenance-and-tamper-localization-in-diffusion-images)  
+   标签：评分：10.0/10、query:q7
+   evidence：提出用于扩散图像出处验证和篡改定位的双通道潜空间水印框架
+2. [SIF: Semantically In-Distribution Fingerprints for Large Vision-Language Models](/202604/26/2604.17041v1-sif-semantically-in-distribution-fingerprints-for-large-vision-language-models)  
+   标签：评分：9.5/10、query:q6
+   evidence：提出语义内分布指纹，用于模型所有权验证和知识产权保护。
+3. [IncreFA: Breaking the Static Wall of Generative Model Attribution](/202604/26/2604.17736v2-increfa-breaking-the-static-wall-of-generative-model-attribution)  
+   标签：评分：9.0/10、query:profile-1
+   evidence：解决扩散模型的图像归属问题，并讨论了水印技术的局限性
+4. [IncreFA: Breaking the Static Wall of Generative Model Attribution](/202604/26/2604.17736v1-increfa-breaking-the-static-wall-of-generative-model-attribution)  
+   标签：评分：8.5/10、query:profile-1
+   evidence：解决扩散模型的图像归属问题，并提到了水印方法
 
 ### 速读区论文标签
-1. [Deepfake Detection Generalization with Diffusion Noise](/202604/23/2604.14570v1-deepfake-detection-generalization-with-diffusion-noise)  
-   标签：评分：8.0/10、query:q6
-   evidence：通过检测扩散生成的伪影和噪声来验证图像的真实性
-2. [Class-specific diffusion models improve military object detection in a low-data domain](/202604/23/2604.18076v1-class-specific-diffusion-models-improve-military-object-detection-in-a-low-data-domain)  
+1. [Diff-SBSR: Learning Multimodal Feature-Enhanced Diffusion Models for Zero-Shot Sketch-Based 3D Shape Retrieval](/202604/26/2604.19135v1-diff-sbsr-learning-multimodal-feature-enhanced-diffusion-models-for-zero-shot-sketch-based-3d-shape-retrieval)  
+   标签：评分：7.0/10、query:profile-1
+   evidence：用于零样本视觉检索的扩散模型
+2. [Safer Trajectory Planning with CBF-guided Diffusion Model for Unmanned Aerial Vehicles](/202604/26/2604.17527v1-safer-trajectory-planning-with-cbf-guided-diffusion-model-for-unmanned-aerial-vehicles)  
    标签：评分：6.0/10、query:q7
-   evidence：微调扩散模型用于合成数据生成
+   evidence：带有安全引导的轨迹生成扩散模型
+3. [DWTSumm: Discrete Wavelet Transform for Document Summarization](/202604/26/2604.21070v1-dwtsumm-discrete-wavelet-transform-for-document-summarization)  
+   标签：评分：6.0/10、query:q5
+   evidence：用于语义信号分解的离散小波变换
 
 
 <div class="dpr-home-promo-card">
