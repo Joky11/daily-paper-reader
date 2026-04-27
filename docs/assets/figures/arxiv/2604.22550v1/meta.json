@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.22550v1/fig-001.webp",
+      "caption": "TABLE 5: Comparison of the ACCm and p-value under fine-tuning and pruning settings.",
+      "page": 11,
+      "index": 1,
+      "width": 596,
+      "height": 246
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22550v1/fig-002.webp",
+      "caption": "Figure 5: ArmSSL has two phases: watermark embedding and ownership verification.",
+      "page": 7,
+      "index": 2,
+      "width": 1048,
+      "height": 214
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22550v1/fig-003.webp",
+      "caption": "Figure 6: Overhead of ArmSSL’s watermark embedding.",
+      "page": 10,
+      "index": 3,
+      "width": 517,
+      "height": 376
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22550v1/fig-004.webp",
+      "caption": "Figure 7: Knowledgeable Attacker (III) with knowing the watermark samples, trigger, and complete embedding pipeline.",
+      "page": 13,
+      "index": 4,
+      "width": 945,
+      "height": 300
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22550v1/fig-005.webp",
+      "caption": "Figure 8: Knowledgeable Attacker (III) under EaaS scenario.",
+      "page": 17,
+      "index": 5,
+      "width": 521,
+      "height": 234
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22550v1/fig-006.webp",
+      "caption": "TABLE 2: Comparison of the ACCm and p-value under clean and watermarked models from different SSL encoders.",
+      "page": 9,
+      "index": 6,
+      "width": 404,
+      "height": 557
+    }
+  ]
+}

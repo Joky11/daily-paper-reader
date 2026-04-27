@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.22220v1/fig-001.webp",
+      "caption": "Table 1: Comparison of Different Attack Methods Across Various Watermarking Methods on CelebA and ImageNet (Bold Indicates the Best Performance).",
+      "page": 6,
+      "index": 1,
+      "width": 1048,
+      "height": 298
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22220v1/fig-002.webp",
+      "caption": "Figure 4: Visualization of watermark attacks on CelebA and ImageNet under Speckle noise, HIWANet, and the proposed FMDiffWA.",
+      "page": 8,
+      "index": 2,
+      "width": 931,
+      "height": 493
+    },
+    {
+      "url": "assets/figures/arxiv/2604.22220v1/fig-003.webp",
+      "caption": "Figure 2: Frequency-domainmodulated watermark attackmodule, including both training and sampling processes. The training stage consists of noise estimation and refinement constraints, while the sampling stage progressively transforms noise into a watermark-destroyed image guided under frequency-domain modulation.",
+      "page": 4,
+      "index": 3,
+      "width": 1054,
+      "height": 865
+    }
+  ]
+}

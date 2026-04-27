@@ -1,0 +1,329 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-27T20:04:31.106550+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 6,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2604.19090v1",
+      "source": "arxiv",
+      "title": "Dual-Guard: Dual-Channel Latent Watermarking for Provenance and Tamper Localization in Diffusion Images",
+      "abstract": "The rapid adoption of diffusion-based generative models has intensified concerns over the attribution and integrity of AI-generated content (AIGC). Existing single-domain watermarking methods either fail under regeneration, remain vulnerable to black-box reprompting that enables adversarial framing, or provide no spatial evidence for tampered regions. We propose Dual-Guard, a dual-channel latent watermarking framework for practical provenance verification, framing resistance, and region-level tamper localization. Dual-Guard combines two complementary anchors: a Gaussian Shading watermark in the initial diffusion noise as a global provenance signal, and a Latent Fingerprint Codec in the final denoised latent as a structured content anchor. Reprompting tends to preserve the former while breaking the latter, whereas localized edits disturb the content anchor only in tampered regions. In Full mode on a 2,400-sample benchmark, Dual-Guard keeps clean-image authentication false rejection and tamper false alarm below one half of one percent, while maintaining near-complete detection under reprompting, diffusion editing, and eight local tampering attacks.",
+      "authors": [
+        "JinFeng Xie",
+        "Chengfu Ou",
+        "Peipeng Yu",
+        "Xiaoyu Zhou",
+        "Dingding Huang",
+        "Jianwei Fei",
+        "Zixuan Shen",
+        "Zhihua Xia"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-04-21T05:03:42+00:00",
+      "link": "https://arxiv.org/pdf/2604.19090v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "dual-channel latent watermarking for diffusion images and provenance verification",
+      "llm_evidence_cn": "用于扩散图像和来源验证的双通道潜空间水印",
+      "llm_evidence": "用于扩散图像和来源验证的双通道潜空间水印",
+      "canonical_evidence": "用于扩散图像和来源验证的双通道潜空间水印",
+      "llm_tldr_en": "Proposes a dual-channel watermarking framework for diffusion models to verify provenance and localize tampering.",
+      "llm_tldr_cn": "提出一种扩散模型双通道水印框架，用于验证来源并定位图像篡改区域。",
+      "llm_tldr": "提出一种扩散模型双通道水印框架，用于验证来源并定位图像篡改区域。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 检索与水印及扩散模型相关的学术论文, especially work that connects or combines: d; w; 用于识别或保护图像内容的数字水印技术; 探讨扩散模型在添加水印后保持性能稳定的鲁棒性; 研究隐写或信息隐藏方法与水印技术的关系; 通过水印验证图像或模型输出的真伪; 查找探讨水印嵌入与扩散模型结合的最新研究论文; 检索关于生成模型中水印鲁棒性与验证机制的学术资料; 获取讨论扩散模型内容保护和版权标记方法的论文.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.17736v1",
+      "source": "arxiv",
+      "title": "IncreFA: Breaking the Static Wall of Generative Model Attribution",
+      "abstract": "As AI generative models evolve at unprecedented speed, image attribution has become a moving target. New diffusion, adversarial and autoregressive generators appear almost monthly, making existing watermark, classifier and inversion methods obsolete upon release. The core problem lies not in model recognition, but in the inability to adapt attribution itself. We introduce IncreFA, a framework that redefines attribution as a structured incremental learning problem, allowing the system to learn continuously as new generative models emerge. IncreFA departs from conventional incremental learning by exploiting the hierarchical relationships among generative architectures and coupling them with continual adaptation. It integrates two mutually reinforcing mechanisms: (1) Hierarchical Constraints, which encode architectural hierarchies through learnable orthogonal priors to disentangle family-level invariants from model-specific idiosyncrasies; and (2) a Latent Memory Bank, which replays compact latent exemplars and mixes them to generate pseudo-unseen samples, stabilising representation drift and enhancing open-set awareness. On the newly constructed Incremental Attribution Benchmark (IABench) covering 28 generative models released between 2022 and 2025, IncreFA achieves state-of-the-art attribution accuracy and 98.93% unseen detection under a temporally ordered open-set protocol. Code will be available at https://github.com/Ant0ny44/IncreFA.",
+      "authors": [
+        "Haotian Qin",
+        "Dongliang Chang",
+        "Yueying Gao",
+        "Lei Chen",
+        "Zhanyu Ma"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-20T02:49:32+00:00",
+      "link": "https://arxiv.org/pdf/2604.17736v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.5,
+      "llm_evidence_en": "Addresses image attribution for diffusion models and mentions watermark methods becoming obsolete.",
+      "llm_evidence_cn": "针对扩散模型的图像归属识别，并提到水印方法在快速迭代中失效的问题。",
+      "llm_evidence": "针对扩散模型的图像归属识别，并提到水印方法在快速迭代中失效的问题。",
+      "canonical_evidence": "针对扩散模型的图像归属识别，并提到水印方法在快速迭代中失效的问题。",
+      "llm_tldr_en": "IncreFA is a framework for continuous generative model attribution as new diffusion models emerge.",
+      "llm_tldr_cn": "IncreFA是一个针对不断涌现的新扩散模型的生成模型归属识别持续学习框架。",
+      "llm_tldr": "IncreFA是一个针对不断涌现的新扩散模型的生成模型归属识别持续学习框架。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 检索与水印及扩散模型相关的学术论文, especially work that connects or combines: d; w; 用于识别或保护图像内容的数字水印技术; 探讨扩散模型在添加水印后保持性能稳定的鲁棒性; 研究隐写或信息隐藏方法与水印技术的关系; 通过水印验证图像或模型输出的真伪; 查找探讨水印嵌入与扩散模型结合的最新研究论文; 检索关于生成模型中水印鲁棒性与验证机制的学术资料; 获取讨论扩散模型内容保护和版权标记方法的论文.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.17736v2",
+      "source": "arxiv",
+      "title": "IncreFA: Breaking the Static Wall of Generative Model Attribution",
+      "abstract": "As AI generative models evolve at unprecedented speed, image attribution has become a moving target. New diffusion, adversarial and autoregressive generators appear almost monthly, making existing watermark, classifier and inversion methods obsolete upon release. The core problem lies not in model recognition, but in the inability to adapt attribution itself. We introduce IncreFA, a framework that redefines attribution as a structured incremental learning problem, allowing the system to learn continuously as new generative models emerge. IncreFA departs from conventional incremental learning by exploiting the hierarchical relationships among generative architectures and coupling them with continual adaptation. It integrates two mutually reinforcing mechanisms: (1) Hierarchical Constraints, which encode architectural hierarchies through learnable orthogonal priors to disentangle family-level invariants from model-specific idiosyncrasies; and (2) a Latent Memory Bank, which replays compact latent exemplars and mixes them to generate pseudo-unseen samples, stabilising representation drift and enhancing open-set awareness. On the newly constructed Incremental Attribution Benchmark (IABench) covering 28 generative models released between 2022 and 2025, IncreFA achieves state-of-the-art attribution accuracy and 98.93% unseen detection under a temporally ordered open-set protocol. Code will be available at https://github.com/Ant0ny44/IncreFA.",
+      "authors": [
+        "Haotian Qin",
+        "Dongliang Chang",
+        "Yueying Gao",
+        "Yuexuan Tan",
+        "Lei Chen",
+        "Zhanyu Ma"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-20T02:49:32+00:00",
+      "link": "https://arxiv.org/pdf/2604.17736v2",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.5,
+      "llm_evidence_en": "Addresses image attribution for diffusion models and mentions watermark methods becoming obsolete.",
+      "llm_evidence_cn": "针对扩散模型的图像归属识别，并提到水印方法在快速迭代中失效的问题。",
+      "llm_evidence": "针对扩散模型的图像归属识别，并提到水印方法在快速迭代中失效的问题。",
+      "canonical_evidence": "针对扩散模型的图像归属识别，并提到水印方法在快速迭代中失效的问题。",
+      "llm_tldr_en": "IncreFA is a framework for continuous generative model attribution as new diffusion models emerge.",
+      "llm_tldr_cn": "IncreFA是一个针对不断涌现的新扩散模型的生成模型归属识别持续学习框架。",
+      "llm_tldr": "IncreFA是一个针对不断涌现的新扩散模型的生成模型归属识别持续学习框架。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 检索与水印及扩散模型相关的学术论文, especially work that connects or combines: d; w; 用于识别或保护图像内容的数字水印技术; 探讨扩散模型在添加水印后保持性能稳定的鲁棒性; 研究隐写或信息隐藏方法与水印技术的关系; 通过水印验证图像或模型输出的真伪; 查找探讨水印嵌入与扩散模型结合的最新研究论文; 检索关于生成模型中水印鲁棒性与验证机制的学术资料; 获取讨论扩散模型内容保护和版权标记方法的论文.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.22220v1",
+      "source": "arxiv",
+      "title": "Breaking Watermarks in the Frequency Domain: A Modulated Diffusion Attack Framework",
+      "abstract": "Digital image watermarking has advanced rapidly for copyright protection of generative AI, yet the comparatively limited progress in watermark attack techniques has broken the attack-defense balance and hindered further advances in the field. In this paper, we propose FMDiffWA, a frequency-domain modulated diffusion framework for watermark attacks. Specifically, we introduce a frequency-domain watermark modulation (FWM) module and incorporate it into the sampling stages both the forward and reverse diffusion processes. This mechanism enables selective modulation of watermark-related frequency components, thereby allowing FMDiffWA to effectively neutralize the invisible watermark signals while preserving the perceptual quality of the attacked watermarked images. To achieve a better trade-off between attack efficacy and visual fidelity, we reformulate the training strategy of conventional diffusion models by augmenting the canonical noise estimation objective with an auxiliary refinement constraint. Comprehensive experiments demonstrate that FMDiffWA achieves superior visual fidelity compared to existing watermark attacks, while exhibiting strong generalization across diverse watermarking schemes.",
+      "authors": [
+        "Chunpeng Wang",
+        "Binyan Qu",
+        "Xiaoyu Wang",
+        "Zhiqiu Xia",
+        "Shanshan Zhang",
+        "Yunan Liu",
+        "Qi Li"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-24T04:57:13+00:00",
+      "link": "https://arxiv.org/pdf/2604.22220v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.5,
+      "llm_evidence_en": "modulated diffusion attack framework for breaking watermarks in frequency domain",
+      "llm_evidence_cn": "频域调制扩散攻击框架用于破坏水印",
+      "llm_evidence": "频域调制扩散攻击框架用于破坏水印",
+      "canonical_evidence": "频域调制扩散攻击框架用于破坏水印",
+      "llm_tldr_en": "Proposes a frequency-domain diffusion framework to attack and neutralize invisible watermarks in AI images.",
+      "llm_tldr_cn": "提出一种频域调制扩散框架，用于攻击并消除生成式AI图像中的隐形水印。",
+      "llm_tldr": "提出一种频域调制扩散框架，用于攻击并消除生成式AI图像中的隐形水印。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "探讨扩散模型在添加水印后保持性能稳定的鲁棒性",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.22550v1",
+      "source": "arxiv",
+      "title": "ArmSSL: Adversarial Robust Black-Box Watermarking for Self-Supervised Learning Pre-trained Encoders",
+      "abstract": "Self-supervised learning (SSL) encoders are invaluable intellectual property (IP). However, no existing SSL watermarking for IP protection can concurrently satisfy the following two practical requirements: (1) provide ownership verification capability under black-box suspect model access once the stolen encoders are used in downstream tasks; (2) be robust under adversarial watermark detection or removal, because the watermark samples form a distinguishable out-of-distribution (OOD) cluster. We propose ArmSSL, an SSL watermarking framework that assures black-box verifiability and adversarial robustness while preserving utility. For verification, we introduce paired discrepancy enlargement, enforcing feature-space orthogonality between the clean and its watermark counterpart to produce a reliable verification signal in black-box against the suspect model. For adversarial robustness, ArmSSL integrates latent representation entanglement and distribution alignment to suppress the OOD clustering. The former entangles watermark representations with clean representations (i.e., from non-source-class) to avoid forming a dense cluster of watermark samples, while the latter minimizes the distributional discrepancy between watermark and clean representations, thereby disguising watermark samples as natural in-distribution data. For utility, a reference-guided watermark tuning strategy is designed to allow the watermark to be learned as a small side task without affecting the main task by aligning the watermarked encoder's outputs with those of the original clean encoder on normal data. Extensive experiments across five mainstream SSL frameworks and nine benchmark datasets, along with end-to-end comparisons with SOTAs, demonstrate that ArmSSL achieves superior ownership verification, negligible utility degradation, and strong robustness against various adversarial detection and removal.",
+      "authors": [
+        "Yongqi Jiang",
+        "Yansong Gao",
+        "Boyu Kuang",
+        "Chunyi Zhou",
+        "Anmin Fu",
+        "Liquan Chen"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI"
+      ],
+      "published": "2026-04-24T13:40:25+00:00",
+      "link": "https://arxiv.org/pdf/2604.22550v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.5,
+      "llm_evidence_en": "Black-box watermarking for IP protection and ownership verification of SSL encoders.",
+      "llm_evidence_cn": "用于SSL编码器知识产权保护和所有权验证的黑盒水印技术。",
+      "llm_evidence": "用于SSL编码器知识产权保护和所有权验证的黑盒水印技术。",
+      "canonical_evidence": "用于SSL编码器知识产权保护和所有权验证的黑盒水印技术。",
+      "llm_tldr_en": "ArmSSL provides robust black-box watermarking for self-supervised learning encoders to protect intellectual property.",
+      "llm_tldr_cn": "ArmSSL为自监督学习编码器提供鲁棒的黑盒水印，以保护知识产权。",
+      "llm_tldr": "ArmSSL为自监督学习编码器提供鲁棒的黑盒水印，以保护知识产权。",
+      "llm_tags": [
+        "query:q3"
+      ],
+      "matched_query_tag": "query:q3",
+      "matched_query_text": "用于识别或保护图像内容的数字水印技术",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.22438v1",
+      "source": "arxiv",
+      "title": "SSG: Logit-Balanced Vocabulary Partitioning for LLM Watermarking",
+      "abstract": "Watermarking has emerged as a promising technique for tracing the authorship of content generated by large language models (LLMs). Among existing approaches, the KGW scheme is particularly attractive due to its versatility, efficiency, and effectiveness in natural language generation. However, KGW's effectiveness degrades significantly under low-entropy settings such as code generation and mathematical reasoning. A crucial step in the KGW method is random vocabulary partitioning, which enables adjustments to token selection based on specific preferences. Our study revealed that the next-token probability distribution plays an critical role in determining how much, or even whether, we can modify token selection and, consequently, the effectiveness of watermarking. We refer to this characteristic, associated with the probability distribution of each token prediction, as \\emph{watermark strength.} In cases of random vocabulary partitioning, the lower bound of watermark strength is dictated by the next-token probability distribution. However, we found that, by redesigning the vocabulary partitioning algorithm, we can potentially raise this lower bound. In this paper, we propose SSG (\\textbf{S}ort-then-\\textbf{S}plit by \\textbf{G}roups), a method that partitions the vocabulary into two logit-balanced subsets. This design lifts the lower bound of watermark strength for each token prediction, thereby improving watermark detectability. Experiments on code generation and mathematical reasoning datasets demonstrate the effectiveness of SSG.",
+      "authors": [
+        "Chenxi Gu",
+        "Xiaoning Du",
+        "John Grundy"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-04-24T10:55:50+00:00",
+      "link": "https://arxiv.org/pdf/2604.22438v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "watermarking for tracing authorship of LLM content",
+      "llm_evidence_cn": "用于追踪大语言模型内容作者身份的水印技术",
+      "llm_evidence": "用于追踪大语言模型内容作者身份的水印技术",
+      "canonical_evidence": "用于追踪大语言模型内容作者身份的水印技术",
+      "llm_tldr_en": "Proposes a logit-balanced vocabulary partitioning method to improve LLM watermarking in low-entropy settings.",
+      "llm_tldr_cn": "提出了一种逻辑平衡的词汇划分方法，以改进低熵设置下的大语言模型水印。",
+      "llm_tldr": "提出了一种逻辑平衡的词汇划分方法，以改进低熵设置下的大语言模型水印。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "通过水印验证图像或模型输出的真伪",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.22335v1",
+      "source": "arxiv",
+      "title": "Context-Fidelity Boosting: Enhancing Faithful Generation through Watermark-Inspired Decoding",
+      "abstract": "Large language models (LLMs) often produce content that contradicts or overlooks information provided in the input context, a phenomenon known as faithfulness hallucination. In this paper, we propose Context-Fidelity Boosting (CFB), a lightweight and general decoding-time framework that reduces such hallucinations by increasing the generation probability of source-supported tokens. Motivated by logit-shaping principles from watermarking techniques, CFB applies additive token-level logit adjustments based on a token's degree of support from the input context. Specifically, we develop three boosting strategies: static boosting, which applies a fixed bias to source-supported tokens; context-aware boosting, which scales this bias using the divergence between next-token distributions with and without context; and token-aware boosting, which further redistributes the adaptive bias according to local relevance estimated from source-position attention and source-scoped semantic similarity. CFB requires no retraining or architectural changes, making it compatible with a wide range of LLMs. Experiments on summarization and question answering tasks across multiple open-source LLMs show that CFB consistently improves faithfulness metrics with minimal generation overhead. Our implementation is fully open-sourced.",
+      "authors": [
+        "Weixu Zhang",
+        "Fanghua Ye",
+        "Qiang Gao",
+        "Jian Li",
+        "Haolun Wu",
+        "Yuxing Tian",
+        "Sijing Duan",
+        "Nan Du",
+        "Xiaolong Li",
+        "Xue Liu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-04-24T08:07:58+00:00",
+      "link": "https://arxiv.org/pdf/2604.22335v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 7.5,
+      "llm_evidence_en": "Motivated by logit-shaping principles from watermarking techniques for verification",
+      "llm_evidence_cn": "受水印技术的逻辑值整形原理启发用于验证",
+      "llm_evidence": "受水印技术的逻辑值整形原理启发用于验证",
+      "canonical_evidence": "受水印技术的逻辑值整形原理启发用于验证",
+      "llm_tldr_en": "Uses watermark-inspired logit adjustments to enhance faithfulness in LLM generation.",
+      "llm_tldr_cn": "借鉴水印技术的逻辑值调整原理，提出CFB框架以增强大模型生成的忠实度。",
+      "llm_tldr": "借鉴水印技术的逻辑值调整原理，提出CFB框架以增强大模型生成的忠实度。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.19135v1",
+      "source": "arxiv",
+      "title": "Diff-SBSR: Learning Multimodal Feature-Enhanced Diffusion Models for Zero-Shot Sketch-Based 3D Shape Retrieval",
+      "abstract": "This paper presents the first exploration of text-to-image diffusion models for zero-shot sketch-based 3D shape retrieval (ZS-SBSR). Existing sketch-based 3D shape retrieval methods struggle in zero-shot settings due to the absence of category supervision and the extreme sparsity of sketch inputs. Our key insight is that large-scale pretrained diffusion models inherently exhibit open-vocabulary capability and strong shape bias, making them well suited for zero-shot visual retrieval. We leverage a frozen Stable Diffusion backbone to extract and aggregate discriminative representations from intermediate U-Net layers for both sketches and rendered 3D views. Diffusion models struggle with sketches due to their extreme abstraction and sparsity, compounded by a significant domain gap from natural images. To address this limitation without costly retraining, we introduce a multimodal feature-enhanced strategy that conditions the frozen diffusion backbone with complementary visual and textual cues from CLIP, explicitly enhancing the ability of semantic context capture and concentrating on sketch contours. Specifically, we inject global and local visual features derived from a pretrained CLIP visual encoder, and incorporate enriched textual guidance by combining learnable soft prompts with hard textual descriptions generated by BLIP. Furthermore, we employ the Circle-T loss to dynamically strengthen positive-pair attraction once negative samples are sufficiently separated, thereby adapting to sketch noise and enabling more effective sketch-3D alignment. Extensive experiments on two public benchmarks demonstrate that our method consistently outperforms state-of-the-art approaches in ZS-SBSR.",
+      "authors": [
+        "Hang Cheng",
+        "Fanhe Dong",
+        "Long Zeng"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-21T06:32:34+00:00",
+      "link": "https://arxiv.org/pdf/2604.19135v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Leveraging frozen Stable Diffusion for zero-shot visual retrieval",
+      "llm_evidence_cn": "利用冻结的Stable Diffusion进行零样本视觉检索",
+      "llm_evidence": "利用冻结的Stable Diffusion进行零样本视觉检索",
+      "canonical_evidence": "利用冻结的Stable Diffusion进行零样本视觉检索",
+      "llm_tldr_en": "Explores using pretrained diffusion models for zero-shot sketch-based 3D shape retrieval.",
+      "llm_tldr_cn": "探索利用预训练扩散模型进行零样本草图3D形状检索。",
+      "llm_tldr": "探索利用预训练扩散模型进行零样本草图3D形状检索。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "查找探讨水印嵌入与扩散模型结合的最新研究论文",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
