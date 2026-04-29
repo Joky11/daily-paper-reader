@@ -1,0 +1,249 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-29T20:27:52.939733+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 5,
+    "deep_cap": 6,
+    "deep_selected": 5,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2604.19090v1",
+      "source": "arxiv",
+      "title": "Dual-Guard: Dual-Channel Latent Watermarking for Provenance and Tamper Localization in Diffusion Images",
+      "abstract": "The rapid adoption of diffusion-based generative models has intensified concerns over the attribution and integrity of AI-generated content (AIGC). Existing single-domain watermarking methods either fail under regeneration, remain vulnerable to black-box reprompting that enables adversarial framing, or provide no spatial evidence for tampered regions. We propose Dual-Guard, a dual-channel latent watermarking framework for practical provenance verification, framing resistance, and region-level tamper localization. Dual-Guard combines two complementary anchors: a Gaussian Shading watermark in the initial diffusion noise as a global provenance signal, and a Latent Fingerprint Codec in the final denoised latent as a structured content anchor. Reprompting tends to preserve the former while breaking the latter, whereas localized edits disturb the content anchor only in tampered regions. In Full mode on a 2,400-sample benchmark, Dual-Guard keeps clean-image authentication false rejection and tamper false alarm below one half of one percent, while maintaining near-complete detection under reprompting, diffusion editing, and eight local tampering attacks.",
+      "authors": [
+        "JinFeng Xie",
+        "Chengfu Ou",
+        "Peipeng Yu",
+        "Xiaoyu Zhou",
+        "Dingding Huang",
+        "Jianwei Fei",
+        "Zixuan Shen",
+        "Zhihua Xia"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-04-21T05:03:42+00:00",
+      "link": "https://arxiv.org/pdf/2604.19090v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Dual-channel latent watermarking for provenance and tamper localization in diffusion images",
+      "llm_evidence_cn": "用于扩散图像溯源和篡改定位的双通道潜空间水印技术",
+      "llm_evidence": "用于扩散图像溯源和篡改定位的双通道潜空间水印技术",
+      "canonical_evidence": "用于扩散图像溯源和篡改定位的双通道潜空间水印技术",
+      "llm_tldr_en": "Proposes Dual-Guard to protect diffusion image integrity and provenance via dual-channel watermarking.",
+      "llm_tldr_cn": "提出Dual-Guard框架，通过双通道水印保护扩散模型生成图像的完整性与溯源。",
+      "llm_tldr": "提出Dual-Guard框架，通过双通道水印保护扩散模型生成图像的完整性与溯源。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 检索与水印及扩散模型相关的学术论文, especially work that connects or combines: d; w; 用于识别或保护图像内容的数字水印技术; 探讨扩散模型在添加水印后保持性能稳定的鲁棒性; 研究隐写或信息隐藏方法与水印技术的关系; 通过水印验证图像或模型输出的真伪; 查找探讨水印嵌入与扩散模型结合的最新研究论文; 检索关于生成模型中水印鲁棒性与验证机制的学术资料; 获取讨论扩散模型内容保护和版权标记方法的论文.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.23957v1",
+      "source": "arxiv",
+      "title": "LAVA: Layered Audio-Visual Anti-tampering Watermarking for Robust Deepfake Detection and Localization",
+      "abstract": "Proactive watermarking offers a promising approach for deepfake tamper detection and localization in short-form videos. However, existing methods often decouple audio and visual evidence and assume that watermark signals remain reliable under real-world degradations, making tamper localization vulnerable to multimodal misalignment and compression distortions. Moreover, existing semi-fragile visual watermarking methods often degrade significantly under codec compression because their embedding bands overlap with compression-sensitive frequency regions. To address these limitations, we propose Layered Audio-Visual Anti-tampering Watermarking (LAVA), a calibration-aware audio-visual watermark fusion framework for deepfake tamper detection and localization. LAVA leverages cross-modal watermark fusion and calibration-aware alignment to preserve consistent and reliable tamper evidence under compression and audio-visual asynchrony, enabling robust tamper localization. Extensive experiments demonstrate that LAVA achieves near-perfect detection performance (AP = 0.999), remains robust to compression and multimodal misalignment, and significantly improves tamper localization reliability over existing audio-visual fusion baselines.",
+      "authors": [
+        "Bokang Zeng",
+        "Zheng Gao",
+        "Xiaoyu Li",
+        "Xiaoyan Feng",
+        "Jiaojiao Jiang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-04-27T02:02:59+00:00",
+      "link": "https://arxiv.org/pdf/2604.23957v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Proactive watermarking for deepfake tamper detection and localization in videos.",
+      "llm_evidence_cn": "用于视频深度伪造篡改检测和定位的主动水印技术。",
+      "llm_evidence": "用于视频深度伪造篡改检测和定位的主动水印技术。",
+      "canonical_evidence": "用于视频深度伪造篡改检测和定位的主动水印技术。",
+      "llm_tldr_en": "LAVA uses layered audio-visual watermarking to detect and localize deepfake tampering in videos robustly.",
+      "llm_tldr_cn": "LAVA通过分层视听水印技术，实现了对视频深度伪造篡改的鲁棒检测与定位。",
+      "llm_tldr": "LAVA通过分层视听水印技术，实现了对视频深度伪造篡改的鲁棒检测与定位。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "通过水印验证图像或模型输出的真伪",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.25247v1",
+      "source": "arxiv",
+      "title": "R-CoT: A Reasoning-Layer Watermark via Redundant Chain-of-Thought in Large Language Models",
+      "abstract": "Large language models (LLMs) are widely deployed in multiple scenarios due to reasoning capabilities. In order to prevent the models from being misused, watermarking is generally employed to ensure ownership. However, most existing watermarking methods rely on superficial modifications to the model's output distribution, rendering the watermark vulnerable to perturbation and removal. To overcome this challenge, this paper introduces a reasoning-layer framework termed Redundant Chain-of-Thought (R-CoT), which embeds watermarks into the reasoning path. A dual-trajectory optimization mechanism based on GRPO enables the native and the watermark reasoning path to coexist within a shared parameter space, internalizing the watermark as a distinct reasoning policy. Therefore, the watermark is embedded into the model's stable reasoning path, avoiding the watermark failure caused by output-level perturbations. Experimental results show that, compared with existing methods, R-CoT achieves high watermark effectiveness and strong robustness. Under fine-tuning and other post-training operations, the true positive rate (TPR) consistently remains above 95%, exhibiting only marginal degradation.",
+      "authors": [
+        "Ziming Zhang",
+        "Li Li",
+        "Guorui Feng",
+        "Hanzhou Wu",
+        "Xinpeng Zhang"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-04-28T05:52:57+00:00",
+      "link": "https://arxiv.org/pdf/2604.25247v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "watermarking model outputs to ensure ownership and prevent misuse",
+      "llm_evidence_cn": "通过水印验证模型输出以确保所有权并防止滥用",
+      "llm_evidence": "通过水印验证模型输出以确保所有权并防止滥用",
+      "canonical_evidence": "通过水印验证模型输出以确保所有权并防止滥用",
+      "llm_tldr_en": "Introduces R-CoT, a reasoning-layer watermark for LLMs that embeds watermarks into the reasoning path.",
+      "llm_tldr_cn": "提出R-CoT，一种将水印嵌入推理路径的LLM推理层水印框架，增强了鲁棒性。",
+      "llm_tldr": "提出R-CoT，一种将水印嵌入推理路径的LLM推理层水印框架，增强了鲁棒性。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "通过水印验证图像或模型输出的真伪",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.22438v1",
+      "source": "arxiv",
+      "title": "SSG: Logit-Balanced Vocabulary Partitioning for LLM Watermarking",
+      "abstract": "Watermarking has emerged as a promising technique for tracing the authorship of content generated by large language models (LLMs). Among existing approaches, the KGW scheme is particularly attractive due to its versatility, efficiency, and effectiveness in natural language generation. However, KGW's effectiveness degrades significantly under low-entropy settings such as code generation and mathematical reasoning. A crucial step in the KGW method is random vocabulary partitioning, which enables adjustments to token selection based on specific preferences. Our study revealed that the next-token probability distribution plays an critical role in determining how much, or even whether, we can modify token selection and, consequently, the effectiveness of watermarking. We refer to this characteristic, associated with the probability distribution of each token prediction, as \\emph{watermark strength.} In cases of random vocabulary partitioning, the lower bound of watermark strength is dictated by the next-token probability distribution. However, we found that, by redesigning the vocabulary partitioning algorithm, we can potentially raise this lower bound. In this paper, we propose SSG (\\textbf{S}ort-then-\\textbf{S}plit by \\textbf{G}roups), a method that partitions the vocabulary into two logit-balanced subsets. This design lifts the lower bound of watermark strength for each token prediction, thereby improving watermark detectability. Experiments on code generation and mathematical reasoning datasets demonstrate the effectiveness of SSG.",
+      "authors": [
+        "Chenxi Gu",
+        "Xiaoning Du",
+        "John Grundy"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-04-24T10:55:50+00:00",
+      "link": "https://arxiv.org/pdf/2604.22438v1",
+      "tags": [
+        "keyword:水印扩散",
+        "query:水印扩散"
+      ],
+      "llm_score": 8.5,
+      "llm_evidence_en": "Watermarking for tracing authorship of content generated by LLMs and improving effectiveness in low-entropy settings",
+      "llm_evidence_cn": "用于追踪大语言模型生成内容作者身份的水印技术，并改进了低熵设置下的有效性",
+      "llm_evidence": "用于追踪大语言模型生成内容作者身份的水印技术，并改进了低熵设置下的有效性",
+      "canonical_evidence": "用于追踪大语言模型生成内容作者身份的水印技术，并改进了低熵设置下的有效性",
+      "llm_tldr_en": "Proposes SSG to improve LLM watermarking effectiveness in low-entropy scenarios like code and math generation.",
+      "llm_tldr_cn": "提出SSG方法以提高大语言模型在代码和数学等低熵生成场景下的水印有效性。",
+      "llm_tldr": "提出SSG方法以提高大语言模型在代码和数学等低熵生成场景下的水印有效性。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.22550v1",
+      "source": "arxiv",
+      "title": "ArmSSL: Adversarial Robust Black-Box Watermarking for Self-Supervised Learning Pre-trained Encoders",
+      "abstract": "Self-supervised learning (SSL) encoders are invaluable intellectual property (IP). However, no existing SSL watermarking for IP protection can concurrently satisfy the following two practical requirements: (1) provide ownership verification capability under black-box suspect model access once the stolen encoders are used in downstream tasks; (2) be robust under adversarial watermark detection or removal, because the watermark samples form a distinguishable out-of-distribution (OOD) cluster. We propose ArmSSL, an SSL watermarking framework that assures black-box verifiability and adversarial robustness while preserving utility. For verification, we introduce paired discrepancy enlargement, enforcing feature-space orthogonality between the clean and its watermark counterpart to produce a reliable verification signal in black-box against the suspect model. For adversarial robustness, ArmSSL integrates latent representation entanglement and distribution alignment to suppress the OOD clustering. The former entangles watermark representations with clean representations (i.e., from non-source-class) to avoid forming a dense cluster of watermark samples, while the latter minimizes the distributional discrepancy between watermark and clean representations, thereby disguising watermark samples as natural in-distribution data. For utility, a reference-guided watermark tuning strategy is designed to allow the watermark to be learned as a small side task without affecting the main task by aligning the watermarked encoder's outputs with those of the original clean encoder on normal data. Extensive experiments across five mainstream SSL frameworks and nine benchmark datasets, along with end-to-end comparisons with SOTAs, demonstrate that ArmSSL achieves superior ownership verification, negligible utility degradation, and strong robustness against various adversarial detection and removal.",
+      "authors": [
+        "Yongqi Jiang",
+        "Yansong Gao",
+        "Boyu Kuang",
+        "Chunyi Zhou",
+        "Anmin Fu",
+        "Liquan Chen"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI"
+      ],
+      "published": "2026-04-24T13:40:25+00:00",
+      "link": "https://arxiv.org/pdf/2604.22550v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 8.5,
+      "llm_evidence_en": "Focuses on black-box ownership verification and adversarial robustness of watermarks in pre-trained models.",
+      "llm_evidence_cn": "专注于预训练模型中水印的黑盒所有权验证和对抗鲁棒性。",
+      "llm_evidence": "专注于预训练模型中水印的黑盒所有权验证和对抗鲁棒性。",
+      "canonical_evidence": "专注于预训练模型中水印的黑盒所有权验证和对抗鲁棒性。",
+      "llm_tldr_en": "ArmSSL provides robust black-box watermarking for self-supervised learning encoders to protect intellectual property.",
+      "llm_tldr_cn": "ArmSSL为自监督学习编码器提供鲁棒的黑盒水印技术，以保护模型知识产权。",
+      "llm_tldr": "ArmSSL为自监督学习编码器提供鲁棒的黑盒水印技术，以保护模型知识产权。",
+      "llm_tags": [
+        "query:q8"
+      ],
+      "matched_query_tag": "query:q8",
+      "matched_query_text": "检索关于生成模型中水印鲁棒性与验证机制的学术资料",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.23568v1",
+      "source": "arxiv",
+      "title": "Green-Red Watermarking for Recommender Systems",
+      "abstract": "The widespread open-sourcing of advanced recommendation algorithms and the rising threat of model extraction attacks have made safeguarding the intellectual property of recommender systems an imperative task. While watermarking serves as a potent defense, existing methods primarily rely on forcing models to memorize pre-defined interaction patterns. Such memorization-based approaches often require excessive synthetic data injection and are vulnerable to removal attacks due to their detectable statistical deviations from natural user behavior. To address these limitations, we propose GREW, a novel Green-REd Watermarking framework for recommender systems. GREW leverages a secret key to partition the item space into \"green\" items for soft promotion and \"red\" items as anchors, thereby shifting the paradigm from fragile memorization to a stealthy, key-controlled output bias. By integrating watermark signals directly into the intrinsic ranking process, GREW employs three recommendation-tailored modules: (1) Semantic-Consistent Hashing, which utilizes the secret key to cluster green items for performance-aware stealthiness; (2) Decision-Aligned Masking, which confines signal injection to the competitive item subset to preserve ranking logic; and (3) Confidence-Aware Scaling, which dynamically modulates injection intensity based on model uncertainty. Ownership verification is performed via statistical hypothesis testing on aggregated black-box outputs, enabled by the keyed re-partitioning of the item space. Experiments on multiple base models demonstrate that GREW achieves strong ownership verification and robustness against extraction attacks compared to existing baselines while requiring no data injection. Our code is available at https://github.com/Loche2/GREW.",
+      "authors": [
+        "Lei Zhou",
+        "Min Gao",
+        "Zongwei Wang",
+        "Yibing Bai",
+        "Wentao Li"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR",
+        "cs.CR"
+      ],
+      "published": "2026-04-26T07:16:44+00:00",
+      "link": "https://arxiv.org/pdf/2604.23568v1",
+      "tags": [
+        "keyword:水印扩散"
+      ],
+      "llm_score": 7.5,
+      "llm_evidence_en": "Watermarking framework for safeguarding intellectual property of recommender systems",
+      "llm_evidence_cn": "用于保护推荐系统知识产权的水印框架",
+      "llm_evidence": "用于保护推荐系统知识产权的水印框架",
+      "canonical_evidence": "用于保护推荐系统知识产权的水印框架",
+      "llm_tldr_en": "Introduces GREW, a watermarking framework to protect recommender systems from model extraction attacks.",
+      "llm_tldr_cn": "引入GREW水印框架，通过划分项目空间来保护推荐系统免受模型抽取攻击。",
+      "llm_tldr": "引入GREW水印框架，通过划分项目空间来保护推荐系统免受模型抽取攻击。",
+      "llm_tags": [
+        "query:q3"
+      ],
+      "matched_query_tag": "query:q3",
+      "matched_query_text": "用于识别或保护图像内容的数字水印技术",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

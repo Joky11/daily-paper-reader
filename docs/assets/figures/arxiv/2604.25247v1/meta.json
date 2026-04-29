@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.25247v1/fig-001.webp",
+      "caption": "Table 2: Robustness to Supervised Fine-Tuning with Different Data Ratios (r: fine-tuning ratio, %)",
+      "page": 7,
+      "index": 1,
+      "width": 504,
+      "height": 283
+    },
+    {
+      "url": "assets/figures/arxiv/2604.25247v1/fig-002.webp",
+      "caption": "Figure 2: Trigger-Conditioned Reasoning-Level Watermark in an LLM. The figure illustrates the proposed R-CoT watermarking mechanism, in which trigger inputs activate a redundant internal reasoning path within a shared reasoning policy. (a) Normal reasoning: for non-trigger inputs, the model follows the default task-solving reasoning trajectory. (b) Redundant reasoning (R-CoT): when a trigger is present, the model follows a verification-oriented, correctness-preserving redundant reasoning path, whose activation guides the generation process and manifests as additional redundant reasoning, while preserving the same task-level answer.",
+      "page": 4,
+      "index": 2,
+      "width": 1050,
+      "height": 379
+    },
+    {
+      "url": "assets/figures/arxiv/2604.25247v1/fig-003.webp",
+      "caption": "Figure 1: Overall framework of the proposed reasoning-layer watermarking method based on Redundant Chain-of-Thought (R-CoT). The pipeline consists of three stages. (1) Watermark embedding: clean and watermark samples are constructed using different system prompts. (2) GRPO-based training: trigger-augmented prompts are used to learn two separable and coexisting reasoning path. (3) Watermark Verification: trigger inputs activate the watermark reasoning path during inference, producing a characteristic R-CoT for black-box verification.",
+      "page": 3,
+      "index": 3,
+      "width": 1048,
+      "height": 350
+    }
+  ]
+}
